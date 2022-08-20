@@ -1,0 +1,901 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+    body {
+        font-family: 'Poppins', sans-serif;
+    }
+    .checkout-container-left{
+        position: relative;
+        width: 500px;
+        border-radius: 20px;
+        background-color: #FCFCFC;
+        height: 550px;
+        padding-left: 0px;
+        padding-right: 0px;
+    }
+    
+    .checkout-container-right{
+        position: relative;
+        width: 290px;
+        border-radius: 20px;
+        border-bottom-left-radius: 0;
+        border-top-left-radius: 0;
+        background-color: #fff;
+        height: 500px;
+        align-self: center;
+    }
+
+    .form-check-input:checked {
+        background-color: #003898;
+        border-color: #003898;
+    }
+    .btn-primary {
+        color: #fff;
+        background-color: #003898;
+        border-color: #003898;
+    }
+    a {
+        color: #003898;
+        text-decoration: none;
+    }
+    .modal-content{
+        background:none !important;
+        border:none !important;
+    }
+
+    .trianle{
+        position: absolute;
+        top: -12px;
+        left: 36px;
+        width: 0;
+        height: 0;
+        border-bottom: 12px solid #5379b9;
+        border-left: 14px solid transparent;
+    }
+
+    .verticalbanner {
+        position: absolute;
+        width: 90px;
+        top: -12px;
+        left:50px;
+        background: #003898;
+        height: 90px;
+        line-height: 95px;
+        text-align: center;
+    }
+    .verticalbanner:after,
+    .verticalbanner:before {
+        content: '';
+        position: absolute;
+        border-top: 20px solid #003898;
+        height: 0;
+        width: 0;
+        top: 100%;
+    }
+    .verticalbanner:after {
+        border-right:45px solid transparent;
+        right: 0px;
+    }
+    .verticalbanner:before {
+        border-left: 45px solid transparent;
+        left: 0px;
+    }
+
+    .custom-circle{
+        border-radius: 50%;
+        padding: 5px 8px;
+    }
+
+    .checkout-header{
+        position: absolute;
+        top: 120px;
+        left: 50px;
+        display: flex;
+    }
+
+    .cart{
+        position: absolute;
+        top: 10px;
+        right: 35px;
+    }
+    .step{
+        font-size: 13px;
+    }
+
+    .active{
+        color: #003898;
+        font-weight: bold;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #003898;	 
+    }
+    .activeStep{
+        color: #fff;
+        background-color: #003898;
+    }
+    .disabled{
+        color:#767676;
+    }
+    .disabledStep{
+        color: #fff;
+        background-color: #767676 !important;
+    }
+    .completed{
+        color: #003898;
+        font-weight: bold;
+        /* padding-bottom: 8px; */
+        /* border-bottom: 1px solid #35bd35; */
+    }
+    .completedStep{
+        color: #fff;
+        background-color: #003898 !important;
+    }
+
+    .active-border{
+        border: 1px solid #59dd59; 
+    }
+
+    .welcome , .verification{
+        font-size: 18px;
+        color: #767676;
+    }
+    .enter-phone, .enter-otp{
+        font-size: 22px;
+        color: #323232;
+        font-weight: 600;
+    }
+
+    /* ----- Mobile Box Styles Starts ----- */
+
+    .mobile-box{
+        position: absolute;
+        top: 210px;
+        left: 50px;
+    }
+
+    .phone{
+        border-radius: 5px!important;
+        height: 43px;
+        max-width: 65% !important;
+        box-shadow: 3px 0 4px -4px rgb(96 96 96 / 80%), 
+        -2px 0 6px -4px rgb(112 112 112 / 80%), 
+        -2px 0 6px -4px rgb(112 112 112 / 80%), 
+        -2px 0 6px -4px rgb(112 112 112 / 80%)!important;
+        color: #767676;
+        padding-left: 50px;
+    }
+    .phone:focus{
+        border-color: #8f8b8b00!important;
+        box-shadow: 3px 0 4px -4px rgb(96 96 96 / 80%), 
+        -2px 0 6px -4px rgb(112 112 112 / 80%), 
+        -2px 0 6px -4px rgb(112 112 112 / 80%), 
+        -2px 0 6px -4px rgb(112 112 112 / 80%)!important;
+    }
+    .green-check{
+        color: #35bd35;
+        line-height: 2.50;
+        z-index: 9999;
+        margin-left: -26px !important;
+        display: none;
+    }
+
+    .mobile-next-btn{
+        width: 135px;
+        padding: 9px;
+        background-color: #767676 !important;
+        color: #fff !important;
+        border-radius: 7px;
+    }
+
+    .active-btn{
+        background-color: #003898 !important;
+    }
+    .country-code{
+        position: absolute;
+        z-index: 999999;
+        padding: 0px 7px;
+        color: #847592;
+        background: #fff;
+        height: 41px;
+        line-height: 41px;
+        margin-top: 1px;
+        border-right: 1px solid #ddd;
+        border-radius: 5px;
+        color: #767676;
+    }
+
+    /* ----- Mobile Box Styles Ends ----- */
+
+    /* ----- OTP Box Styles Starts ----- */
+
+    .otp-box{
+        position: absolute;
+        top: 210px;
+        left: 50px;
+    }
+    .otp-not-received{
+        font-size: small;
+        color: #767676!important;
+    }
+    .resend-otp{
+        color: #003898;
+        cursor: pointer;
+        font-weight: 500;
+    }
+
+    .edit-icon { 
+        color: #003898;
+        -webkit-text-stroke: 0.5px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .otp-value{
+        border-radius: 5px!important;
+        height: 43px;
+        font-size: 20px;
+        width: 45px!important;
+        flex: none!important;
+        margin-right: 0.7rem!important;
+        text-align: center;
+        box-shadow: 3px 0 4px -4px rgb(96 96 96 / 80%), -2px 0 6px -4px rgb(112 112 112 / 80%), -2px 0 6px -4px rgb(112 112 112 / 80%), -2px 0 6px -4px rgb(112 112 112 / 80%)!important;
+    }
+    
+    /* ----- OTP Box Styles Ends ----- */
+
+
+    /* ----- Address Box Style Starts ----- */
+
+    .address-box{
+        position: absolute;
+        top: 165px;
+        left: 35px;
+        right: 35px;
+    }
+
+    .addressTextBox {
+        height: 40px;
+        font-size: small;
+    }
+
+    /* .addressTextBox:after {
+        color: #e32;
+        content: ' *';
+        display:inline;
+      } */
+
+      .mandetory_field{
+        color: #e32;
+        font-size: 20px;
+      }
+
+
+    .currentLocation {
+        color: #003898;
+        font-size: 13px;
+        font-weight: 600;
+        margin-top: 12px;
+        margin-bottom: 12px;
+        cursor: pointer;
+    }
+
+    .addressTypeRadio {
+        font-size: small;
+        display: flex;
+    }
+
+    .address-header{
+        width: initial;
+       display: flow-root;
+       margin-bottom: 15px;
+       border-bottom: 1px solid #ddd;
+    }
+    .add-address{
+        float: left;
+        margin-bottom: 10px;
+        font-weight: bold;
+    }
+    .mandatory-filed{
+        float: right;
+        font-size: 10px;
+    }
+    .add_type_other:focus-visible{
+    	outline: 0;
+    }
+    .add_type_other, .add_type_other:active {
+        border: none;
+        border-bottom: 1px solid #6e6e6e;
+        height: 18px;
+        width: 78px;
+        font-size: 12px;
+        background: transparent;
+    }
+
+    .address-back-btn {
+        width: 70px;
+        line-height: 15px;
+    	height: 35px;
+        padding: 10px;
+        background-color: #003898 !important;
+        color: #fff !important;
+        border-radius: 40px;
+        -webkit-text-stroke: 1px;
+        border: none;
+        margin-top: 10px;
+    }
+
+    .address-next-btn {
+        width: 100px;
+        line-height: 15px;
+    	height: 35px;
+        padding: 10px;
+        background-color: #003898 !important;
+        color: #fff !important;
+        border-radius: 7px;
+        border: none;
+        margin-top: 10px;
+    }
+
+    /* ----- Address Box Style Ends ----- */
+
+    /* ----- Address List Box Style Starts ----- */
+
+    .address-list-box{
+        position: absolute;
+        top: 180px;
+        left: 35px;
+        right: 35px;
+    }
+
+    .address-list{
+        /* margin: 10px; */
+        display: flow-root;
+        
+        /* padding: 12px; */
+        padding-right: 8px;
+    }
+
+    .address-card{
+        border: 1px solid #ddd;
+        padding: 8px;
+        height: auto;
+        border-radius: 5px;
+    	margin-bottom: 10px;
+        position: relative;
+	}
+    .active-address{
+        border: 1px solid #003898 !important;
+    }
+    .address-label{
+        font-size: 10px;
+    }
+    .make-default-address{
+        font-size: 12px;
+        float: right;
+        color: #C80000;
+        cursor: pointer;
+        position: absolute;
+        bottom: 10px;
+        right: 5px;
+    }
+    .add_list_round {
+        background: #003898;
+        color: #fff;
+        font-size: x-small;
+        border-radius: 50%;
+        padding: 2px 4px;
+    }
+    .add-new-address {
+        cursor: pointer;
+        font-size: 13px;
+    }
+    .shipping-address{
+		font-size: 12px;
+        width: 80%;    
+	}
+    .add-new-address .bi-plus-circle-fill{
+		font-size: 13px;
+	}
+    .add-new-address label{
+		font-size: 15px;
+		cursor: pointer;
+	}
+
+    .edit-address-btn{
+        float: right;
+        color: #003898;
+        -webkit-text-stroke: 0.5px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    .delete-address-btn {
+        float: right;
+        margin-left: 5px;
+        color: #C80000;
+        -webkit-text-stroke: 0.5px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    .pay-nxt-btn {
+        width: 100px;
+        float: right;
+        margin-top: 25px;
+        padding: 10px;
+        background-color: #003898 !important;
+        color: #fff !important;
+        border-radius: 7px;
+        border: none;
+    }
+
+    /* ----- Address List Box Style Ends ----- */
+
+
+    /* ----- Payment Box Style Starts ----- */
+
+
+    /* ----- Payment Box Style Ends ----- */
+    
+    
+
+
+    /* ----- Right Panel Box Styles Starts ----- */
+
+    .top-section,.coupon-section{
+        text-align: left;
+        font-size: 14px;
+        padding: 12px 0px;
+    }
+
+    .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        cursor: pointer;
+    }
+
+    .bi-cart{
+        -webkit-text-stroke: 1px;
+    }
+    .bi-chevron-up{
+        -webkit-text-stroke: 1px;
+        cursor: pointer;
+        color: #282c30;
+    }
+    .bi-chevron-down{
+        -webkit-text-stroke: 1px;
+        cursor: pointer;
+        color: #282c30;
+    }
+    .cart-details{
+        background: #fff;
+        font-size: 14px;
+        padding-bottom: 10px;
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+        padding-right: 5px;
+    }
+    .cart-list{
+        width: 100%;
+        margin-bottom: 15px;
+        min-height: 105px;
+        overflow-y: scroll;
+        padding: 2px 12px 0px 0px;
+        max-height: 140px;
+    }
+    .product-name{
+        font-size: 13px;
+        margin-bottom: 2px;
+    }
+
+    .variant{
+        font-size: 12px;
+        margin-bottom: 2px;
+    }
+    .size,.color{
+        margin-right: 15px;
+    }
+    .product-price{
+        font-size: 12px;
+    }
+	.cart-list::-webkit-scrollbar {
+        width: 7px;
+    }	
+    .cart-list::-webkit-scrollbar-track {
+        box-shadow: inset 0 0 5px grey; 
+        border-radius: 10px;
+    } 	
+    .cart-list::-webkit-scrollbar-thumb {
+        background: #5e5d5d; 
+        border-radius: 10px;
+    }	
+    .cart-list::-webkit-scrollbar-thumb:hover {
+        background: #003898; 
+    }
+
+    .cart-list-item{
+        position: relative;
+        margin-bottom: 15px;
+    }
+    .cart-list-item:last-child{
+        margin-bottom: 0px;
+    }
+    .cart-img{
+        display: flex;
+    }
+    .cart-img img{
+        height: 58px;
+        width: 100%;
+    }
+    .price,.discount,.shipping{
+        font-size: 12px;
+        margin-bottom: 3px;
+    }
+    .amount{
+        font-size: 12px;
+        margin-bottom: 3px;
+    }
+    .product-details{
+        background: #fff;
+        font-size: 14px;
+    }
+    .remove-cart{
+        position: absolute;
+        right: 10px;
+        bottom: 2px;
+        font-size: 11px;
+    }
+    .hr-tag{
+        margin: 5px auto;
+        width: 265px;
+    }
+    .coupon-details label{
+        margin-bottom: 10px;
+    }
+    .coupon-desc{
+        font-size: 12px;
+    }
+    .c-list{
+        position: relative;
+    }
+
+    .apply-code{
+        position: absolute;
+        right: 0px;
+        top: 0px;
+        font-size: 11px;
+        color: blue;
+    }
+    .coupon-box{
+        /* border: 2px solid gray; */
+        /* border-radius: 5px; */
+        /* padding: 5px; */
+        max-height: 195px;
+    }
+    .coupon-header{
+        font-size: 14px;
+        font-weight: bold;
+        text-decoration: underline;
+        margin-bottom: 2px;
+    }
+    .coupon_text{
+        padding: 1px 8px !important;
+    }
+    .coupon_apply_btn{
+        padding: 1px 7px !important;
+        background: #0a53be;
+        color: #fff;
+        border-radius: 7px;
+        border: none;
+    }
+    .c-list{
+        font-size: small;
+        line-height: 1.3;
+    }
+
+    .coupon-list{
+        min-height: 105px;
+        overflow-y: scroll;
+        padding: 12px;
+        max-height: 115px;
+    }
+
+    .coupon-list::-webkit-scrollbar {
+        width: 7px;
+    }	
+    .coupon-list::-webkit-scrollbar-track {
+        box-shadow: inset 0 0 5px grey; 
+        border-radius: 10px;
+    } 	
+    .coupon-list::-webkit-scrollbar-thumb {
+        background: #5e5d5d; 
+        border-radius: 10px;
+    }	
+    .coupon-list::-webkit-scrollbar-thumb:hover {
+        background: #0a53be; 
+    }
+
+    /* ----- Right Panel Box Styles Ends ----- */
+
+
+
+
+
+
+
+
+
+    /* -------------------OLD Codes---------------------- */
+
+
+
+
+
+
+
+
+
+
+    
+
+   
+
+/* ----- New Address Box Styles Starts ----- */
+
+    
+
+    /* .address-scroll{
+        visibility: hidden;
+        max-height: 135px;
+        overflow-y: scroll;
+        padding: 5px 15px;
+    }
+
+   
+
+    .left-address{
+        padding-left: 0;
+    }
+    .right-address{
+        padding-right: 0;
+    }
+
+    .address-box label{
+		font-size: 14px;
+		padding: 0;
+	}
+
+    .address-box input[type="text"]{
+	    border: none;
+	    text-align: left;
+	    border-bottom-right-radius: 0;
+	    border-bottom-left-radius: 0;
+	    border-bottom: 1px solid #d0d0d0;
+	    letter-spacing: 0.1em;
+	    font-size: 14px;
+	    padding: 6px 0px;
+	    margin-bottom: 8px;
+	}
+
+    .address-radio{
+        border: 2px solid #888888;
+        display: inline-block;
+        border-radius: 10px;
+        padding: 7px 10px;
+        margin: 10px;
+        cursor: pointer;
+    }
+
+    .custom-align-radio{
+		vertical-align: sub!important;
+	}
+	.shipping-box{
+		padding-left: 0;
+		margin-top: 25px;
+	}
+
+    .back-btn{
+        margin-top: 20px;
+        width: 40%;
+        font-size: 16px;
+        font-weight: 700;
+        border-radius: 8px;
+        padding: 1rem;
+        justify-content: center;
+        background-color: #868383;
+        color: #fff;
+        border: none;
+    }
+    .submit-aadress-btn{
+        margin-top: 20px;
+        margin-left: 5px;
+        width: 40%;
+        font-size: 16px;
+        font-weight: 700;
+        border-radius: 8px;
+        padding: 1rem;
+        justify-content: center;
+        background-color: #868383;
+        color: #fff;
+        border: none;
+    }
+
+
+
+    .address-complete-box{
+        margin: 10px 10px;      
+        padding: 12px;
+    }
+
+    .address_list_main{
+        display: flow-root;
+    }
+
+    .address-list{
+        margin: 10px;
+        display: flow-root;
+        min-height: 150px;
+        max-height: 180px;
+        overflow-y: scroll;
+        padding: 12px;
+    }
+
+    .shipping_heading{
+        font-weight: bold;
+    	font-size: 18px;
+    	margin-bottom: 12px;
+    	float: left;
+    	text-align: left;
+    }   
+    .address-card{
+		position: relative;
+		border: 1px solid #ddd;
+	    padding: 5px;
+	    height: auto;
+	    border-radius: 5px;
+	    min-height: 70px;
+    	max-height: 75px;
+    	margin-bottom: 10px;
+	}
+    .address-section{
+		position: absolute;
+    	top: 4px;
+    	left: 28px;
+	}
+    .add-new-address {
+        text-align: right;
+        float: right;
+        cursor: pointer;
+    }
+    .shipping-address{
+		font-size: 12px;
+        width: 80%;
+	}
+    .add-new-address .bi-plus-circle-fill{
+		font-size: 13px;
+	}
+    .add-new-address label{
+		font-size: 15px;
+		cursor: pointer;
+	}
+
+    .address-type{
+        border-radius: 26px;
+        padding: 3px 14px;
+        float: right;
+        position: absolute;
+        right: 5px;
+        top: 5px;
+        text-align: center;
+        background: #000;
+        color: #fff;
+        font-size: 13px;
+    }
+
+    .edit-address-btn{
+        position: absolute;
+        right: 10px;
+        bottom: 4px;
+        font-size: 13px;
+        cursor: pointer;
+    }
+
+
+
+
+    /* .pay-box{
+        width: 100%;
+        margin: 20px 10px;
+        display: flex;
+        justify-content: space-between;
+    }
+    .upi-icon-box{
+        width: 35%;
+        display: flex;
+        flex: 50%;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-around;
+    }
+    .upi-option{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 40%;
+        font-size: 12px;
+        line-height: 12px;
+        font-weight: 400;
+        color: var(--a5);
+        margin: 0.5rem;
+        border: none;
+        outline: none;
+        cursor: pointer;
+    }
+    .upi-icon-box img{
+        max-width: 100%;
+        height: auto;
+        vertical-align: middle;
+    } 
+    .upi-name{
+        margin-top: 15px;
+    }
+    .qr-code-box{
+        display: flex;
+        justify-content: center;
+    }
+    .or-option-main{
+        width: 100%; 
+        text-align: center; 
+        border-bottom: 1px solid #000; 
+        line-height: 0.1em;
+        margin: 10px 0 20px; 
+    }
+    .or-option-inner{
+        background:#fff; 
+        padding:0 10px; 
+    }
+
+    .mob-link{
+        display: flex;
+        align-items: baseline;
+        float: left;
+    }
+    input[name='send-link-textbox']{
+        width: 130px;
+    }
+    .mobile-c-code{
+        border-bottom: 1px solid #d0d0d0;
+        padding-bottom: 6px;
+    }
+    .send-link-btn{
+    width: 15%;
+    font-size: 16px;
+    font-weight: 700;
+    border-radius: 8px;
+    padding: 0.5rem;
+    background-color: #868383;
+    color: #fff;
+    border: none;
+    margin-left: 25px;
+    } */
+
+    /* ----- Pay Box Styles Ends ----- */
+
+    
+
+    /*Lipu CSS*/
+   
+   
+
+
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
