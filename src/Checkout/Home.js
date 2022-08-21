@@ -21,6 +21,7 @@ const Home = () => {
         const handleFormFieldsChange = event => {
             fields[event.target.name] = event.target.value;
             setFields(fields); 
+            //console.log(fields['otp1'])
           }
 
         const MobileNextbtn = (event) => {
@@ -30,6 +31,28 @@ const Home = () => {
                 setOtpSectionDiv(true);
             }, "300");
         }
+
+        const otpInputHandler = (event) =>{
+            if(event.target.value.length == 1 && event.target.value.length == event.target.maxLength){
+                event.target.classList.add('active-border');
+                if(event.target.name == 'otp1' || event.target.name == 'otp2' || event.target.name == 'otp3'){
+                    event.target.nextSibling.focus();
+                }
+            } else {
+                event.target.classList.remove('active-border');
+            }
+            
+            console.log(fields['otp1']);
+            console.log(fields['otp2']);
+            console.log(fields['otp3']);
+            console.log(fields['otp4']);
+
+            // if(document.querySelectorAll('.otp-value').value){
+            //     setOtpSectionDiv(false);
+            //     setAddressSectionDiv(true);
+            // }
+        }
+        
 
         const mobileInputHandler = event => {
             CommonMethods.phoneMasking(event);
@@ -110,14 +133,18 @@ const Home = () => {
                         { otpSectionDiv ? 
                         <div className="otp-section">
                             <h6 className="mb-5 text-muted verification">Verification</h6>
-                            <h6 className="mb-3 enter-otp">OTP is sent to <span id="mob-num">+999 888 0000<sup><i
-                                            className="bi bi-pencil-square edit-icon ms-1"
-                                            id="edit-phone-link"></i></sup></span></h6>
+                            <h6 className="mb-3 enter-otp">OTP is sent to 
+                                <span id="mob-num">+999 888 0000
+                                    <sup>
+                                        <i className="bi bi-pencil-square edit-icon ms-1" id="edit-phone-link"></i>
+                                    </sup>
+                                </span>
+                            </h6>
                             <div className="input-group">
-                                <input type="text" name="otp2" className="form-control otp-value" maxLength="1" />
-                                <input type="text" name="otp1" className="form-control otp-value" maxLength="1" />
-                                <input type="text" name="otp3" className="form-control otp-value" maxLength="1" />
-                                <input type="text" name="otp4" className="form-control otp-value" maxLength="1" />
+                                <input type="text" name="otp1" className="form-control otp-value" maxLength="1" onInput={otpInputHandler} onChange={handleFormFieldsChange}  />
+                                <input type="text" name="otp2" className="form-control otp-value" maxLength="1" onInput={otpInputHandler} onChange={handleFormFieldsChange}  />
+                                <input type="text" name="otp3" className="form-control otp-value" maxLength="1" onInput={otpInputHandler} onChange={handleFormFieldsChange}  />
+                                <input type="text" name="otp4" className="form-control otp-value" maxLength="1" onInput={otpInputHandler} onChange={handleFormFieldsChange} />
                             </div>
                             <div className="text-muted ms-1 mt-5 otp-not-received">Didn't get the OTP <span
                                     className="resend-otp">Resend a new code</span></div>
