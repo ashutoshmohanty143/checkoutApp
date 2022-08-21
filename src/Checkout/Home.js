@@ -9,13 +9,18 @@ const Home = () => {
         const [ addressSectionDiv, setAddressSectionDiv ] = useState(false);
         const [ addressListSectionDiv, setaddressListSectionDiv ] = useState(false);
 
+        const [addressStepActive, setAddressStepActive] = useState(false);
+        const [paymentStepActive, setPaymentStepActive] = useState(false);
+
         const [mobNextbtn, setMobNextbtn] = useState(true);
         const [fields, setFields] = useState({});
         const [errors, setErrors] = useState({});
 
+        const MOB_MAX_NUM = 12;
+
         const handleFormFieldsChange = event => {
             fields[event.target.name] = event.target.value;
-            setFields(fields);
+            setFields(fields); 
           }
 
         const MobileNextbtn = (event) => {
@@ -24,16 +29,22 @@ const Home = () => {
             setOtpSectionDiv(true);
         }
 
-        const mobileInputHandler = e => {
-            if (!CommonMethods.phoneMasking(e) && !CommonMethods.numberValidation(e)) {
-                // setErrors({ ...errors, mobile : "Please enter Only Numbers"  });
+        const mobileInputHandler = event => {
+            CommonMethods.phoneMasking(event);
+            if(event.target.value.length != event.target.maxLength && event.target.value.length != MOB_MAX_NUM){
                 setMobNextbtn(true);
-            } else if(fields["mobile"].length != 12) {
-                // setErrors({ ...errors, mobile : "Please enter 10 digit numbers"  });
-                setMobNextbtn(true);
+                document.querySelector('#mobile-next-btn').classList.remove('active-btn');
+                //document.querySelector('#mobile').blur();
+                document.querySelector('#mobile').classList.remove('active-border');
+                document.querySelector('#mobile').classList.add('danger-border');
             } else {
-                setErrors({ ...errors, mobile : ""  });
+                
+
                 setMobNextbtn(false);
+                //document.querySelector('#mobile').blur();
+                document.querySelector('#mobile-next-btn').classList.add('active-btn');
+                document.querySelector('#mobile').classList.remove('danger-border');
+                document.querySelector('#mobile').classList.add('active-border');
             }
         }
 
@@ -56,18 +67,17 @@ const Home = () => {
                         
                         
                         <div className="checkout-header">
-                            <div id="check-tabs-mobile" className="me-3">
-                                <span className="custom-circle" id="mob-span"><i className="bi bi-people-fill"></i></span>
-                                <span className="step">Verify</span>
+                            <div className='me-3 active-step'>
+                                        <img src="../../img/followers-active.png" className='me-2'/>
+                                <span>Verify</span>
                             </div>
-                            <div id="check-tabs-address" className="me-3">
-                                <span className="custom-circle" id="address-span"><i
-                                        className="bi bi-house-heart-fill"></i></span>
-                                <span className="step">Address</span>
+                            <div className={`me-3 ${ addressStepActive ? 'active-step' : 'disabled-step'}`}>
+                                <img src={ addressStepActive ? '../../img/address-active.png' : '../../img/address.png' } className='me-2'/>
+                                <span>Address</span>
                             </div>
-                            <div id="check-tabs-pay">
-                                <span className="custom-circle" id="pay-span"><i className="bi bi-credit-card"></i></span>
-                                <span className="step">Payment</span>
+                            <div className={`me-3 ${ paymentStepActive ? 'active-step' : 'disabled-step'}`}>
+                                <img src={ paymentStepActive ? '' : '../../img/payment-method.png' } className='me-2'/>
+                                <span>Payment</span>
                             </div>
                         </div>
                         
@@ -78,14 +88,14 @@ const Home = () => {
                             <h4 className="mb-3 enter-mobile">Please enter your mobile number</h4>
                             <div className="input-group">
                                 <span className="country-code" id="mob-code">+91</span>
-                                <input type="text" name="mobile" className="form-control mobile" maxLength="12"
-                                    placeholder="999 888 0000" onInput={mobileInputHandler} onChange={handleFormFieldsChange} />
+                                <input type="text" name="mobile" id='mobile' className="form-control mobile" maxLength={MOB_MAX_NUM}
+                                    placeholder="999 888 0000" onInput={mobileInputHandler} 
+                                     onChange={handleFormFieldsChange} />
                                 <span className="green-check"><i className="bi bi-check-circle-fill"></i></span>
                             </div>
-                            <span className="error-msg">{errors["mobile"]}</span>
                             <div className="text-muted ms-1 mt-2" style={{fontSize: 12+'px'}}>A 4 digit OTP will be sent via
                                 SMS to verify your mobile number!</div>
-                            <button onClick={MobileNextbtn} className="mobile-next-btn form-control mt-5" disabled={mobNextbtn}>Get
+                            <button onClick={MobileNextbtn} id="mobile-next-btn" className="mobile-next-btn form-control mt-5" disabled={mobNextbtn}>Get
                                 OTP</button>
                         </div>
                         : ''}
@@ -248,11 +258,11 @@ const Home = () => {
                             <span><strong>Order Summary</strong></span>
                         </div>
 
-                        <div className="cart-details" id="collapseExample">
+                        <div className="cart-section">
                             <div className="cart-list">
                                 <div className="cart-list-item row">
-                                    <div className="col-md-3 cart-img"  style={{padding: 0}}>
-                                        <img src="assets/img/adidas.png" alt="Cart 1" />
+                                    <div className="col-md-3 cart-img"  style={{paddingRight: 0}}>
+                                        <img src="../../img/adidas.png" alt="Cart 1" />
                                     </div>
                                     <div className="col-md-9">
                                         <div className="product-name">Adidas Style Sneakers</div>
@@ -264,8 +274,8 @@ const Home = () => {
                                     </div>
                                 </div>
                                 <div className="cart-list-item row">
-                                    <div className="col-md-3 cart-img" style={{padding: 0}}>
-                                        <img src="assets/img/sneaker.png" alt="Cart 1" />
+                                    <div className="col-md-3 cart-img" style={{paddingRight: 0}}>
+                                        <img src="../../img/sneaker.png" alt="Cart 1" />
                                     </div>
                                     <div className="col-md-9">
                                         <div className="product-name">Adidas Style Sneakers</div>
@@ -278,7 +288,7 @@ const Home = () => {
                                 </div>
                                 <div className="cart-list-item row">
                                     <div className="col-md-3 cart-img" style={{paddingRight: 0}}>
-                                        <img src="assets/img/sneaker.png" alt="Cart 1" />
+                                        <img src="../../img/sneaker.png" alt="Cart 1" />
                                     </div>
                                     <div className="col-md-9">
                                         <div className="product-name">Adidas Style Sneakers</div>
@@ -314,9 +324,7 @@ const Home = () => {
 
                         <div className="coupon-section">
                             <span><strong>Coupon Details</strong></span>
-                        </div>
-
-                        <div className="coupon-box">
+                            <div className="coupon-box">
                             <div className="row mb-2">
                                 <div className="col-md-8">
                                     <input type="text" className="form-control coupon_text" id="cpnTextbox"
@@ -356,9 +364,8 @@ const Home = () => {
                                 </div>
                             </div>
 
-
                         </div>
-
+                        </div>
 
                     </div>
 
