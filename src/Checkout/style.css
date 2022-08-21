@@ -158,9 +158,9 @@
     }
     .green-check{
         color: #35bd35;
-        line-height: 2.50;
+        line-height: 2.70;
         z-index: 9999;
-        margin-left: -26px !important;
+        margin-left: -30px !important;
         display: none;
     }
 
