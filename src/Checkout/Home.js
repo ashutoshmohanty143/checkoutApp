@@ -26,7 +26,9 @@ const Home = () => {
         const MobileNextbtn = (event) => {
             event.preventDefault();
             setMobileSectionDiv(false);
-            setOtpSectionDiv(true);
+            setTimeout(() => {
+                setOtpSectionDiv(true);
+            }, "300");
         }
 
         const mobileInputHandler = event => {
@@ -34,17 +36,20 @@ const Home = () => {
             if(event.target.value.length != event.target.maxLength && event.target.value.length != MOB_MAX_NUM){
                 setMobNextbtn(true);
                 document.querySelector('#mobile-next-btn').classList.remove('active-btn');
-                //document.querySelector('#mobile').blur();
+                //
                 document.querySelector('#mobile').classList.remove('active-border');
                 document.querySelector('#mobile').classList.add('danger-border');
+                document.querySelectorAll('.green-check')[0].style.display = "none";
+                // document.querySelector('#mobile').blur();
             } else {
                 
 
                 setMobNextbtn(false);
-                //document.querySelector('#mobile').blur();
+                document.querySelector('#mobile').blur();
                 document.querySelector('#mobile-next-btn').classList.add('active-btn');
                 document.querySelector('#mobile').classList.remove('danger-border');
                 document.querySelector('#mobile').classList.add('active-border');
+                document.querySelectorAll('.green-check')[0].style.display = "block";
             }
         }
 
@@ -60,10 +65,12 @@ const Home = () => {
                 <div className="modal-body row">
                     <div className="checkout-container-left">
                         <span className="trianle"></span>
-                        <div className="verticalbanner"><img src="../../img/logo.png" width="60px" height="45px"
-                                alt="Logo" /></div>
-                        <div className="cart"><img id="cart_img" src="../../img/cart.png" width="100px" height="100px"
-                                alt="Cart-icon" /></div>
+                        <div className="verticalbanner">
+                            <img src="../../img/logo.png" width="60px" height="45px" alt="Logo" />
+                        </div>
+                        <div className="cart">
+                            <img id="cart_img" src="../../img/cart.png" width="100px" height="100px" alt="Cart-icon" />
+                        </div>
                         
                         
                         <div className="checkout-header">
@@ -82,7 +89,7 @@ const Home = () => {
                         </div>
                         
 
-                        { mobileSectionDiv ? 
+                        { mobileSectionDiv ?
                         <div className="mobile-section">
                             <h6 className="mb-5 text-muted welcome">Welcome</h6>
                             <h4 className="mb-3 enter-mobile">Please enter your mobile number</h4>
