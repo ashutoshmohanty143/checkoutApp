@@ -136,7 +136,7 @@
         font-size: 18px;
         color: #767676;
     }
-    .enter-phone, .enter-otp{
+    .enter-mobile, .enter-otp{
         font-size: 22px;
         color: #323232;
         font-weight: 600;
@@ -144,13 +144,13 @@
 
     /* ----- Mobile Box Styles Starts ----- */
 
-    .mobile-box{
+    .mobile-section{
         position: absolute;
         top: 210px;
         left: 50px;
     }
 
-    .phone{
+    .mobile{
         border-radius: 5px!important;
         height: 43px;
         max-width: 65% !important;
@@ -161,7 +161,7 @@
         color: #767676;
         padding-left: 50px;   
     }
-    .phone:focus{
+    .mobile:focus{
         border-color: #8f8b8b00!important;
         box-shadow: 3px 0 4px -4px rgb(96 96 96 / 80%), 
         -2px 0 6px -4px rgb(112 112 112 / 80%), 
@@ -205,7 +205,7 @@
 
     /* ----- OTP Box Styles Starts ----- */
 
-    .otp-box{
+    .otp-section{
         position: absolute;
         top: 210px;
         left: 50px;
@@ -244,7 +244,7 @@
 
     /* ----- Address Box Style Starts ----- */
 
-    .address-box{
+    .address-section{
         position: absolute;
         top: 165px;
         left: 35px;
@@ -338,7 +338,7 @@
 
     /* ----- Address List Box Style Starts ----- */
 
-    .address-list-box{
+    .address-list-section{
         position: absolute;
         top: 180px;
         left: 35px;
@@ -618,272 +618,10 @@
 
 
 
-
-
-
-
-
-
-    /* -------------------OLD Codes---------------------- */
-
-
-
-
-
-
-
-
-
-
-    
-
-   
-
-/* ----- New Address Box Styles Starts ----- */
-
-    
-
-    /* .address-scroll{
-        visibility: hidden;
-        max-height: 135px;
-        overflow-y: scroll;
-        padding: 5px 15px;
-    }
-
-   
-
-    .left-address{
-        padding-left: 0;
-    }
-    .right-address{
-        padding-right: 0;
-    }
-
-    .address-box label{
-		font-size: 14px;
-		padding: 0;
-	}
-
-    .address-box input[type="text"]{
-	    border: none;
-	    text-align: left;
-	    border-bottom-right-radius: 0;
-	    border-bottom-left-radius: 0;
-	    border-bottom: 1px solid #d0d0d0;
-	    letter-spacing: 0.1em;
-	    font-size: 14px;
-	    padding: 6px 0px;
-	    margin-bottom: 8px;
-	}
-
-    .address-radio{
-        border: 2px solid #888888;
-        display: inline-block;
-        border-radius: 10px;
-        padding: 7px 10px;
-        margin: 10px;
-        cursor: pointer;
-    }
-
-    .custom-align-radio{
-		vertical-align: sub!important;
-	}
-	.shipping-box{
-		padding-left: 0;
-		margin-top: 25px;
-	}
-
-    .back-btn{
-        margin-top: 20px;
-        width: 40%;
-        font-size: 16px;
-        font-weight: 700;
-        border-radius: 8px;
-        padding: 1rem;
-        justify-content: center;
-        background-color: #868383;
-        color: #fff;
-        border: none;
-    }
-    .submit-aadress-btn{
-        margin-top: 20px;
-        margin-left: 5px;
-        width: 40%;
-        font-size: 16px;
-        font-weight: 700;
-        border-radius: 8px;
-        padding: 1rem;
-        justify-content: center;
-        background-color: #868383;
-        color: #fff;
-        border: none;
-    }
-
-
-
-    .address-complete-box{
-        margin: 10px 10px;      
-        padding: 12px;
-    }
-
-    .address_list_main{
-        display: flow-root;
-    }
-
-    .address-list{
-        margin: 10px;
-        display: flow-root;
-        min-height: 150px;
-        max-height: 180px;
-        overflow-y: scroll;
-        padding: 12px;
-    }
-
-    .shipping_heading{
-        font-weight: bold;
-    	font-size: 18px;
-    	margin-bottom: 12px;
-    	float: left;
-    	text-align: left;
-    }   
-    .address-card{
-		position: relative;
-		border: 1px solid #ddd;
-	    padding: 5px;
-	    height: auto;
-	    border-radius: 5px;
-	    min-height: 70px;
-    	max-height: 75px;
-    	margin-bottom: 10px;
-	}
-    .address-section{
-		position: absolute;
-    	top: 4px;
-    	left: 28px;
-	}
-    .add-new-address {
-        text-align: right;
-        float: right;
-        cursor: pointer;
-    }
-    .shipping-address{
-		font-size: 12px;
-        width: 80%;
-	}
-    .add-new-address .bi-plus-circle-fill{
-		font-size: 13px;
-	}
-    .add-new-address label{
-		font-size: 15px;
-		cursor: pointer;
-	}
-
-    .address-type{
-        border-radius: 26px;
-        padding: 3px 14px;
-        float: right;
-        position: absolute;
-        right: 5px;
-        top: 5px;
-        text-align: center;
-        background: #000;
-        color: #fff;
-        font-size: 13px;
-    }
-
-    .edit-address-btn{
-        position: absolute;
-        right: 10px;
-        bottom: 4px;
-        font-size: 13px;
-        cursor: pointer;
-    }
-
-
-
-
-    /* .pay-box{
-        width: 100%;
-        margin: 20px 10px;
-        display: flex;
-        justify-content: space-between;
-    }
-    .upi-icon-box{
-        width: 35%;
-        display: flex;
-        flex: 50%;
-        flex-wrap: wrap;
-        align-items: center;
-        justify-content: space-around;
-    }
-    .upi-option{
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: 40%;
-        font-size: 12px;
-        line-height: 12px;
-        font-weight: 400;
-        color: var(--a5);
-        margin: 0.5rem;
-        border: none;
-        outline: none;
-        cursor: pointer;
-    }
-    .upi-icon-box img{
-        max-width: 100%;
-        height: auto;
-        vertical-align: middle;
-    } 
-    .upi-name{
-        margin-top: 15px;
-    }
-    .qr-code-box{
-        display: flex;
-        justify-content: center;
-    }
-    .or-option-main{
-        width: 100%; 
-        text-align: center; 
-        border-bottom: 1px solid #000; 
-        line-height: 0.1em;
-        margin: 10px 0 20px; 
-    }
-    .or-option-inner{
-        background:#fff; 
-        padding:0 10px; 
-    }
-
-    .mob-link{
-        display: flex;
-        align-items: baseline;
-        float: left;
-    }
-    input[name='send-link-textbox']{
-        width: 130px;
-    }
-    .mobile-c-code{
-        border-bottom: 1px solid #d0d0d0;
-        padding-bottom: 6px;
-    }
-    .send-link-btn{
-    width: 15%;
-    font-size: 16px;
-    font-weight: 700;
-    border-radius: 8px;
-    padding: 0.5rem;
-    background-color: #868383;
-    color: #fff;
-    border: none;
-    margin-left: 25px;
-    } */
-
-    /* ----- Pay Box Styles Ends ----- */
-
-    
-
-    /*Lipu CSS*/
-   
+    /* New Code Added */
+   .error-msg {
+    color: red;
+   }
    
 
 

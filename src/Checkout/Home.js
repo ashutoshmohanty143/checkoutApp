@@ -1,8 +1,42 @@
-import React from 'react'
+import React, { useState } from 'react'
+import CommonMethods from '../Common/CommonMethods';
 import './style.css'
 
 
 const Home = () => {
+        const [ mobileSectionDiv, setMobileSectionDiv ] = useState(true);
+        const [ otpSectionDiv, setOtpSectionDiv ] = useState(false);
+        const [ addressSectionDiv, setAddressSectionDiv ] = useState(false);
+        const [ addressListSectionDiv, setaddressListSectionDiv ] = useState(false);
+
+        const [mobNextbtn, setMobNextbtn] = useState(true);
+        const [fields, setFields] = useState({});
+        const [errors, setErrors] = useState({});
+
+        const handleFormFieldsChange = event => {
+            fields[event.target.name] = event.target.value;
+            setFields(fields);
+          }
+
+        const MobileNextbtn = (event) => {
+            event.preventDefault();
+            setMobileSectionDiv(false);
+            setOtpSectionDiv(true);
+        }
+
+        const mobileInputHandler = e => {
+            if (!CommonMethods.phoneMasking(e) && !CommonMethods.numberValidation(e)) {
+                // setErrors({ ...errors, mobile : "Please enter Only Numbers"  });
+                setMobNextbtn(true);
+            } else if(fields["mobile"].length != 12) {
+                // setErrors({ ...errors, mobile : "Please enter 10 digit numbers"  });
+                setMobNextbtn(true);
+            } else {
+                setErrors({ ...errors, mobile : ""  });
+                setMobNextbtn(false);
+            }
+        }
+
   return (
     <>
         <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#checkoutModal">
@@ -15,11 +49,12 @@ const Home = () => {
                 <div className="modal-body row">
                     <div className="checkout-container-left">
                         <span className="trianle"></span>
-                        <div className="verticalbanner"><img src="assets/img/logo.png" width="60px" height="45px"
+                        <div className="verticalbanner"><img src="../../img/logo.png" width="60px" height="45px"
                                 alt="Logo" /></div>
-                        <div className="cart"><img id="cart_img" src="assets/img/cart.png" width="100px" height="100px"
+                        <div className="cart"><img id="cart_img" src="../../img/cart.png" width="100px" height="100px"
                                 alt="Cart-icon" /></div>
-
+                        
+                        
                         <div className="checkout-header">
                             <div id="check-tabs-mobile" className="me-3">
                                 <span className="custom-circle" id="mob-span"><i className="bi bi-people-fill"></i></span>
@@ -35,23 +70,28 @@ const Home = () => {
                                 <span className="step">Payment</span>
                             </div>
                         </div>
+                        
 
-                        <div className="mobile-box">
+                        { mobileSectionDiv ? 
+                        <div className="mobile-section">
                             <h6 className="mb-5 text-muted welcome">Welcome</h6>
-                            <h4 className="mb-3 enter-phone">Please enter your mobile number</h4>
-                            <div className="input-group mobile">
+                            <h4 className="mb-3 enter-mobile">Please enter your mobile number</h4>
+                            <div className="input-group">
                                 <span className="country-code" id="mob-code">+91</span>
-                                <input type="text" name="mobile" className="form-control phone" id="phone" maxLength="12"
-                                    placeholder="999 888 0000" />
+                                <input type="text" name="mobile" className="form-control mobile" maxLength="12"
+                                    placeholder="999 888 0000" onInput={mobileInputHandler} onChange={handleFormFieldsChange} />
                                 <span className="green-check"><i className="bi bi-check-circle-fill"></i></span>
                             </div>
+                            <span className="error-msg">{errors["mobile"]}</span>
                             <div className="text-muted ms-1 mt-2" style={{fontSize: 12+'px'}}>A 4 digit OTP will be sent via
                                 SMS to verify your mobile number!</div>
-                            <button id="mobile-next-btn" className="mobile-next-btn form-control mt-5" disabled>Get
+                            <button onClick={MobileNextbtn} className="mobile-next-btn form-control mt-5" disabled={mobNextbtn}>Get
                                 OTP</button>
                         </div>
+                        : ''}
 
-                        <div className="otp-box">
+                        { otpSectionDiv ? 
+                        <div className="otp-section">
                             <h6 className="mb-5 text-muted verification">Verification</h6>
                             <h6 className="mb-3 enter-otp">OTP is sent to <span id="mob-num">+999 888 0000<sup><i
                                             className="bi bi-pencil-square edit-icon ms-1"
@@ -65,8 +105,11 @@ const Home = () => {
                             <div className="text-muted ms-1 mt-5 otp-not-received">Didn't get the OTP <span
                                     className="resend-otp">Resend a new code</span></div>
                         </div>
+                        : ''}
 
-                        <div className="address-box">
+
+                        { addressSectionDiv ?
+                        <div className="address-section">
                             <div className="row mb-2">
                                 <div className="col-md-6">
                                     <input type="text" name="fullName" className="form-control addressTextBox"
@@ -134,8 +177,10 @@ const Home = () => {
                             </div>
 
                         </div>
+                        : ''}
 
-                        <div className="address-list-box">
+                        { addressListSectionDiv ?
+                        <div className="address-list-section">
                             <div className="address-list">
 
                                 <div className="address-card active-address">
@@ -191,16 +236,16 @@ const Home = () => {
 
                             <button className="pay-nxt-btn">Next</button>
                         </div>
+                        : ''}
 
 
                     </div>
 
                     <div className="checkout-container-right">
                         <div className="close-btn" data-bs-dismiss="modal"><i className="bi bi-x-lg"></i></div>
-                        <div className="top-section">
-                            
+                        
+                        <div className="top-section">            
                             <span><strong>Order Summary</strong></span>
-                           
                         </div>
 
                         <div className="cart-details" id="collapseExample">
