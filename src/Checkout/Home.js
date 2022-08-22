@@ -15,6 +15,18 @@ const Home = () => {
         const [mobNextbtn, setMobNextbtn] = useState(true);
         const [fields, setFields] = useState({});
         const [errors, setErrors] = useState({});
+        const [addresslist, SetAddresslist] = useState([]);
+
+        // const [addresslist, SetAddresslist] = useState([{
+        //     _id:'001',
+        //     fullName: 'Ashutosh Mohanty',
+        //     email:'ashutoshmohanty143@gmail.com', 
+        //     address:'Rasulgarh', 
+        //     landmark:'Near Falcon', 
+        //     city:'Bhubaneswar', 
+        //     state:'Odisha', 
+        //     addressType:'Home'
+        // }]);
 
         const MOB_MAX_NUM = 12;
 
@@ -27,7 +39,7 @@ const Home = () => {
                 [event.target.name]: event.target.value
               }));
           }
-
+          console.log(addresslist);
         const MobileNextbtn = (event) => {
             event.preventDefault();
             setMobileSectionDiv(false);
@@ -63,32 +75,21 @@ const Home = () => {
             } else {
                 event.target.classList.remove('active-border');
             }
-
-            // if(fields['otp1'] === '1' && fields['otp2'] === '2' && fields['otp3'] === '3' && fields['otp4'] === '4') {
-            //     setOtpSectionDiv(false);
-            //     setAddressSectionDiv(true);
-            // }
-            
-            // console.log(fields['otp1']);
-            // console.log(fields['otp2']);
-            // console.log(fields['otp3']);
-            // console.log(fields['otp4']);
-
-            // if(document.querySelectorAll('.otp-value').value){
-            //     setOtpSectionDiv(false);
-            //     setAddressSectionDiv(true);
-            // }
         }
 
         const otp4InputHandler = () => {
             if(fields['otp1'] === '1' && fields['otp2'] === '2' && fields['otp3'] === '3' && fields['otp4'] === '4') {
                 setOtpSectionDiv(false);
                 setAddressStepActive(true);
-                setTimeout(() => {
-                    setAddressSectionDiv(true);
-                }, "500");
-            } else {
-                alert('Please enter correct otp');
+                if(addresslist.length === 0 ){
+                    setTimeout(() => {
+                        setAddressSectionDiv(true);
+                    }, "500");
+                } else {
+                    setTimeout(() => {
+                        setaddressListSectionDiv(true);
+                    }, "500");
+                }
             }
         }
 
@@ -105,8 +106,9 @@ const Home = () => {
             setMobileSectionDiv(true);
             setFields({ fields:  " "  });
         }
+        
         const addressNextBtnHandler = e => {
-
+            
         }
 
   return (
@@ -188,7 +190,7 @@ const Home = () => {
                                     className="resend-otp">Resend a new code</span></div>
                         </div>
                         : ''}
-
+                            
 
                         { addressSectionDiv ?
                         <div className="address-section">
@@ -265,7 +267,28 @@ const Home = () => {
                         <div className="address-list-section">
                             <div className="address-list">
 
+                                { addresslist ? addresslist.map((item, i) => 
+                                <ul style={{ listStyleType: "none", paddingLeft: 0 }} key={item._id}>
+                                    <li>
                                 <div className="address-card active-address">
+                                    <div className="mb-2">
+                                        <span className="add_list_round"><i className="bi bi-house-heart-fill"></i></span> <b
+                                            style={{fontSize: 'small'}}>{item.addressType}</b>
+                                        <span className="edit-address-btn"><i className="bi bi-pencil-square"></i></span>
+                                    </div>
+                                    <div>
+                                        <input type="radio" className="form-check-input custom-align-radio me-2"
+                                            name="shipping_address" defaultChecked />
+                                        <label className="address-label"><span className="me-4">{'  '}{item.fullName}</span>
+                                            <span>{item.address+', '+item.city+', '+item.state}</span></label>
+                                    </div>
+                                </div>
+                                </li>
+                                </ul>
+                                ) : "Data Not Found"
+                                }
+
+                                {/* <div className="address-card active-address">
                                     <div className="mb-2">
                                         <span className="add_list_round"><i className="bi bi-house-heart-fill"></i></span> <b
                                             style={{fontSize: 'small'}}>Home</b>
@@ -309,7 +332,7 @@ const Home = () => {
                                                 Sector - 8, Chandigarh</span></label>
                                     </div>
                                     <span className="make-default-address">Make as default</span>
-                                </div>
+                                </div> */}
 
                             </div>
                             <div className="add-new-address" id="add-new-address">
