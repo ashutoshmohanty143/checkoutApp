@@ -18,10 +18,14 @@ const Home = () => {
 
         const MOB_MAX_NUM = 12;
 
-        const handleFormFieldsChange = event => {
-            fields[event.target.name] = event.target.value;
-            setFields(fields); 
-            //console.log(fields['otp1'])
+        const handleFormFieldsChange = (event) => {
+            // fields[event.target.name] = event.target.value;
+            // setFields(fields); 
+            
+            setFields(fields => ({
+                ...fields,
+                [event.target.name]: event.target.value
+              }));
           }
 
         const MobileNextbtn = (event) => {
@@ -30,6 +34,24 @@ const Home = () => {
             setTimeout(() => {
                 setOtpSectionDiv(true);
             }, "300");
+        }
+
+        const mobileInputHandler = (event) => {
+            CommonMethods.phoneMasking(event);
+            if(event.target.value.length != event.target.maxLength && event.target.value.length != MOB_MAX_NUM){
+                setMobNextbtn(true);
+                document.querySelector('#mobile-next-btn').classList.remove('active-btn');
+                document.querySelector('#mobile').classList.remove('active-border');
+                document.querySelector('#mobile').classList.add('danger-border');
+                document.querySelectorAll('.green-check')[0].style.display = "none";
+            } else {
+                setMobNextbtn(false);
+                document.querySelector('#mobile').blur();
+                document.querySelector('#mobile-next-btn').classList.add('active-btn');
+                document.querySelector('#mobile').classList.remove('danger-border');
+                document.querySelector('#mobile').classList.add('active-border');
+                document.querySelectorAll('.green-check')[0].style.display = "block";
+            }
         }
 
         const otpInputHandler = (event) =>{
@@ -41,39 +63,50 @@ const Home = () => {
             } else {
                 event.target.classList.remove('active-border');
             }
+
+            // if(fields['otp1'] === '1' && fields['otp2'] === '2' && fields['otp3'] === '3' && fields['otp4'] === '4') {
+            //     setOtpSectionDiv(false);
+            //     setAddressSectionDiv(true);
+            // }
             
-            console.log(fields['otp1']);
-            console.log(fields['otp2']);
-            console.log(fields['otp3']);
-            console.log(fields['otp4']);
+            // console.log(fields['otp1']);
+            // console.log(fields['otp2']);
+            // console.log(fields['otp3']);
+            // console.log(fields['otp4']);
 
             // if(document.querySelectorAll('.otp-value').value){
             //     setOtpSectionDiv(false);
             //     setAddressSectionDiv(true);
             // }
         }
-        
 
-        const mobileInputHandler = event => {
-            CommonMethods.phoneMasking(event);
-            if(event.target.value.length != event.target.maxLength && event.target.value.length != MOB_MAX_NUM){
-                setMobNextbtn(true);
-                document.querySelector('#mobile-next-btn').classList.remove('active-btn');
-                //
-                document.querySelector('#mobile').classList.remove('active-border');
-                document.querySelector('#mobile').classList.add('danger-border');
-                document.querySelectorAll('.green-check')[0].style.display = "none";
-                // document.querySelector('#mobile').blur();
+        const otp4InputHandler = () => {
+            if(fields['otp1'] === '1' && fields['otp2'] === '2' && fields['otp3'] === '3' && fields['otp4'] === '4') {
+                setOtpSectionDiv(false);
+                setAddressStepActive(true);
+                setTimeout(() => {
+                    setAddressSectionDiv(true);
+                }, "500");
             } else {
-                
-
-                setMobNextbtn(false);
-                document.querySelector('#mobile').blur();
-                document.querySelector('#mobile-next-btn').classList.add('active-btn');
-                document.querySelector('#mobile').classList.remove('danger-border');
-                document.querySelector('#mobile').classList.add('active-border');
-                document.querySelectorAll('.green-check')[0].style.display = "block";
+                alert('Please enter correct otp');
             }
+        }
+
+        const editMobileLink = event => {
+            event.preventDefault();
+            setOtpSectionDiv(false);
+            setMobileSectionDiv(true);
+            document.querySelectorAll('otp-value').value = '';
+        }
+
+        const addressBackBtnHandler = e => {
+            setAddressStepActive(false);
+            setAddressSectionDiv(false);
+            setMobileSectionDiv(true);
+            setFields({ fields:  " "  });
+        }
+        const addressNextBtnHandler = e => {
+
         }
 
   return (
@@ -120,7 +153,7 @@ const Home = () => {
                                 <span className="country-code" id="mob-code">+91</span>
                                 <input type="text" name="mobile" id='mobile' className="form-control mobile" maxLength={MOB_MAX_NUM}
                                     placeholder="999 888 0000" onInput={mobileInputHandler} 
-                                     onChange={handleFormFieldsChange} />
+                                     onChange={handleFormFieldsChange} value={fields['mobile'] || ''} />
                                 <span className="green-check"><i className="bi bi-check-circle-fill"></i></span>
                             </div>
                             <div className="text-muted ms-1 mt-2" style={{fontSize: 12+'px'}}>A 4 digit OTP will be sent via
@@ -134,17 +167,22 @@ const Home = () => {
                         <div className="otp-section">
                             <h6 className="mb-5 text-muted verification">Verification</h6>
                             <h6 className="mb-3 enter-otp">OTP is sent to 
-                                <span id="mob-num">+999 888 0000
+                                <span className='me-2'>
+                                {' '+fields['mobile']}
                                     <sup>
-                                        <i className="bi bi-pencil-square edit-icon ms-1" id="edit-phone-link"></i>
+                                        <i className="bi bi-pencil-square edit-icon ms-2" onClick={editMobileLink}></i>
                                     </sup>
                                 </span>
                             </h6>
                             <div className="input-group">
-                                <input type="text" name="otp1" className="form-control otp-value" maxLength="1" onInput={otpInputHandler} onChange={handleFormFieldsChange}  />
-                                <input type="text" name="otp2" className="form-control otp-value" maxLength="1" onInput={otpInputHandler} onChange={handleFormFieldsChange}  />
-                                <input type="text" name="otp3" className="form-control otp-value" maxLength="1" onInput={otpInputHandler} onChange={handleFormFieldsChange}  />
-                                <input type="text" name="otp4" className="form-control otp-value" maxLength="1" onInput={otpInputHandler} onChange={handleFormFieldsChange} />
+                                <input type="text" name="otp1" className="form-control otp-value" 
+                                        maxLength="1" onInput={otpInputHandler} onChange={handleFormFieldsChange}  />
+                                <input type="text" name="otp2" className="form-control otp-value" 
+                                        maxLength="1" onInput={otpInputHandler} onChange={handleFormFieldsChange}  />
+                                <input type="text" name="otp3" className="form-control otp-value" 
+                                        maxLength="1" onInput={otpInputHandler} onChange={handleFormFieldsChange}  />
+                                <input type="text" name="otp4" className="form-control otp-value" 
+                                        maxLength="1" onKeyUp={otp4InputHandler} onChange={handleFormFieldsChange} />
                             </div>
                             <div className="text-muted ms-1 mt-5 otp-not-received">Didn't get the OTP <span
                                     className="resend-otp">Resend a new code</span></div>
@@ -157,11 +195,11 @@ const Home = () => {
                             <div className="row mb-2">
                                 <div className="col-md-6">
                                     <input type="text" name="fullName" className="form-control addressTextBox"
-                                        placeholder="Full Name*" />
+                                        placeholder="Full Name*" onChange={handleFormFieldsChange} />
                                 </div>
                                 <div className="col-md-6">
                                     <input type="text" name="email" className="form-control addressTextBox"
-                                        placeholder="Email Address*" />
+                                        placeholder="Email Address*" onChange={handleFormFieldsChange} />
                                 </div>
                             </div>
                             <div className="currentLocation">
@@ -170,20 +208,20 @@ const Home = () => {
                             </div>
                             <div className="mb-2">
                                 <input type="text" name="address" className="form-control addressTextBox"
-                                    placeholder="Address(Area and street)*" />
+                                    placeholder="Address(Area and street)*" onChange={handleFormFieldsChange} />
                             </div>
                             <div className="row mb-3">
                                 <div className="col-md-6">
                                     <input type="text" name="landmark" className="form-control mb-2 addressTextBox"
-                                        placeholder="Landmark*" />
+                                        placeholder="Landmark*" onChange={handleFormFieldsChange} />
                                     <input type="text" name="city" className="form-control addressTextBox"
-                                        placeholder="City/District/Town*" />
+                                        placeholder="City/District/Town*" onChange={handleFormFieldsChange} />
                                 </div>
                                 <div className="col-md-6">
                                     {/* <input type="text" name="pincode" className="form-control mb-2 addressTextBox"
                                         placeholder="Pincode*" maxLength="6"
                                         onInput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" /> */}
-                                    <select name="state" id="state" className="form-control addressTextBox">
+                                    <select name="state" id="state" className="form-control addressTextBox" onChange={handleFormFieldsChange}>
                                         {/* <option value="mumbai">Mumbai</option>
                                         <option value="bangalore">Bangalore</option> */}
                                     </select>
@@ -195,31 +233,31 @@ const Home = () => {
                             <div className="addressTypeRadio">
                                 <div className="form-check col-md-4">
                                     <input className="form-check-input" type="radio" name="addressType" id="home"
-                                        value="home" defaultChecked />
+                                        value="home" defaultChecked onChange={handleFormFieldsChange} />
                                     <label className="form-check-label" htmlFor="home">Home <br/> <span
                                             style={{fontSize: 10+'px'}}>(All day delivery)</span></label>
                                 </div>
                                 <div className="form-check col-md-4">
                                     <input className="form-check-input" type="radio" name="addressType" id="work"
-                                        value="work" />
+                                        value="work" onChange={handleFormFieldsChange} />
                                     <label className="form-check-label" htmlFor="work">Work <br/> <span
                                             style={{fontSize: 10+'px'}}>(Between 10 AM-5 PM)</span></label>
                                 </div>
                                 <div className="form-check col-md-4 d-flex">
                                     <input className="form-check-input me-2" type="radio" name="addressType" id="other"
-                                        value="other" />
+                                        value="other" onChange={handleFormFieldsChange} />
                                     <label className="form-check-label me-2" htmlFor="other">Other</label>
                                     <input type="text" id="add_type_other" className="add_type_other" />
                                 </div>
                             </div>
 
                             <div className="d-flex justify-content-between">
-                                <input type="button" id="address-back-btn" className="address-back-btn form-control"
-                                    value="&larr;" />
-                                <input type="button" id="address-next-btn" className="address-next-btn form-control"
-                                    value="Next" />
+                                <input type="button" className="address-back-btn form-control" value="&larr;" 
+                                            onClick={addressBackBtnHandler} />
+                                <input type="button" className="address-next-btn form-control" value="Next" 
+                                            onClick={addressNextBtnHandler} />
                             </div>
-
+                            
                         </div>
                         : ''}
 
