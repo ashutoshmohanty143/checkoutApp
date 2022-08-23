@@ -1,294 +1,368 @@
 import React, { useState } from 'react'
+import { ClipLoader } from 'react-spinners';
 import CommonMethods from '../Common/CommonMethods';
 import './style.css'
 
 
 const Home = () => {
-        const [ mobileSectionDiv, setMobileSectionDiv ] = useState(true);
-        const [ otpSectionDiv, setOtpSectionDiv ] = useState(false);
-        const [ addressSectionDiv, setAddressSectionDiv ] = useState(false);
-        const [ addressListSectionDiv, setaddressListSectionDiv ] = useState(false);
+    const [mobileSectionDiv, setMobileSectionDiv] = useState(true);
+    const [otpSectionDiv, setOtpSectionDiv] = useState(false);
+    const [addressSectionDiv, setAddressSectionDiv] = useState(false);
+    const [addressListSectionDiv, setaddressListSectionDiv] = useState(false);
 
-        const [addressStepActive, setAddressStepActive] = useState(false);
-        const [paymentStepActive, setPaymentStepActive] = useState(false);
+    const [addressStepActive, setAddressStepActive] = useState(false);
+    const [paymentStepActive, setPaymentStepActive] = useState(false);
 
-        const [mobNextbtn, setMobNextbtn] = useState(true);
-        const [fields, setFields] = useState({});
-        const [errors, setErrors] = useState({});
-        const [addresslist, SetAddresslist] = useState([]);
+    const [mobNextbtn, setMobNextbtn] = useState(true);
+    const [fields, setFields] = useState({});
+    const [errors, setErrors] = useState({});
+    const [addresslist, setAddresslist] = useState([]);
 
-        // const [addresslist, SetAddresslist] = useState([{
-        //     _id:'001',
-        //     fullName: 'Ashutosh Mohanty',
-        //     email:'ashutoshmohanty143@gmail.com', 
-        //     address:'Rasulgarh', 
-        //     landmark:'Near Falcon', 
-        //     city:'Bhubaneswar', 
-        //     state:'Odisha', 
-        //     addressType:'Home'
-        // }]);
+    // const [addresslist, setAddresslist] = useState([{
+    //     _id:'001',
+    //     fullName: 'Ashutosh Mohanty',
+    //     email:'ashutoshmohanty143@gmail.com', 
+    //     address:'Rasulgarh', 
+    //     landmark:'Near Falcon', 
+    //     city:'Bhubaneswar', 
+    //     state:'Odisha', 
+    //     addressType:'Home'
+    // }]);
 
-        const MOB_MAX_NUM = 12;
+    const [productlist, setProductlist] = useState([
+        {
+            _id:'001',
+            productName: 'Adidas Style Sneakers',
+            productSize: 'XL',
+            productColor: 'Gray',
+            productPrice: '1650.00',
+            productQuantity: '01',
+            productImg: '../../img/adidas.png'
+        },
+        {
+            _id:'002',
+            productName: 'Pumma Sneakers',
+            productSize: 'L',
+            productColor: 'Blue',
+            productPrice: '1995.00',
+            productQuantity: '02',
+            productImg: '../../img/puma.png'
+        }
+    ]);
 
-        const handleFormFieldsChange = (event) => {
-            // fields[event.target.name] = event.target.value;
-            // setFields(fields); 
+    const [cliploader, setCliploader] = useState(false);
+
+    const MOB_MAX_NUM = 12;
+
+    const handleFormFieldsChange = (event) => {
+        // fields[event.target.name] = event.target.value;
+        // setFields(fields); 
+
+        setFields(fields => ({
+            ...fields,
+            [event.target.name]: event.target.value
+        }));
+    }
+    
+    const MobileNextbtn = (event) => {
+        event.preventDefault();
+        setMobileSectionDiv(false);
+        setTimeout(() => {
+            setOtpSectionDiv(true);
+        }, "300");
+    }
+
+    const mobileInputHandler = (event) => {
+        CommonMethods.phoneMasking(event);
+        if (event.target.value.length != event.target.maxLength && event.target.value.length != MOB_MAX_NUM) {
+            setMobNextbtn(true);
+            // document.querySelector('#mobile').blur();
+            document.querySelector('#mobile-next-btn').classList.remove('active-btn');
+            // document.querySelector('#mobile').classList.add('danger-border');
+            document.querySelector('#mobile').classList.remove('active-border');
+            document.querySelectorAll('.green-check')[0].style.display = "none";
+            document.querySelectorAll('.red-alert')[0].style.display = "block";
+
+        } else {
+            setMobNextbtn(false);
+            document.querySelector('#mobile').blur();
+            document.querySelector('#mobile-next-btn').classList.add('active-btn');
+            // document.querySelector('#mobile').classList.remove('danger-border');
+            document.querySelector('#mobile').classList.add('active-border');
+            document.querySelectorAll('.green-check')[0].style.display = "block";   
+            document.querySelectorAll('.red-alert')[0].style.display = "none";
+        }
+    }
+
+    const mobileKeyupHandler = (event) => {
+        // if(!CommonMethods.numberValidation(event)){
+        //     document.querySelector('#mobile').blur();
+        //     document.querySelectorAll('.red-alert')[0].style.display = "block";
+        //     document.querySelector('#mobile').classList.add('danger-border');
             
-            setFields(fields => ({
-                ...fields,
-                [event.target.name]: event.target.value
-              }));
-          }
-          console.log(addresslist);
-        const MobileNextbtn = (event) => {
-            event.preventDefault();
-            setMobileSectionDiv(false);
-            setTimeout(() => {
-                setOtpSectionDiv(true);
-            }, "300");
-        }
+        // } else {
+        //     document.querySelectorAll('.red-alert')[0].style.display = "none";
+        //     document.querySelector('#mobile').classList.remove('danger-border');
+        // }
+    }
 
-        const mobileInputHandler = (event) => {
-            CommonMethods.phoneMasking(event);
-            if(event.target.value.length != event.target.maxLength && event.target.value.length != MOB_MAX_NUM){
-                setMobNextbtn(true);
-                document.querySelector('#mobile-next-btn').classList.remove('active-btn');
-                document.querySelector('#mobile').classList.remove('active-border');
-                document.querySelector('#mobile').classList.add('danger-border');
-                document.querySelectorAll('.green-check')[0].style.display = "none";
-            } else {
-                setMobNextbtn(false);
-                document.querySelector('#mobile').blur();
-                document.querySelector('#mobile-next-btn').classList.add('active-btn');
-                document.querySelector('#mobile').classList.remove('danger-border');
-                document.querySelector('#mobile').classList.add('active-border');
-                document.querySelectorAll('.green-check')[0].style.display = "block";
+    const otpInputHandler = (event) => {
+        if (event.target.value.length == 1 && event.target.value.length == event.target.maxLength) {
+            event.target.classList.add('active-border');
+            if (event.target.name == 'otp1' || event.target.name == 'otp2' || event.target.name == 'otp3') {
+                event.target.nextSibling.focus();
             }
+        } else {
+            event.target.classList.remove('active-border');
         }
+    }
 
-        const otpInputHandler = (event) =>{
-            if(event.target.value.length == 1 && event.target.value.length == event.target.maxLength){
-                event.target.classList.add('active-border');
-                if(event.target.name == 'otp1' || event.target.name == 'otp2' || event.target.name == 'otp3'){
-                    event.target.nextSibling.focus();
-                }
-            } else {
-                event.target.classList.remove('active-border');
-            }
-        }
-
-        const otp4InputHandler = () => {
-            if(fields['otp1'] === '1' && fields['otp2'] === '2' && fields['otp3'] === '3' && fields['otp4'] === '4') {
-                setOtpSectionDiv(false);
-                setAddressStepActive(true);
-                if(addresslist.length === 0 ){
-                    setTimeout(() => {
-                        setAddressSectionDiv(true);
-                    }, "500");
-                } else {
-                    setTimeout(() => {
-                        setaddressListSectionDiv(true);
-                    }, "500");
-                }
-            }
-        }
-
-        const editMobileLink = event => {
-            event.preventDefault();
-            setOtpSectionDiv(false);
-            setMobileSectionDiv(true);
-            document.querySelectorAll('otp-value').value = '';
-        }
-
-        const addressBackBtnHandler = e => {
-            setAddressStepActive(false);
-            setAddressSectionDiv(false);
-            setMobileSectionDiv(true);
-            setFields({ fields:  " "  });
-        }
-        
-        const addressNextBtnHandler = e => {
+    const otp4InputHandler = () => {
+        if (fields['otp1'] === '1' && fields['otp2'] === '2' && fields['otp3'] === '3' && fields['otp4'] === '4') {
+            // setTimeout(() => {
+            // document.getElementById('otp-info').style.display = "block";
+            // document.getElementById('otp-info').innerHTML = 'Verifying OTP';
+            // }, "500");
+            // setOtpSectionDiv(false);
+            setAddressStepActive(true);
             
+            if (addresslist.length === 0) {
+                setTimeout(() => {
+                    setCliploader(true);
+                    document.getElementById('otp-info').style.display = "block";
+                    document.getElementById('otp-info').innerHTML = 'Verifying OTP';
+                    }, "1000");
+                setTimeout(() => {
+                    setOtpSectionDiv(false);
+                    setAddressSectionDiv(true);
+                }, "5000");
+            } else {
+                setTimeout(() => {
+                    setCliploader(true);
+                    document.getElementById('otp-info').style.display = "block";
+                    document.getElementById('otp-info').innerHTML = 'Verifying OTP';
+                    }, "1000");
+                setTimeout(() => {
+                    setOtpSectionDiv(false);
+                    setaddressListSectionDiv(true);
+                }, "5000");
+            }
         }
+    }
 
-  return (
-    <>
-        <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#checkoutModal">
-            Checkout
-        </button>
+    const editMobileLink = event => {
+        event.preventDefault();
+        setOtpSectionDiv(false);
+        setMobileSectionDiv(true);
+        document.querySelectorAll('otp-value').value = '';
+    }
 
-        <div className="modal fade" id="checkoutModal" tabIndex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true">
-        <div className="modal-dialog modal-dialog-centered modal-lg">
-            <div className="modal-content">
-                <div className="modal-body row">
-                    <div className="checkout-container-left">
-                        <span className="trianle"></span>
-                        <div className="verticalbanner">
-                            <img src="../../img/logo.png" width="60px" height="45px" alt="Logo" />
-                        </div>
-                        <div className="cart">
-                            <img id="cart_img" src="../../img/cart.png" width="100px" height="100px" alt="Cart-icon" />
-                        </div>
-                        
-                        
-                        <div className="checkout-header">
-                            <div className='me-3 active-step'>
-                                        <img src="../../img/followers-active.png" className='me-2'/>
-                                <span>Verify</span>
-                            </div>
-                            <div className={`me-3 ${ addressStepActive ? 'active-step' : 'disabled-step'}`}>
-                                <img src={ addressStepActive ? '../../img/address-active.png' : '../../img/address.png' } className='me-2'/>
-                                <span>Address</span>
-                            </div>
-                            <div className={`me-3 ${ paymentStepActive ? 'active-step' : 'disabled-step'}`}>
-                                <img src={ paymentStepActive ? '' : '../../img/payment-method.png' } className='me-2'/>
-                                <span>Payment</span>
-                            </div>
-                        </div>
-                        
+    const resendOTP = event => {
+        event.preventDefault();
+        // setFields({ ...fields, otp1 : ""  });
+        document.querySelectorAll('otp-value').value = '';
+        setTimeout(() => {
+            setCliploader(true);
+            document.getElementById('otp-info').style.display = "block";
+            document.getElementById('otp-info').innerHTML = 'OTP Sent Again';
+        }, "1000");
+    }
 
-                        { mobileSectionDiv ?
-                        <div className="mobile-section">
-                            <h6 className="mb-5 text-muted welcome">Welcome</h6>
-                            <h4 className="mb-3 enter-mobile">Please enter your mobile number</h4>
-                            <div className="input-group">
-                                <span className="country-code" id="mob-code">+91</span>
-                                <input type="text" name="mobile" id='mobile' className="form-control mobile" maxLength={MOB_MAX_NUM}
-                                    placeholder="999 888 0000" onInput={mobileInputHandler} 
-                                     onChange={handleFormFieldsChange} value={fields['mobile'] || ''} />
-                                <span className="green-check"><i className="bi bi-check-circle-fill"></i></span>
-                            </div>
-                            <div className="text-muted ms-1 mt-2" style={{fontSize: 12+'px'}}>A 4 digit OTP will be sent via
-                                SMS to verify your mobile number!</div>
-                            <button onClick={MobileNextbtn} id="mobile-next-btn" className="mobile-next-btn form-control mt-5" disabled={mobNextbtn}>Get
-                                OTP</button>
-                        </div>
-                        : ''}
+    const addressBackBtnHandler = e => {
+        setAddressStepActive(false);
+        setAddressSectionDiv(false);
+        setMobileSectionDiv(true);
+        setFields({ fields: " " });
+    }
 
-                        { otpSectionDiv ? 
-                        <div className="otp-section">
-                            <h6 className="mb-5 text-muted verification">Verification</h6>
-                            <h6 className="mb-3 enter-otp">OTP is sent to 
-                                <span className='me-2'>
-                                {' '+fields['mobile']}
-                                    <sup>
-                                        <i className="bi bi-pencil-square edit-icon ms-2" onClick={editMobileLink}></i>
-                                    </sup>
-                                </span>
-                            </h6>
-                            <div className="input-group">
-                                <input type="text" name="otp1" className="form-control otp-value" 
-                                        maxLength="1" onInput={otpInputHandler} onChange={handleFormFieldsChange}  />
-                                <input type="text" name="otp2" className="form-control otp-value" 
-                                        maxLength="1" onInput={otpInputHandler} onChange={handleFormFieldsChange}  />
-                                <input type="text" name="otp3" className="form-control otp-value" 
-                                        maxLength="1" onInput={otpInputHandler} onChange={handleFormFieldsChange}  />
-                                <input type="text" name="otp4" className="form-control otp-value" 
-                                        maxLength="1" onKeyUp={otp4InputHandler} onChange={handleFormFieldsChange} />
-                            </div>
-                            <div className="text-muted ms-1 mt-5 otp-not-received">Didn't get the OTP <span
-                                    className="resend-otp">Resend a new code</span></div>
-                        </div>
-                        : ''}
-                            
+    const addressNextBtnHandler = e => {
 
-                        { addressSectionDiv ?
-                        <div className="address-section">
-                            <div className="row mb-2">
-                                <div className="col-md-6">
-                                    <input type="text" name="fullName" className="form-control addressTextBox"
-                                        placeholder="Full Name*" onChange={handleFormFieldsChange} />
+    }
+
+    return (
+        <>
+            <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#checkoutModal">
+                Checkout
+            </button>
+
+            <div className="modal fade" id="checkoutModal" tabIndex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true">
+                <div className="modal-dialog modal-dialog-centered modal-lg">
+                    <div className="modal-content">
+                        <div className="modal-body row">
+                            <div className="checkout-container-left">
+                                <span className="trianle"></span>
+                                <div className="verticalbanner">
+                                    <img src="../../img/logo.png" width="60px" height="45px" alt="Logo" />
                                 </div>
-                                <div className="col-md-6">
-                                    <input type="text" name="email" className="form-control addressTextBox"
-                                        placeholder="Email Address*" onChange={handleFormFieldsChange} />
+                                <div className="cart">
+                                    <img id="cart_img" src="../../img/cart.png" width="100px" height="100px" alt="Cart-icon" />
                                 </div>
-                            </div>
-                            <div className="currentLocation">
-                                <a href=""><i className="bi bi-circle bi-geo-alt"></i></a> Use current
-                                location
-                            </div>
-                            <div className="mb-2">
-                                <input type="text" name="address" className="form-control addressTextBox"
-                                    placeholder="Address(Area and street)*" onChange={handleFormFieldsChange} />
-                            </div>
-                            <div className="row mb-3">
-                                <div className="col-md-6">
-                                    <input type="text" name="landmark" className="form-control mb-2 addressTextBox"
-                                        placeholder="Landmark*" onChange={handleFormFieldsChange} />
-                                    <input type="text" name="city" className="form-control addressTextBox"
-                                        placeholder="City/District/Town*" onChange={handleFormFieldsChange} />
+
+
+                                <div className="checkout-header">
+                                    <div className='me-3 active-step'>
+                                        <img src="../../img/followers-active.png" className='me-2' />
+                                        <span>Verify</span>
+                                    </div>
+                                    <div className={`me-3 ${addressStepActive ? 'active-step' : 'disabled-step'}`}>
+                                        <img src={addressStepActive ? '../../img/address-active.png' : '../../img/address.png'} className='me-2' />
+                                        <span>Address</span>
+                                    </div>
+                                    <div className={`me-3 ${paymentStepActive ? 'active-step' : 'disabled-step'}`}>
+                                        <img src={paymentStepActive ? '' : '../../img/payment-method.png'} className='me-2' />
+                                        <span>Payment</span>
+                                    </div>
                                 </div>
-                                <div className="col-md-6">
-                                    {/* <input type="text" name="pincode" className="form-control mb-2 addressTextBox"
+
+
+                                {mobileSectionDiv ?
+                                    <div className="mobile-section">
+                                        <h6 className="mb-5 text-muted welcome">Welcome</h6>
+                                        <h4 className="mb-3 enter-mobile">Please enter your mobile number</h4>
+                                        <div className="input-group">
+                                            <span className="country-code" id="mob-code">+91</span>
+                                            <input type="text" name="mobile" id='mobile' className="form-control mobile" maxLength={MOB_MAX_NUM}
+                                                placeholder="999 888 0000" onInput={mobileInputHandler}
+                                                onChange={handleFormFieldsChange} value={fields['mobile'] || ''} />
+                                            <span className="green-check"><i className="bi bi-check-circle-fill"></i></span>
+                                            <span className="red-alert" data-bs-toggle="pass_tooltip" data-bs-placement="top" 
+                                                title={`Give only 10 digit mobile number`}><i className="bi bi-info-circle-fill"></i>
+                                            </span>
+                                        </div>
+                                        <div className="text-muted ms-1 mt-2" style={{ fontSize: 12 + 'px' }}>A 4 digit OTP will be sent via
+                                            SMS to verify your mobile number!</div>
+                                        <button onClick={MobileNextbtn} id="mobile-next-btn" className="mobile-next-btn form-control mt-5" disabled={mobNextbtn}>Get
+                                            OTP</button>
+                                    </div>
+                                    : ''}
+
+                                {otpSectionDiv ?
+                                    <div className="otp-section">
+                                        <h6 className="mb-5 text-muted verification">Verification</h6>
+                                        <h6 className="mb-3 enter-otp">OTP is sent to
+                                            <span className='me-2'>
+                                                {' ' + fields['mobile']}
+                                                <sup>
+                                                    <i className="bi bi-pencil-square edit-icon ms-2" onClick={editMobileLink}></i>
+                                                </sup>
+                                            </span>
+                                        </h6>
+                                        <div className="input-group mb-2">
+                                            <input type="text" name="otp1" className="form-control otp-value"
+                                                maxLength="1" onInput={otpInputHandler} onChange={handleFormFieldsChange} />
+                                            <input type="text" name="otp2" className="form-control otp-value"
+                                                maxLength="1" onInput={otpInputHandler} onChange={handleFormFieldsChange} />
+                                            <input type="text" name="otp3" className="form-control otp-value"
+                                                maxLength="1" onInput={otpInputHandler} onChange={handleFormFieldsChange} />
+                                            <input type="text" name="otp4" className="form-control otp-value"
+                                                maxLength="1" onKeyUp={otp4InputHandler} onChange={handleFormFieldsChange} />
+                                        </div>
+                                        <span><ClipLoader size={16} color="#35bd35" loading={cliploader} /></span>
+                                        <span className='otp-info' id='otp-info'></span>
+                                        <div className="text-muted ms-1 mt-5 otp-not-received">Didn't get the OTP? 
+                                            <span className="resend-otp" onClick={resendOTP}>Resend a new code</span>
+                                        </div>
+                                    </div>
+                                    : ''}
+
+
+                                {addressSectionDiv ?
+                                    <div className="address-section">
+                                        <div className="row mb-2">
+                                            <div className="col-md-6">
+                                                <input type="text" name="fullName" className="form-control addressTextBox"
+                                                    placeholder="Full Name*" onChange={handleFormFieldsChange} />
+                                            </div>
+                                            <div className="col-md-6">
+                                                <input type="text" name="email" className="form-control addressTextBox"
+                                                    placeholder="Email Address*" onChange={handleFormFieldsChange} />
+                                            </div>
+                                        </div>
+                                        <div className="currentLocation">
+                                            <a href=""><i className="bi bi-circle bi-geo-alt"></i></a> Use current
+                                            location
+                                        </div>
+                                        <div className="mb-2">
+                                            <input type="text" name="address" className="form-control addressTextBox"
+                                                placeholder="Address(Area and street)*" onChange={handleFormFieldsChange} />
+                                        </div>
+                                        <div className="row mb-3">
+                                            <div className="col-md-6">
+                                                <input type="text" name="landmark" className="form-control mb-2 addressTextBox"
+                                                    placeholder="Landmark*" onChange={handleFormFieldsChange} />
+                                                <input type="text" name="city" className="form-control addressTextBox"
+                                                    placeholder="City/District/Town*" onChange={handleFormFieldsChange} />
+                                            </div>
+                                            <div className="col-md-6">
+                                                {/* <input type="text" name="pincode" className="form-control mb-2 addressTextBox"
                                         placeholder="Pincode*" maxLength="6"
                                         onInput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" /> */}
-                                    <select name="state" id="state" className="form-control addressTextBox" onChange={handleFormFieldsChange}>
-                                        {/* <option value="mumbai">Mumbai</option>
+                                                <select name="state" id="state" className="form-control addressTextBox" onChange={handleFormFieldsChange}>
+                                                    {/* <option value="mumbai">Mumbai</option>
                                         <option value="bangalore">Bangalore</option> */}
-                                    </select>
-                                </div>
-                            </div>
-                            <div className="mb-2">
-                                <h6>Address Type*</h6>
-                            </div>
-                            <div className="addressTypeRadio">
-                                <div className="form-check col-md-4">
-                                    <input className="form-check-input" type="radio" name="addressType" id="home"
-                                        value="home" defaultChecked onChange={handleFormFieldsChange} />
-                                    <label className="form-check-label" htmlFor="home">Home <br/> <span
-                                            style={{fontSize: 10+'px'}}>(All day delivery)</span></label>
-                                </div>
-                                <div className="form-check col-md-4">
-                                    <input className="form-check-input" type="radio" name="addressType" id="work"
-                                        value="work" onChange={handleFormFieldsChange} />
-                                    <label className="form-check-label" htmlFor="work">Work <br/> <span
-                                            style={{fontSize: 10+'px'}}>(Between 10 AM-5 PM)</span></label>
-                                </div>
-                                <div className="form-check col-md-4 d-flex">
-                                    <input className="form-check-input me-2" type="radio" name="addressType" id="other"
-                                        value="other" onChange={handleFormFieldsChange} />
-                                    <label className="form-check-label me-2" htmlFor="other">Other</label>
-                                    <input type="text" id="add_type_other" className="add_type_other" />
-                                </div>
-                            </div>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div className="mb-2">
+                                            <h6>Address Type*</h6>
+                                        </div>
+                                        <div className="addressTypeRadio">
+                                            <div className="form-check col-md-4">
+                                                <input className="form-check-input" type="radio" name="addressType" id="home"
+                                                    value="home" defaultChecked onChange={handleFormFieldsChange} />
+                                                <label className="form-check-label" htmlFor="home">Home <br /> <span
+                                                    style={{ fontSize: 10 + 'px' }}>(All day delivery)</span></label>
+                                            </div>
+                                            <div className="form-check col-md-4">
+                                                <input className="form-check-input" type="radio" name="addressType" id="work"
+                                                    value="work" onChange={handleFormFieldsChange} />
+                                                <label className="form-check-label" htmlFor="work">Work <br /> <span
+                                                    style={{ fontSize: 10 + 'px' }}>(Between 10 AM-5 PM)</span></label>
+                                            </div>
+                                            <div className="form-check col-md-4 d-flex">
+                                                <input className="form-check-input me-2" type="radio" name="addressType" id="other"
+                                                    value="other" onChange={handleFormFieldsChange} />
+                                                <label className="form-check-label me-2" htmlFor="other">Other</label>
+                                                <input type="text" id="add_type_other" className="add_type_other" />
+                                            </div>
+                                        </div>
 
-                            <div className="d-flex justify-content-between">
-                                <input type="button" className="address-back-btn form-control" value="&larr;" 
-                                            onClick={addressBackBtnHandler} />
-                                <input type="button" className="address-next-btn form-control" value="Next" 
-                                            onClick={addressNextBtnHandler} />
-                            </div>
-                            
-                        </div>
-                        : ''}
+                                        <div className="d-flex justify-content-between">
+                                            <input type="button" className="address-back-btn form-control" value="&larr;"
+                                                onClick={addressBackBtnHandler} />
+                                            <input type="button" className="address-next-btn form-control" value="Next"
+                                                onClick={addressNextBtnHandler} />
+                                        </div>
 
-                        { addressListSectionDiv ?
-                        <div className="address-list-section">
-                            <div className="address-list">
-
-                                { addresslist ? addresslist.map((item, i) => 
-                                <ul style={{ listStyleType: "none", paddingLeft: 0 }} key={item._id}>
-                                    <li>
-                                <div className="address-card active-address">
-                                    <div className="mb-2">
-                                        <span className="add_list_round"><i className="bi bi-house-heart-fill"></i></span> <b
-                                            style={{fontSize: 'small'}}>{item.addressType}</b>
-                                        <span className="edit-address-btn"><i className="bi bi-pencil-square"></i></span>
                                     </div>
-                                    <div>
-                                        <input type="radio" className="form-check-input custom-align-radio me-2"
-                                            name="shipping_address" defaultChecked />
-                                        <label className="address-label"><span className="me-4">{'  '}{item.fullName}</span>
-                                            <span>{item.address+', '+item.city+', '+item.state}</span></label>
-                                    </div>
-                                </div>
-                                </li>
-                                </ul>
-                                ) : "Data Not Found"
-                                }
+                                    : ''}
 
-                                {/* <div className="address-card active-address">
+                                {addressListSectionDiv ?
+                                    <div className="address-list-section">
+                                        <div className="address-list">
+
+                                            {addresslist ? addresslist.map((item, i) =>
+                                                <ul style={{ listStyleType: "none", paddingLeft: 0 }} key={item._id}>
+                                                    <li>
+                                                        <div className="address-card active-address">
+                                                            <div className="mb-2">
+                                                                <span className="add_list_round"><i className="bi bi-house-heart-fill"></i></span> <b
+                                                                    style={{ fontSize: 'small' }}>{item.addressType}</b>
+                                                                <span className="edit-address-btn"><i className="bi bi-pencil-square"></i></span>
+                                                            </div>
+                                                            <div>
+                                                                <input type="radio" className="form-check-input custom-align-radio me-2"
+                                                                    name="shipping_address" defaultChecked />
+                                                                <label className="address-label"><span className="me-4">{'  '}{item.fullName}</span>
+                                                                    <span>{item.address + ', ' + item.city + ', ' + item.state}</span></label>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            ) : "Data Not Found"
+                                            }
+
+                                            {/* <div className="address-card active-address">
                                     <div className="mb-2">
                                         <span className="add_list_round"><i className="bi bi-house-heart-fill"></i></span> <b
                                             style={{fontSize: 'small'}}>Home</b>
@@ -334,28 +408,51 @@ const Home = () => {
                                     <span className="make-default-address">Make as default</span>
                                 </div> */}
 
+                                        </div>
+                                        <div className="add-new-address" id="add-new-address">
+                                            <i className="bi bi-plus-circle-fill"></i> Add address
+                                        </div>
+
+                                        <button className="pay-nxt-btn">Next</button>
+                                    </div>
+                                    : ''}
+
+
                             </div>
-                            <div className="add-new-address" id="add-new-address">
-                                <i className="bi bi-plus-circle-fill"></i> Add address
-                            </div>
 
-                            <button className="pay-nxt-btn">Next</button>
-                        </div>
-                        : ''}
+                            <div className="checkout-container-right">
+                                <div className="close-btn" data-bs-dismiss="modal"><i className="bi bi-x-lg"></i></div>
 
+                                <div className="top-section">
+                                    <span><strong>Order Summary</strong></span>
+                                </div>
 
-                    </div>
+                                <div className="cart-section">
+                                    <div className="cart-list">
+                                        {productlist ? productlist.map((item) =>
+                                            <ul style={{ listStyleType: 'none', paddingLeft: 0}} key={item._id}>
+                                                <li>
+                                                    <div className="cart-list-item row">
+                                                        <div className="col-md-3 cart-img" style={{ paddingRight: 0 }}>
+                                                            <img src={item.productImg} alt="Cart 1" />
+                                                        </div>
+                                                        <div className="col-md-9">
+                                                            <div className="product-name">{item.productName}</div>
+                                                            <div className="variant">
+                                                                Size:&nbsp;<span style={{ paddingRight: 5+'px' }}>{item.productSize}</span>
+                                                                Color:&nbsp;<span className="color">{item.productColor}</span>
+                                                            </div>
+                                                            <div className="product-price">Rs.&nbsp;&nbsp;{item.productPrice} * {item.productQuantity}</div>
+                                                            <div className="remove-cart"><a className="remove" href="#."><i
+                                                                className="bi bi-trash-fill"></i> Remove </a></div>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        ) : "Data Not Found"
+                                        }
 
-                    <div className="checkout-container-right">
-                        <div className="close-btn" data-bs-dismiss="modal"><i className="bi bi-x-lg"></i></div>
-                        
-                        <div className="top-section">            
-                            <span><strong>Order Summary</strong></span>
-                        </div>
-
-                        <div className="cart-section">
-                            <div className="cart-list">
-                                <div className="cart-list-item row">
+                                        {/* <div className="cart-list-item row">
                                     <div className="col-md-3 cart-img"  style={{paddingRight: 0}}>
                                         <img src="../../img/adidas.png" alt="Cart 1" />
                                     </div>
@@ -383,7 +480,7 @@ const Home = () => {
                                 </div>
                                 <div className="cart-list-item row">
                                     <div className="col-md-3 cart-img" style={{paddingRight: 0}}>
-                                        <img src="../../img/sneaker.png" alt="Cart 1" />
+                                        <img src="../../img/puma.png" alt="Cart 1" />
                                     </div>
                                     <div className="col-md-9">
                                         <div className="product-name">Adidas Style Sneakers</div>
@@ -393,83 +490,83 @@ const Home = () => {
                                         <div className="remove-cart"><a href="#."><i className="bi bi-trash-fill"></i> Remove
                                             </a></div>
                                     </div>
-                                </div>
-                            </div>
+                                </div> */}
+                                    </div>
 
-                            <div className="row">
-                                <div className="col-md-8">
-                                    <div className="price">Subtotal</div>
-                                    <div className="discount">Coupon Discount</div>
-                                    <div className="shipping">Shipping</div>
-                                </div>
-                                <div className="col-md-4 text-end">
-                                    <div className="amount">&#8377; 3299.00</div>
-                                    <div className="amount">&#8377; 659.80</div>
-                                    <div className="amount">&#8377; 0.00</div>
-                                </div>
-                                
-                                <div className="col-md-6">
-                                    <div><strong>To Pay</strong></div>
-                                </div>
-                                <div className="col-md-6 text-end">
-                                    <div><strong>&#8377; 2639.00</strong></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="coupon-section">
-                            <span><strong>Coupon Details</strong></span>
-                            <div className="coupon-box">
-                            <div className="row mb-2">
-                                <div className="col-md-8">
-                                    <input type="text" className="form-control coupon_text" id="cpnTextbox"
-                                        placeholder="Promocode" />
-                                </div>
-                                <div className="col-md-4">
-                                    <button className="coupon_apply_btn">Apply</button>
-                                </div>
-                            </div>
-                            <div className="coupon-list">
-                                <div className="coupon-details">
-                                    <label className="form-check-label">
-                                        <div className="c-list">
-                                            <div className="coupon fw-bold">CC20</div>
-                                            <div className="coupon-desc">Get upto 20% discount on your purchase</div>
-                                            <div className="apply-code"><a href=""> Apply Now </a></div>
+                                    <div className="row">
+                                        <div className="col-md-8">
+                                            <div className="price">Subtotal</div>
+                                            <div className="discount">Coupon Discount</div>
+                                            <div className="shipping">Shipping</div>
                                         </div>
-                                    </label>
-                                </div>
-                                <div className="coupon-details">
-                                    <label className="form-check-label">
-                                        <div className="c-list">
-                                            <div className="coupon fw-bold">CC20</div>
-                                            <div className="coupon-desc">Get upto 20% discount on your purchase</div>
-                                            <div className="apply-code"><a href=""> Apply Now </a></div>
+                                        <div className="col-md-4 text-end">
+                                            <div className="amount">&#8377; 3299.00</div>
+                                            <div className="amount">&#8377; 659.80</div>
+                                            <div className="amount">&#8377; 0.00</div>
                                         </div>
-                                    </label>
-                                </div>
-                                <div className="coupon-details">
-                                    <label className="form-check-label">
-                                        <div className="c-list">
-                                            <div className="coupon fw-bold">CC20</div>
-                                            <div className="coupon-desc">Get upto 20% discount on your purchase</div>
-                                            <div className="apply-code"><a href=""> Apply Now </a></div>
+
+                                        <div className="col-md-6">
+                                            <div><strong>To Pay</strong></div>
                                         </div>
-                                    </label>
+                                        <div className="col-md-6 text-end">
+                                            <div><strong>&#8377; 2639.00</strong></div>
+                                        </div>
+                                    </div>
                                 </div>
+
+                                <div className="coupon-section">
+                                    <span><strong>Coupon Details</strong></span>
+                                    <div className="coupon-box">
+                                        <div className="row mb-2">
+                                            <div className="col-md-8">
+                                                <input type="text" className="form-control coupon_text" id="cpnTextbox"
+                                                    placeholder="Promocode" />
+                                            </div>
+                                            <div className="col-md-4">
+                                                <button className="coupon_apply_btn">Apply</button>
+                                            </div>
+                                        </div>
+                                        <div className="coupon-list">
+                                            <div className="coupon-details">
+                                                <label className="form-check-label">
+                                                    <div className="c-list">
+                                                        <div className="coupon fw-bold">CC20</div>
+                                                        <div className="coupon-desc">Get upto 20% discount on your purchase</div>
+                                                        <div className="apply-code"><a href=""> Apply Now </a></div>
+                                                    </div>
+                                                </label>
+                                            </div>
+                                            <div className="coupon-details">
+                                                <label className="form-check-label">
+                                                    <div className="c-list">
+                                                        <div className="coupon fw-bold">CC20</div>
+                                                        <div className="coupon-desc">Get upto 20% discount on your purchase</div>
+                                                        <div className="apply-code"><a href=""> Apply Now </a></div>
+                                                    </div>
+                                                </label>
+                                            </div>
+                                            <div className="coupon-details">
+                                                <label className="form-check-label">
+                                                    <div className="c-list">
+                                                        <div className="coupon fw-bold">CC20</div>
+                                                        <div className="coupon-desc">Get upto 20% discount on your purchase</div>
+                                                        <div className="apply-code"><a href=""> Apply Now </a></div>
+                                                    </div>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
                             </div>
 
                         </div>
-                        </div>
-
                     </div>
-
                 </div>
             </div>
-        </div>
-    </div>
-    </>
-  )
+        </>
+    )
 }
 
 export default Home

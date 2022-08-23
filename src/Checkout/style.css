@@ -163,6 +163,13 @@
         margin-left: -30px !important;
         display: none;
     }
+    .red-alert{
+        color: #d42506;
+        line-height: 2.70;
+        z-index: 9999;
+        margin-left: -30px !important;
+        display: none;
+    }
 
     .mobile-next-btn{
         width: 135px;
@@ -214,6 +221,12 @@
         cursor: pointer;
         font-size: 12px;
         font-weight: bold;
+    }
+
+    .otp-info {
+        color: #35bd35;
+        /* font-size: 8px; */
+        display: none;
     }
 
     .otp-value{
@@ -479,9 +492,7 @@
         font-size: 12px;
         margin-bottom: 2px;
     }
-    .size,.color{
-        margin-right: 15px;
-    }
+
     .product-price{
         font-size: 12px;
     }
