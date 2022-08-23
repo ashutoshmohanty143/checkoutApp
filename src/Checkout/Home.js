@@ -154,13 +154,19 @@ const Home = () => {
         event.preventDefault();
         setOtpSectionDiv(false);
         setMobileSectionDiv(true);
-        document.querySelectorAll('otp-value').value = '';
     }
 
     const resendOTP = event => {
         event.preventDefault();
-        // setFields({ ...fields, otp1 : ""  });
-        document.querySelectorAll('otp-value').value = '';
+        document.querySelectorAll('.otp-value')[0].value = '';
+        document.querySelectorAll('.otp-value')[1].value = '';
+        document.querySelectorAll('.otp-value')[2].value = '';
+        document.querySelectorAll('.otp-value')[3].value = '';
+
+        // const otpValues = document.querySelectorAll('otp-value'); 
+        // otpValues.forEach(i => {
+        //      i.value = '';
+        // });
         setTimeout(() => {
             setCliploader(true);
             document.getElementById('otp-info').style.display = "block";
