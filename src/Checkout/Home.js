@@ -1,7 +1,9 @@
-import React, { useState } from 'react'
-import { ClipLoader } from 'react-spinners';
+import React, { useEffect, useState } from 'react'
+import { ClimbingBoxLoader, ClipLoader } from 'react-spinners';
+import axios from 'axios';
 import CommonMethods from '../Common/CommonMethods';
-import './style.css'
+import './style.css';
+import ApiServices from '../Common/ApiServices';
 
 
 const Home = () => {
@@ -16,7 +18,22 @@ const Home = () => {
     const [mobNextbtn, setMobNextbtn] = useState(true);
     const [fields, setFields] = useState({});
     const [errors, setErrors] = useState({});
+    const [statelist, setStatelist] = useState([]);
     const [addresslist, setAddresslist] = useState([]);
+
+    useEffect(() => {
+        const url = 'https://gist.githubusercontent.com/shubhamjain/35ed77154f577295707a/raw/7bc2a915cff003fb1f8ff49c6890576eee4f2f10/IndianStates.json';
+        axios.get(url)
+          .then((response) => {
+            let st = response.data;
+            console.log(response.data);
+            setStatelist({ ...statelist, state : st });
+          })
+          .catch((error) => {
+            console.log("error", error);
+          });
+          
+      }, []);
 
     // const [addresslist, setAddresslist] = useState([{
     //     _id:'001',
@@ -55,9 +72,6 @@ const Home = () => {
     const MOB_MAX_NUM = 12;
 
     const handleFormFieldsChange = (event) => {
-        // fields[event.target.name] = event.target.value;
-        // setFields(fields); 
-
         setFields(fields => ({
             ...fields,
             [event.target.name]: event.target.value
@@ -154,6 +168,7 @@ const Home = () => {
         event.preventDefault();
         setOtpSectionDiv(false);
         setMobileSectionDiv(true);
+        setCliploader(false);
     }
 
     const resendOTP = event => {
@@ -179,10 +194,120 @@ const Home = () => {
         setAddressSectionDiv(false);
         setMobileSectionDiv(true);
         setFields({ fields: " " });
+        setCliploader(false);
     }
 
-    const addressNextBtnHandler = e => {
+    function formValidate(){
+        let errors = {};
+        let formIsValid = true;
 
+        //Full Name
+        if (!fields["fullName"]) {
+          formIsValid = false;
+          errors["fullName"] = "Full Name Cannot be empty";
+        }
+    
+        //Email
+        if (!fields["email"]) {
+          formIsValid = false;
+          errors["email"] = "Email Cannot be empty";
+        }  else if (!CommonMethods.emailValidator(fields["email"])) {
+          formIsValid = false;
+          errors["email"] = "Please enter valid email.";
+        } 
+ 
+        //Address
+        if (!fields["address"]) {
+          formIsValid = false;
+          errors["address"] = "Address Cannot be empty";
+        }  
+    
+        //Landmark
+        if (!fields["landmark"]) {
+          formIsValid = false;
+          errors["landmark"] = "Landmark Cannot be empty";
+        }  
+    
+         //City
+         if (!fields["city"]) {
+          formIsValid = false;
+          errors["city"] = "City Cannot be empty";
+        }    
+    
+        //Pincode
+        if (!fields["pincode"]) {
+          formIsValid = false;
+          errors["pincode"] = "Pincode Cannot be empty";
+        } else if (fields["pincode"].length != 6) {
+          formIsValid = false;
+          errors["pincode"] = "Pincode should be 6 digits";
+        }
+
+        //State
+        let cstate = document.querySelector('#state');
+        let stateValue = cstate.options.selectedIndex;
+        if (stateValue === 0) {
+            formIsValid = false;
+            errors["state"] = 'Please Select State';
+        }
+    
+    
+        setErrors(errors);
+        return formIsValid;
+      }
+
+    const addressNextBtnHandler = e => {
+        // e.preventDefault();
+        // if (formValidate()) {
+        //     console.log('first')
+        //     let { fullName, email, address, landmark, city, pincode, state } = fields;
+        //     const formData = {
+        //         "collection": "customers_abcd1234",
+        //         "data": {
+        //             "fullName": fullName,
+        //             "email": email,
+        //             "address": address,
+        //             "password": password,
+        //             "landmark": landmark,
+        //             "city": city,
+        //             "pincode": pincode,
+        //             "state": state
+        //         },
+        //         "meta": {
+        //             "duplicate": ["email"],
+        //             "isPassword": true,
+        //             "passwordKey": "password"
+        //         }
+        //     };
+        //     ApiServices.AddRecord(formData).then(response => {
+        //         if (response.status == 200 && response.data.status == 'success') {
+        //             swal("Thank you!", "Vendor added successfully!!!", "success").then((value) => {
+        //                 if (value) {
+        //                     navigate('/vendors');
+        //                 }
+        //             });
+        //         } else if (response.data.status == 'failed' && response.data.message == 'UNIQUE KEY CONSTRAINT') {
+        //             swal("Error", "Vendor email ID is already exist!!!", "error").then((value) => {
+        //                 if (value) {
+        //                     navigate('/addvendor');
+        //                     errors["email"] = "Vendor email ID is already exist";
+        //                 }
+        //             });
+        //         }
+        //     }).catch(error => {
+        //         console.log(error);
+        //     });;
+        // } else {
+        //     console.log("Form Validation Error");
+        // }
+    }
+
+    const pincodeInputHandler = e => {
+        if(!CommonMethods.numberValidation(e)){
+            setErrors({ ...errors, pincode : "Please enter Only Numbers (Max 6)" });
+          } else {
+            setErrors({ ...errors, pincode : ""  });
+          }
     }
 
     return (
@@ -300,12 +425,14 @@ const Home = () => {
                                                     placeholder="City/District/Town*" onChange={handleFormFieldsChange} />
                                             </div>
                                             <div className="col-md-6">
-                                                {/* <input type="text" name="pincode" className="form-control mb-2 addressTextBox"
-                                        placeholder="Pincode*" maxLength="6"
-                                        onInput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" /> */}
+                                                <input type="text" name="pincode" className="form-control mb-2 addressTextBox"
+                                        placeholder="Pincode*" maxLength="6" onInput={pincodeInputHandler} />
                                                 <select name="state" id="state" className="form-control addressTextBox" onChange={handleFormFieldsChange}>
-                                                    {/* <option value="mumbai">Mumbai</option>
-                                        <option value="bangalore">Bangalore</option> */}
+                                                {/* {statelist ? statelist.map((item) =>
+                                                        <option value={item}>{item}</option>
+                                                    ) : " "
+                                                } */}
+                                                        <option value="Odisha">Odisha</option>
                                                 </select>
                                             </div>
                                         </div>
