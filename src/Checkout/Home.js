@@ -21,19 +21,19 @@ const Home = () => {
     const [statelist, setStatelist] = useState([]);
     const [addresslist, setAddresslist] = useState([]);
 
-    useEffect(() => {
-        const url = 'https://gist.githubusercontent.com/shubhamjain/35ed77154f577295707a/raw/7bc2a915cff003fb1f8ff49c6890576eee4f2f10/IndianStates.json';
-        axios.get(url)
-          .then((response) => {
-            let st = response.data;
-            console.log(response.data);
-            setStatelist({ ...statelist, state : st });
-          })
-          .catch((error) => {
-            console.log("error", error);
-          });
+    // useEffect(() => {
+    //     const url = 'https://gist.githubusercontent.com/shubhamjain/35ed77154f577295707a/raw/7bc2a915cff003fb1f8ff49c6890576eee4f2f10/IndianStates.json';
+    //     axios.get(url)
+    //       .then((response) => {
+    //         let st = response.data;
+    //         console.log(response.data);
+    //         setStatelist({ ...statelist, state : st });
+    //       })
+    //       .catch((error) => {
+    //         console.log("error", error);
+    //       });
           
-      }, []);
+    //   }, []);
 
     // const [addresslist, setAddresslist] = useState([{
     //     _id:'001',
@@ -139,28 +139,74 @@ const Home = () => {
             // }, "500");
             // setOtpSectionDiv(false);
             setAddressStepActive(true);
+
+            //check existing user
+            let vendorId = '62f9d325591adcd5e44e18ecs';
+            let mobile = CommonMethods.unmask(fields['mobile']);
+
+            //console.log(mobile);
+            const formData = {
+                "collection": "customers_"+vendorId,
+                "data": {
+                    "mobile": "" + mobile + ""
+                }
+            };
+
+            console.log(formData);
+
+            ApiServices.CheckExistingCustomer(formData).then(response => {      
+                //console.log("response", response);       
+                //console.log("responseData", response.data);       
+                //console.log("responsestatus", response.status);
+                return false;       
+                if (response.status === 200 && response.data.status == 'success' && response.data.isNewCustomer == true ) {
+                    setTimeout(() => {
+                        setCliploader(true);
+                        document.getElementById('otp-info').style.display = "block";
+                        document.getElementById('otp-info').innerHTML = 'Verifying OTP';
+                    }, "1000");
+                    setTimeout(() => {
+                        setOtpSectionDiv(false);
+                        setAddressSectionDiv(true);
+                    }, "5000");
+                } else if(response.status === 200 && response.data.status == 'success' && response.data.isNewCustomer == false){
+                    setAddresslist(response.data);
+                    //console.log(addresslist);
+                    setTimeout(() => {
+                        setCliploader(true);
+                        document.getElementById('otp-info').style.display = "block";
+                        document.getElementById('otp-info').innerHTML = 'Verifying OTP';
+                    }, "1000");
+                    setTimeout(() => {
+                        setOtpSectionDiv(false);
+                        setaddressListSectionDiv(true);
+                    }, "5000");
+                }
+            }).catch(error => {
+                console.log(error);
+            }); 
             
-            if (addresslist.length === 0) {
-                setTimeout(() => {
-                    setCliploader(true);
-                    document.getElementById('otp-info').style.display = "block";
-                    document.getElementById('otp-info').innerHTML = 'Verifying OTP';
-                    }, "1000");
-                setTimeout(() => {
-                    setOtpSectionDiv(false);
-                    setAddressSectionDiv(true);
-                }, "5000");
-            } else {
-                setTimeout(() => {
-                    setCliploader(true);
-                    document.getElementById('otp-info').style.display = "block";
-                    document.getElementById('otp-info').innerHTML = 'Verifying OTP';
-                    }, "1000");
-                setTimeout(() => {
-                    setOtpSectionDiv(false);
-                    setaddressListSectionDiv(true);
-                }, "5000");
-            }
+            // if (addresslist.length === 0) {
+            //     setTimeout(() => {
+            //         setCliploader(true);
+            //         document.getElementById('otp-info').style.display = "block";
+            //         document.getElementById('otp-info').innerHTML = 'Verifying OTP';
+            //         }, "1000");
+            //     setTimeout(() => {
+            //         setOtpSectionDiv(false);
+            //         setAddressSectionDiv(true);
+            //     }, "5000");
+            // } else {
+            //     setTimeout(() => {
+            //         setCliploader(true);
+            //         document.getElementById('otp-info').style.display = "block";
+            //         document.getElementById('otp-info').innerHTML = 'Verifying OTP';
+            //         }, "1000");
+            //     setTimeout(() => {
+            //         setOtpSectionDiv(false);
+            //         setaddressListSectionDiv(true);
+            //     }, "5000");
+            // }
         }
     }
 
@@ -253,53 +299,47 @@ const Home = () => {
     
     
         setErrors(errors);
+        console.log(errors);
         return formIsValid;
       }
 
     const addressNextBtnHandler = e => {
-        // e.preventDefault();
-        // if (formValidate()) {
-        //     console.log('first')
-        //     let { fullName, email, address, landmark, city, pincode, state } = fields;
-        //     const formData = {
-        //         "collection": "customers_abcd1234",
-        //         "data": {
-        //             "fullName": fullName,
-        //             "email": email,
-        //             "address": address,
-        //             "password": password,
-        //             "landmark": landmark,
-        //             "city": city,
-        //             "pincode": pincode,
-        //             "state": state
-        //         },
-        //         "meta": {
-        //             "duplicate": ["email"],
-        //             "isPassword": true,
-        //             "passwordKey": "password"
-        //         }
-        //     };
-        //     ApiServices.AddRecord(formData).then(response => {
-        //         if (response.status == 200 && response.data.status == 'success') {
-        //             swal("Thank you!", "Vendor added successfully!!!", "success").then((value) => {
-        //                 if (value) {
-        //                     navigate('/vendors');
-        //                 }
-        //             });
-        //         } else if (response.data.status == 'failed' && response.data.message == 'UNIQUE KEY CONSTRAINT') {
-        //             swal("Error", "Vendor email ID is already exist!!!", "error").then((value) => {
-        //                 if (value) {
-        //                     navigate('/addvendor');
-        //                     errors["email"] = "Vendor email ID is already exist";
-        //                 }
-        //             });
-        //         }
-        //     }).catch(error => {
-        //         console.log(error);
-        //     });;
-        // } else {
-        //     console.log("Form Validation Error");
-        // }
+        e.preventDefault();
+        if (formValidate()) {
+            let vendorId = '62f9d325591adcd5e44e18ecs';
+            let { fullName, email, address, landmark, city, pincode, state, addressType } = fields;
+            let mobile = CommonMethods.unmask(fields['mobile']);
+            const formData = {
+                "collection": "customers_"+vendorId,
+                "data": {
+                    "name": fullName,
+                    "email": email,
+                    "mobile": mobile,
+                    "address": [
+                        {
+                            "addressType": addressType,
+                            "address": address,
+                            "landmark": landmark,
+                            "city": city,
+                            "pincode": pincode,
+                            "state": state
+                        }
+                    ]
+                }
+            };
+            ApiServices.AddRecord(formData).then(response => {
+                console.log(response);
+                // if (response.status == 200 && response.data.status == 'success') {
+                //     setaddressListSectionDiv(true);
+                // } else if (response.data.status == 'failed' && response.data.message == 'UNIQUE KEY CONSTRAINT') {
+                    
+                // }
+            }).catch(error => {
+                console.log(error);
+            });;
+        } else {
+            console.log("Form Validation Error");
+        }
     }
 
     const pincodeInputHandler = e => {
@@ -426,12 +466,13 @@ const Home = () => {
                                             </div>
                                             <div className="col-md-6">
                                                 <input type="text" name="pincode" className="form-control mb-2 addressTextBox"
-                                        placeholder="Pincode*" maxLength="6" onInput={pincodeInputHandler} />
+                                        placeholder="Pincode*" maxLength="6" onInput={pincodeInputHandler} onChange={handleFormFieldsChange} />
                                                 <select name="state" id="state" className="form-control addressTextBox" onChange={handleFormFieldsChange}>
                                                 {/* {statelist ? statelist.map((item) =>
                                                         <option value={item}>{item}</option>
                                                     ) : " "
                                                 } */}
+                                                        <option value="0">--Select State--</option>
                                                         <option value="Odisha">Odisha</option>
                                                 </select>
                                             </div>
@@ -442,21 +483,21 @@ const Home = () => {
                                         <div className="addressTypeRadio">
                                             <div className="form-check col-md-4">
                                                 <input className="form-check-input" type="radio" name="addressType" id="home"
-                                                    value="home" defaultChecked onChange={handleFormFieldsChange} />
+                                                    value="Home" defaultChecked onChange={handleFormFieldsChange} />
                                                 <label className="form-check-label" htmlFor="home">Home <br /> <span
                                                     style={{ fontSize: 10 + 'px' }}>(All day delivery)</span></label>
                                             </div>
                                             <div className="form-check col-md-4">
                                                 <input className="form-check-input" type="radio" name="addressType" id="work"
-                                                    value="work" onChange={handleFormFieldsChange} />
+                                                    value="Work" onChange={handleFormFieldsChange} />
                                                 <label className="form-check-label" htmlFor="work">Work <br /> <span
                                                     style={{ fontSize: 10 + 'px' }}>(Between 10 AM-5 PM)</span></label>
                                             </div>
                                             <div className="form-check col-md-4 d-flex">
                                                 <input className="form-check-input me-2" type="radio" name="addressType" id="other"
-                                                    value="other" onChange={handleFormFieldsChange} />
-                                                <label className="form-check-label me-2" htmlFor="other">Other</label>
-                                                <input type="text" id="add_type_other" className="add_type_other" />
+                                                    value={fields['add_type_other']} onChange={handleFormFieldsChange} />
+                                                <label className="form-check-label me-2" htmlFor={fields['add_type_other']}>{fields['add_type_other']}</label>
+                                                <input type="text" id="add_type_other" className="add_type_other" onChange={handleFormFieldsChange} value={fields['add_type_other']}/>
                                             </div>
                                         </div>
 

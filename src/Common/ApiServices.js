@@ -1,13 +1,17 @@
 import axios from 'axios';
-// const API_BASE_URL = "http://localhost:5000/api/curd/doc";
-const API_BASE_URL = "https://thinkfast.in:5000/api/curd/doc";
+const API_BASE_URL_CHECK_EXISTING_CUSTOMER = "http://localhost:5000/api/curd/store/customer/type";
+const API_BASE_URL = "http://localhost:5000/api/curd/store/doc";
+//const API_BASE_URL = "https://thinkfast.in:5000/api/curd/doc";
 
 class ApiServices {
-  
-    AddRecord(formData){
-        console.log(formData);
-        return axios.post(API_BASE_URL, formData);
+    
+    CheckExistingCustomer(formData){
+        return axios.post(API_BASE_URL_CHECK_EXISTING_CUSTOMER, formData);
     }
+
+    AddRecord(formData){
+        return axios.post(API_BASE_URL, formData);
+    }  
 
     GetAllRecords(collectionName){
         return axios.get(API_BASE_URL+"/?collection="+collectionName);
