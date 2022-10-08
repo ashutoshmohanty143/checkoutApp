@@ -2,12 +2,15 @@
     body {
         font-family: 'Poppins', sans-serif;
     }
+    .checkoutApp {
+        overflow-x: hidden;
+    }
     .checkout-container-left{
         position: relative;
-        width: 500px;
+        width: 495px;
         border-radius: 20px;
         background-color: #FCFCFC;
-        height: 550px;
+        height: 530px;
         padding-left: 0px;
         padding-right: 0px;
     }
@@ -478,10 +481,10 @@
     .cart-list{
         width: 100%;
         margin-bottom: 15px;
-        min-height: 105px;
+        min-height: 100px;
         overflow-y: scroll;
         padding: 2px 12px 0px 0px;
-        max-height: 140px;
+        max-height: 120px;
     }
     .product-name{
         font-size: 13px;
@@ -592,10 +595,10 @@
     }
 
     .coupon-list{
-        min-height: 105px;
+        min-height: 100px;
         overflow-y: scroll;
         padding: 12px;
-        max-height: 115px;
+        max-height: 100px;
     }
 
     .coupon-list::-webkit-scrollbar {

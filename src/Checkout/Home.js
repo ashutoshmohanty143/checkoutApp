@@ -357,7 +357,7 @@ const Home = () => {
     return (
         <>
             {modalShow ?
-                <div className="modal-body row">
+                <div className="modal-body row" style={{background: '#00000063'}}>
                     <div className="checkout-container-left">
                         <span className="trianle"></span>
                         <div className="verticalbanner">
