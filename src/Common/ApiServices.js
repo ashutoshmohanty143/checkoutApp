@@ -1,8 +1,6 @@
 import axios from 'axios';
-// const API_BASE_URL_CHECK_EXISTING_CUSTOMER = "http://localhost:5000/api/curd/store/customer/type";
-const API_BASE_URL = "http://localhost:5000/api/curd/store";
-//const API_BASE_URL = "http://localhost:5000/api/curd/store/doc";
-//const API_BASE_URL = "https://thinkfast.in:5000/api/curd/doc";
+//const API_BASE_URL = "http://localhost:5000/api/curd/store";
+const API_BASE_URL = "http://thinkfast.in:5000/api/curd/store";
 
 class ApiServices {
     
