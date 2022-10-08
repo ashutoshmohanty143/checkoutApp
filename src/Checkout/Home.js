@@ -14,6 +14,7 @@ const Home = () => {
 
     const [addressStepActive, setAddressStepActive] = useState(false);
     const [paymentStepActive, setPaymentStepActive] = useState(false);
+    const [modalShow, setmodalShow] = useState(false);
 
     const [mobNextbtn, setMobNextbtn] = useState(true);
     const [fields, setFields] = useState({});
@@ -21,6 +22,9 @@ const Home = () => {
     const [statelist, setStatelist] = useState([]);
     const [addresslist, setAddresslist] = useState([]);
 
+    useEffect(() => { 
+        setmodalShow(true);
+    });
     // useEffect(() => {
     //     const url = 'https://gist.githubusercontent.com/shubhamjain/35ed77154f577295707a/raw/7bc2a915cff003fb1f8ff49c6890576eee4f2f10/IndianStates.json';
     //     axios.get(url)
@@ -54,7 +58,7 @@ const Home = () => {
             productColor: 'Gray',
             productPrice: '1650.00',
             productQuantity: '01',
-            productImg: '../../img/adidas.png'
+            productImg: './img/adidas.png'
         },
         {
             _id:'002',
@@ -63,7 +67,7 @@ const Home = () => {
             productColor: 'Blue',
             productPrice: '1995.00',
             productQuantity: '02',
-            productImg: '../../img/puma.png'
+            productImg: './img/puma.png'
         }
     ]);
 
@@ -352,35 +356,35 @@ const Home = () => {
 
     return (
         <>
-            <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#checkoutModal">
+            {/* <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#checkoutModal">
                 Checkout
-            </button>
+            </button> */}
 
-            <div className="modal fade" id="checkoutModal" tabIndex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true">
+            {modalShow ? <div className="modal fade show" id="checkoutModal" tabIndex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true" style={{display: 'block',background: '#a3a3a3'}}>
                 <div className="modal-dialog modal-dialog-centered modal-lg">
                     <div className="modal-content">
                         <div className="modal-body row">
                             <div className="checkout-container-left">
                                 <span className="trianle"></span>
                                 <div className="verticalbanner">
-                                    <img src="../../img/logo.png" width="60px" height="45px" alt="Logo" />
+                                    <img src="./img/logo.png" width="60px" height="45px" alt="Logo" />
                                 </div>
                                 <div className="cart">
-                                    <img id="cart_img" src="../../img/cart.png" width="100px" height="100px" alt="Cart-icon" />
+                                    <img id="cart_img" src="./img/cart.png" width="100px" height="100px" alt="Cart-icon" />
                                 </div>
 
 
                                 <div className="checkout-header">
                                     <div className='me-3 active-step'>
-                                        <img src="../../img/followers-active.png" className='me-2' />
+                                        <img src="./img/followers-active.png" className='me-2' />
                                         <span>Verify</span>
                                     </div>
                                     <div className={`me-3 ${addressStepActive ? 'active-step' : 'disabled-step'}`}>
-                                        <img src={addressStepActive ? '../../img/address-active.png' : '../../img/address.png'} className='me-2' />
+                                        <img src={addressStepActive ? './img/address-active.png' : './img/address.png'} className='me-2' />
                                         <span>Address</span>
                                     </div>
                                     <div className={`me-3 ${paymentStepActive ? 'active-step' : 'disabled-step'}`}>
-                                        <img src={paymentStepActive ? '' : '../../img/payment-method.png'} className='me-2' />
+                                        <img src={paymentStepActive ? '' : './img/payment-method.png'} className='me-2' />
                                         <span>Payment</span>
                                     </div>
                                 </div>
@@ -738,7 +742,7 @@ const Home = () => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> : null }
         </>
     )
 }
