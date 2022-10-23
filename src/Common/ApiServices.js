@@ -1,32 +1,36 @@
 import axios from 'axios';
-//const API_BASE_URL = "http://localhost:5000/api/curd/store";
-const API_BASE_URL = "http://thinkfast.in:5000/api/curd/store";
+const API_BASE_URL = "http://localhost:5000/api/curd";
+//const API_BASE_URL = "http://thinkfast.in:5000/api/curd/store";
 
 class ApiServices {
     
     CheckExistingCustomer(formData){
-        return axios.post(API_BASE_URL+"/customer/type", formData);
+        return axios.post(API_BASE_URL+"/store/customer/type", formData);
     }
 
-    AddRecord(formData){
-        return axios.post(API_BASE_URL+"/doc", formData);
-    }  
-
-    GetAllRecords(collectionName){
-        return axios.get(API_BASE_URL+"/doc/?collection="+collectionName);
+    manageCart(formData){
+        return axios.post(API_BASE_URL+"/cart", formData);
     }
 
-    GetSingleRecordById(id,collectionName){
-      return axios.get(API_BASE_URL+"/doc/"+id+"/?collection="+collectionName);
-    }
+    // AddRecord(formData){
+    //     return axios.post(API_BASE_URL+"/doc", formData);
+    // }  
 
-    DeleteRecord(id, collectionName){
-        return axios.delete(API_BASE_URL+"/doc/"+id+"/?collection="+collectionName);
-    }
+    // GetAllRecords(collectionName){
+    //     return axios.get(API_BASE_URL+"/doc/?collection="+collectionName);
+    // }
 
-    UpdateRecord(formData){
-        return axios.put(API_BASE_URL+"/doc", formData);
-    }
+    // GetSingleRecordById(id,collectionName){
+    //   return axios.get(API_BASE_URL+"/doc/"+id+"/?collection="+collectionName);
+    // }
+
+    // DeleteRecord(id, collectionName){
+    //     return axios.delete(API_BASE_URL+"/doc/"+id+"/?collection="+collectionName);
+    // }
+
+    // UpdateRecord(formData){
+    //     return axios.put(API_BASE_URL+"/doc", formData);
+    // }
 
 }
 

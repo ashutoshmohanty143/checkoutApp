@@ -484,7 +484,7 @@
         min-height: 100px;
         overflow-y: scroll;
         padding: 2px 12px 0px 0px;
-        max-height: 120px;
+        max-height: 135px;
     }
     .product-name{
         font-size: 13px;
@@ -598,7 +598,7 @@
         min-height: 100px;
         overflow-y: scroll;
         padding: 12px;
-        max-height: 100px;
+        max-height: 120px;
     }
 
     .coupon-list::-webkit-scrollbar {

@@ -4,7 +4,7 @@ import axios from 'axios';
 import CommonMethods from '../Common/CommonMethods';
 import './style.css';
 import ApiServices from '../Common/ApiServices';
-
+import { useLocation } from 'react-router-dom';
 
 const Home = () => {
     const [mobileSectionDiv, setMobileSectionDiv] = useState(true);
@@ -22,8 +22,89 @@ const Home = () => {
     const [statelist, setStatelist] = useState([]);
     const [addresslist, setAddresslist] = useState([]);
 
-    useEffect(() => { 
-        setmodalShow(true);
+    useEffect(() => {
+        const cartRequest =
+        {
+            "pincode": "751010",
+            "vendorId": "62f1e95815f7885d3abbd760",
+            "cartItems": [
+                {
+                    "productId": 6800847077428,
+                    "quantity": 1,
+                    "selectedOptions": [
+                        {
+                            "name": "Size",
+                            "value": "S"
+                        },
+                        {
+                            "name": "Color",
+                            "value": "Black"
+                        }
+                    ]
+                },
+                {
+                    "productId": 6800847077428,
+                    "quantity": 2,
+                    "selectedOptions": [
+                        {
+                            "name": "Size",
+                            "value": "M"
+                        },
+                        {
+                            "name": "Color",
+                            "value": "Black"
+                        }
+                    ]
+                },
+                {
+                    "productId": 6880080920628,
+                    "quantity": 2,
+                    "selectedOptions": []
+                }
+            ]
+        }
+
+        const cartUri = encodeURIComponent(JSON.stringify(cartRequest));
+
+        // const search = useLocation().search;
+        // const uri = new URLSearchParams(search).get("id");
+        // console.log(uri);
+
+        const url_string = window.location.href; 
+        const url = new URL(url_string);
+        const cartDetails = JSON.parse(url.searchParams.get("carturi"));
+
+        ApiServices.manageCart(cartDetails).then(response => {
+            console.log(response.data);
+            if(response && response.data){
+                let fetchdata = response.data;
+                //console.log(fetchdata);
+                if(response.status === "success"){
+                    // swal(
+                    //     "Thank you!",
+                    //     "Wirehouse Sync successfully!!!",
+                    //     "success"
+                    // ).then((value) => {
+                    // if (value) {
+                    //     navigate("/wirehouses");
+                    //     fetchAllData();
+                    // }
+                    //});
+                } else {
+                    // swal("Oppss", response.data.message, "error").then((value) => {
+                    //     if (value) {
+                    //         navigate('/wirehouses');
+                    //     }
+                    // });
+                }        
+            } else {  
+              console.log("Error");
+            }
+          }).catch(error => {
+            console.log("error", error)
+          });
+        
+        //setmodalShow(true);
     });
     // useEffect(() => {
     //     const url = 'https://gist.githubusercontent.com/shubhamjain/35ed77154f577295707a/raw/7bc2a915cff003fb1f8ff49c6890576eee4f2f10/IndianStates.json';
@@ -356,7 +437,7 @@ const Home = () => {
 
     return (
         <>
-            {modalShow ?
+            
                 <div className="modal-body row" style={{background: '#00000063'}}>
                     <div className="checkout-container-left">
                         <span className="trianle"></span>
@@ -593,7 +674,7 @@ const Home = () => {
                     </div>
 
                     <div className="checkout-container-right">
-                        <div className="close-btn" data-bs-dismiss="modal"><i className="bi bi-x-lg"></i></div>
+                        {/* <div className="close-btn" data-bs-dismiss="modal"><i className="bi bi-x-lg"></i></div> */}
 
                         <div className="top-section">
                             <span><strong>Order Summary</strong></span>
@@ -732,8 +813,8 @@ const Home = () => {
                         </div>
 
                     </div>
-                </div> : null 
-            }
+                </div>
+            
         </>
     )
 }
