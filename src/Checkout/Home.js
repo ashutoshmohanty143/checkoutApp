@@ -14,6 +14,7 @@ const Home = () => {
 
     const [addressStepActive, setAddressStepActive] = useState(false);
     const [paymentStepActive, setPaymentStepActive] = useState(false);
+    const [aa, setAa] = useState(false);
     const [modalShow, setmodalShow] = useState(false);
 
     const [mobNextbtn, setMobNextbtn] = useState(true);
@@ -22,6 +23,8 @@ const Home = () => {
     const [statelist, setStatelist] = useState([]);
     const [addresslist, setAddresslist] = useState([]);
     const [productlist, setProductlist] = useState([]);
+    const [cliploader, setCliploader] = useState(false);
+    const [cartLoader, setcartLoader] = useState(false);
 
     useEffect(() => {
         const cartRequest =
@@ -66,7 +69,7 @@ const Home = () => {
         }
 
         const cartUri = encodeURIComponent(JSON.stringify(cartRequest));
-
+        setcartLoader(true);
         // const search = useLocation().search;
         // const uri = new URLSearchParams(search).get("id");
         // console.log(uri);
@@ -75,19 +78,18 @@ const Home = () => {
         const url = new URL(url_string);
         const cartDetails = JSON.parse(url.searchParams.get("carturi"));
 
-
         ApiServices.manageCart(cartDetails).then(response => {
-            //console.log(response.data);
             if(response && response.data.data){
+                setcartLoader(false);
                 if(response.status === 200 && response.data.status === "success"){
-                    const orderSummary = response.data.data;
-                    //let updatedProductList = [...productlist];
-                    //updatedProductList = orderSummary;
-                    setProductlist({...productlist, orderSummary});
-                } else {
-                    //console.log(333333333);
+                    setAa(true);
+                    const cartDetails = response.data.data;
+                    setProductlist([cartDetails]);
+
+                } else if(response.data.status === "failure"){
+                    console.log('error');
                 }        
-            } else {  
+            } else {
               console.log("Error");
             }
         }).catch(error => {
@@ -95,8 +97,6 @@ const Home = () => {
         });
 
     });
-        
-    const [cliploader, setCliploader] = useState(false);
 
     const MOB_MAX_NUM = 12;
 
@@ -379,8 +379,9 @@ const Home = () => {
           }
     }
     
+    //console.log(aa);
     console.log(productlist);
-    return (        
+    return (     
         <>            
             <div className="modal-body row">
                 <div className="checkout-container-left">
@@ -625,12 +626,13 @@ const Home = () => {
                     </div>
 
                     {/* order summary */}
-                    <div className="cart-section">
+                    <div className="cart-section">                       
+                        <div className="cart-list text-center">
+                            
 
-                       
-                        <div className="cart-list">
-                            {productlist && productlist.length > 0 ? productlist.lineItems.map((item) =>
-                                <ul style={{ listStyleType: 'none', paddingLeft: 0}} key={item._id}>
+
+                            {productlist && productlist.length > 0 ? productlist[0].lineItems.map((item) =>
+                                <ul style={{ listStyleType: 'none', paddingLeft: 0}} key={item.cartItemId}>
                                     <li>
                                         <div className="cart-list-item row">
                                             <div className="col-md-3 cart-img" style={{ paddingRight: 0 }}>
@@ -638,20 +640,26 @@ const Home = () => {
                                             </div>
                                             <div className="col-md-9">
                                                 <div className="product-name">{item.itemName}</div>
-                                                {/* <div className="variant">
+                                                <div className="variant">
                                                     Size:&nbsp;<span style={{ paddingRight: 5+'px' }}>{item.productSize}</span>
                                                     Color:&nbsp;<span className="color">{item.productColor}</span>
-                                                </div> */}
-                                                {/* <div className="product-price">Rs.&nbsp;&nbsp;{item.productPrice} * {item.productQuantity}</div> */}
+                                                </div>
+                                                <div className="product-price">Rs.&nbsp;&nbsp;{item.productPrice} * {item.productQuantity}</div>
                                                 <div className="remove-cart"><a className="remove" href="#."><i
                                                     className="bi bi-trash-fill"></i> Remove </a></div>
                                             </div>
                                         </div>
                                     </li>
                                 </ul>
-                            ) : ''
+                            ) : 
+                            
+                            <span><ClipLoader size={16} color="#000" loading={cartLoader} /></span>
+                            
                             }
                         </div>
+
+
+                        
 
                         <div className="row">
                             <div className="col-md-8">

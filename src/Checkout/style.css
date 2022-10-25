@@ -618,7 +618,10 @@
 
     /* ----- Right Panel Box Styles Ends ----- */
 
-
+    #loader{
+        position: absolute;
+        top: 30%;
+    }
 
     /* New Code Added */
    .error-msg {
