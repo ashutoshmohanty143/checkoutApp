@@ -627,9 +627,7 @@ const Home = () => {
 
                     {/* order summary */}
                     <div className="cart-section">                       
-                        <div className="cart-list text-center">
-                            
-
+                        <div className={`cart-list ${!productlist.length ? 'text-center' : '' }`}>
 
                             {productlist && productlist.length > 0 ? productlist[0].lineItems.map((item) =>
                                 <ul style={{ listStyleType: 'none', paddingLeft: 0}} key={item.cartItemId}>
@@ -641,10 +639,15 @@ const Home = () => {
                                             <div className="col-md-9">
                                                 <div className="product-name">{item.itemName}</div>
                                                 <div className="variant">
-                                                    Size:&nbsp;<span style={{ paddingRight: 5+'px' }}>{item.productSize}</span>
-                                                    Color:&nbsp;<span className="color">{item.productColor}</span>
+                                                    {/* {productlist && productlist.length > 0 ? productlist[0].lineItems.map((item) =>
+                                                        <div className="variant">
+                                                            Size:&nbsp;<span style={{ paddingRight: 5+'px' }}>{item.productSize}</span>
+                                                            Color:&nbsp;<span className="color">{item.productColor}</span>
+                                                        </div>
+                                                    ) : ''
+                                                    } */}
                                                 </div>
-                                                <div className="product-price">Rs.&nbsp;&nbsp;{item.productPrice} * {item.productQuantity}</div>
+                                                <div className="product-price">Rs.&nbsp;&nbsp;{item.price} * {item.itemQuantity}</div>
                                                 <div className="remove-cart"><a className="remove" href="#."><i
                                                     className="bi bi-trash-fill"></i> Remove </a></div>
                                             </div>
@@ -656,10 +659,9 @@ const Home = () => {
                             <span><ClipLoader size={16} color="#000" loading={cartLoader} /></span>
                             
                             }
+
+
                         </div>
-
-
-                        
 
                         <div className="row">
                             <div className="col-md-8">
