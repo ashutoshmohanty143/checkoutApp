@@ -21,6 +21,7 @@ const Home = () => {
     const [errors, setErrors] = useState({});
     const [statelist, setStatelist] = useState([]);
     const [addresslist, setAddresslist] = useState([]);
+    const [productlist, setProductlist] = useState([]);
 
     useEffect(() => {
         const cartRequest =
@@ -74,84 +75,27 @@ const Home = () => {
         const url = new URL(url_string);
         const cartDetails = JSON.parse(url.searchParams.get("carturi"));
 
+
         ApiServices.manageCart(cartDetails).then(response => {
-            console.log(response.data);
-            if(response && response.data){
-                let fetchdata = response.data;
-                //console.log(fetchdata);
-                if(response.status === "success"){
-                    // swal(
-                    //     "Thank you!",
-                    //     "Wirehouse Sync successfully!!!",
-                    //     "success"
-                    // ).then((value) => {
-                    // if (value) {
-                    //     navigate("/wirehouses");
-                    //     fetchAllData();
-                    // }
-                    //});
+            //console.log(response.data);
+            if(response && response.data.data){
+                if(response.status === 200 && response.data.status === "success"){
+                    const orderSummary = response.data.data;
+                    //let updatedProductList = [...productlist];
+                    //updatedProductList = orderSummary;
+                    setProductlist({...productlist, orderSummary});
                 } else {
-                    // swal("Oppss", response.data.message, "error").then((value) => {
-                    //     if (value) {
-                    //         navigate('/wirehouses');
-                    //     }
-                    // });
+                    //console.log(333333333);
                 }        
             } else {  
               console.log("Error");
             }
-          }).catch(error => {
+        }).catch(error => {
             console.log("error", error)
-          });
-        
-        //setmodalShow(true);
+        });
+
     });
-    // useEffect(() => {
-    //     const url = 'https://gist.githubusercontent.com/shubhamjain/35ed77154f577295707a/raw/7bc2a915cff003fb1f8ff49c6890576eee4f2f10/IndianStates.json';
-    //     axios.get(url)
-    //       .then((response) => {
-    //         let st = response.data;
-    //         console.log(response.data);
-    //         setStatelist({ ...statelist, state : st });
-    //       })
-    //       .catch((error) => {
-    //         console.log("error", error);
-    //       });
-          
-    //   }, []);
-
-    // const [addresslist, setAddresslist] = useState([{
-    //     _id:'001',
-    //     fullName: 'Ashutosh Mohanty',
-    //     email:'ashutoshmohanty143@gmail.com', 
-    //     address:'Rasulgarh', 
-    //     landmark:'Near Falcon', 
-    //     city:'Bhubaneswar', 
-    //     state:'Odisha', 
-    //     addressType:'Home'
-    // }]);
-
-    const [productlist, setProductlist] = useState([
-        {
-            _id:'001',
-            productName: 'Adidas Style Sneakers',
-            productSize: 'XL',
-            productColor: 'Gray',
-            productPrice: '1650.00',
-            productQuantity: '01',
-            productImg: './img/adidas.png'
-        },
-        {
-            _id:'002',
-            productName: 'Pumma Sneakers',
-            productSize: 'L',
-            productColor: 'Blue',
-            productPrice: '1995.00',
-            productQuantity: '02',
-            productImg: './img/puma.png'
-        }
-    ]);
-
+        
     const [cliploader, setCliploader] = useState(false);
 
     const MOB_MAX_NUM = 12;
@@ -434,270 +378,180 @@ const Home = () => {
             setErrors({ ...errors, pincode : ""  });
           }
     }
-
-    return (
-        <>
-            
-                <div className="modal-body row" style={{background: '#00000063'}}>
-                    <div className="checkout-container-left">
-                        <span className="trianle"></span>
-                        <div className="verticalbanner">
-                            <img src="./img/logo.png" width="60px" height="45px" alt="Logo" />
-                        </div>
-                        <div className="cart">
-                            <img id="cart_img" src="./img/cart.png" width="100px" height="100px" alt="Cart-icon" />
-                        </div>
-
-
-                        <div className="checkout-header">
-                            <div className='me-3 active-step'>
-                                <img src="./img/followers-active.png" className='me-2' />
-                                <span>Verify</span>
-                            </div>
-                            <div className={`me-3 ${addressStepActive ? 'active-step' : 'disabled-step'}`}>
-                                <img src={addressStepActive ? './img/address-active.png' : './img/address.png'} className='me-2' />
-                                <span>Address</span>
-                            </div>
-                            <div className={`me-3 ${paymentStepActive ? 'active-step' : 'disabled-step'}`}>
-                                <img src={paymentStepActive ? '' : './img/payment-method.png'} className='me-2' />
-                                <span>Payment</span>
-                            </div>
-                        </div>
-
-
-                        {mobileSectionDiv ?
-                            <div className="mobile-section">
-                                <h6 className="mb-5 text-muted welcome">Welcome</h6>
-                                <h4 className="mb-3 enter-mobile">Please enter your mobile number</h4>
-                                <div className="input-group">
-                                    <span className="country-code" id="mob-code">+91</span>
-                                    <input type="text" name="mobile" id='mobile' className="form-control mobile" maxLength={MOB_MAX_NUM}
-                                        placeholder="999 888 0000" onInput={mobileInputHandler}
-                                        onChange={handleFormFieldsChange} value={fields['mobile'] || ''} />
-                                    <span className="green-check"><i className="bi bi-check-circle-fill"></i></span>
-                                    <span className="red-alert" data-bs-toggle="pass_tooltip" data-bs-placement="top" 
-                                        title={`Give only 10 digit mobile number`}><i className="bi bi-info-circle-fill"></i>
-                                    </span>
-                                </div>
-                                <div className="text-muted ms-1 mt-2" style={{ fontSize: 12 + 'px' }}>A 4 digit OTP will be sent via
-                                    SMS to verify your mobile number!</div>
-                                <button onClick={MobileNextbtn} id="mobile-next-btn" className="mobile-next-btn form-control mt-5" disabled={mobNextbtn}>Get
-                                    OTP</button>
-                            </div>
-                            : ''}
-
-                        {otpSectionDiv ?
-                            <div className="otp-section">
-                                <h6 className="mb-5 text-muted verification">Verification</h6>
-                                <h6 className="mb-3 enter-otp">OTP is sent to
-                                    <span className='me-2'>
-                                        {' ' + fields['mobile']}
-                                        <sup>
-                                            <i className="bi bi-pencil-square edit-icon ms-2" onClick={editMobileLink}></i>
-                                        </sup>
-                                    </span>
-                                </h6>
-                                <div className="input-group mb-2">
-                                    <input type="text" name="otp1" className="form-control otp-value"
-                                        maxLength="1" onInput={otpInputHandler} onChange={handleFormFieldsChange} />
-                                    <input type="text" name="otp2" className="form-control otp-value"
-                                        maxLength="1" onInput={otpInputHandler} onChange={handleFormFieldsChange} />
-                                    <input type="text" name="otp3" className="form-control otp-value"
-                                        maxLength="1" onInput={otpInputHandler} onChange={handleFormFieldsChange} />
-                                    <input type="text" name="otp4" className="form-control otp-value"
-                                        maxLength="1" onKeyUp={otp4InputHandler} onChange={handleFormFieldsChange} />
-                                </div>
-                                <span><ClipLoader size={16} color="#35bd35" loading={cliploader} /></span>
-                                <span className='otp-info' id='otp-info'></span>
-                                <div className="text-muted ms-1 mt-5 otp-not-received">Didn't get the OTP? 
-                                    <span className="resend-otp" onClick={resendOTP}>Resend a new code</span>
-                                </div>
-                            </div>
-                            : ''}
-
-
-                        {addressSectionDiv ?
-                            <div className="address-section">
-                                <div className="row mb-2">
-                                    <div className="col-md-6">
-                                        <input type="text" name="fullName" className="form-control addressTextBox"
-                                            placeholder="Full Name*" onChange={handleFormFieldsChange} />
-                                    </div>
-                                    <div className="col-md-6">
-                                        <input type="text" name="email" className="form-control addressTextBox"
-                                            placeholder="Email Address*" onChange={handleFormFieldsChange} />
-                                    </div>
-                                </div>
-                                <div className="currentLocation">
-                                    <a href=""><i className="bi bi-circle bi-geo-alt"></i></a> Use current
-                                    location
-                                </div>
-                                <div className="mb-2">
-                                    <input type="text" name="address" className="form-control addressTextBox"
-                                        placeholder="Address(Area and street)*" onChange={handleFormFieldsChange} />
-                                </div>
-                                <div className="row mb-3">
-                                    <div className="col-md-6">
-                                        <input type="text" name="landmark" className="form-control mb-2 addressTextBox"
-                                            placeholder="Landmark*" onChange={handleFormFieldsChange} />
-                                        <input type="text" name="city" className="form-control addressTextBox"
-                                            placeholder="City/District/Town*" onChange={handleFormFieldsChange} />
-                                    </div>
-                                    <div className="col-md-6">
-                                        <input type="text" name="pincode" className="form-control mb-2 addressTextBox"
-                                placeholder="Pincode*" maxLength="6" onInput={pincodeInputHandler} onChange={handleFormFieldsChange} />
-                                        <select name="state" id="state" className="form-control addressTextBox" onChange={handleFormFieldsChange}>
-                                        {/* {statelist ? statelist.map((item) =>
-                                                <option value={item}>{item}</option>
-                                            ) : " "
-                                        } */}
-                                                <option value="0">--Select State--</option>
-                                                <option value="Odisha">Odisha</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div className="mb-2">
-                                    <h6>Address Type*</h6>
-                                </div>
-                                <div className="addressTypeRadio">
-                                    <div className="form-check col-md-4">
-                                        <input className="form-check-input" type="radio" name="addressType" id="home"
-                                            value="Home" defaultChecked onChange={handleFormFieldsChange} />
-                                        <label className="form-check-label" htmlFor="home">Home <br /> <span
-                                            style={{ fontSize: 10 + 'px' }}>(All day delivery)</span></label>
-                                    </div>
-                                    <div className="form-check col-md-4">
-                                        <input className="form-check-input" type="radio" name="addressType" id="work"
-                                            value="Work" onChange={handleFormFieldsChange} />
-                                        <label className="form-check-label" htmlFor="work">Work <br /> <span
-                                            style={{ fontSize: 10 + 'px' }}>(Between 10 AM-5 PM)</span></label>
-                                    </div>
-                                    <div className="form-check col-md-4 d-flex">
-                                        <input className="form-check-input me-2" type="radio" name="addressType" id="other"
-                                            value={fields['add_type_other']} onChange={handleFormFieldsChange} />
-                                        <label className="form-check-label me-2" htmlFor={fields['add_type_other']}>{fields['add_type_other']}</label>
-                                        <input type="text" id="add_type_other" className="add_type_other" onChange={handleFormFieldsChange} value={fields['add_type_other']}/>
-                                    </div>
-                                </div>
-
-                                <div className="d-flex justify-content-between">
-                                    <input type="button" className="address-back-btn form-control" value="&larr;"
-                                        onClick={addressBackBtnHandler} />
-                                    <input type="button" className="address-next-btn form-control" value="Next"
-                                        onClick={addressNextBtnHandler} />
-                                </div>
-
-                            </div>
-                            : ''}
-
-                        {addressListSectionDiv ?
-                            <div className="address-list-section">
-                                <div className="address-list">
-
-                                    {addresslist ? addresslist.map((item, i) =>
-                                        <ul style={{ listStyleType: "none", paddingLeft: 0 }} key={item._id}>
-                                            <li>
-                                                <div className="address-card active-address">
-                                                    <div className="mb-2">
-                                                        <span className="add_list_round"><i className="bi bi-house-heart-fill"></i></span> <b
-                                                            style={{ fontSize: 'small' }}>{item.addressType}</b>
-                                                        <span className="edit-address-btn"><i className="bi bi-pencil-square"></i></span>
-                                                    </div>
-                                                    <div>
-                                                        <input type="radio" className="form-check-input custom-align-radio me-2"
-                                                            name="shipping_address" defaultChecked />
-                                                        <label className="address-label"><span className="me-4">{'  '}{item.fullName}</span>
-                                                            <span>{item.address + ', ' + item.city + ', ' + item.state}</span></label>
-                                                    </div>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                    ) : "Data Not Found"
-                                    }
-
-                                    {/* <div className="address-card active-address">
-                            <div className="mb-2">
-                                <span className="add_list_round"><i className="bi bi-house-heart-fill"></i></span> <b
-                                    style={{fontSize: 'small'}}>Home</b>
-                                <span className="edit-address-btn"><i className="bi bi-pencil-square"></i></span>
-                            </div>
-                            <div>
-                                <input type="radio" className="form-check-input custom-align-radio"
-                                    name="shipping_address" defaultChecked />
-                                <label className="address-label"><span className="me-4">Vikas Kumar</span><span>Bolck C,
-                                        Sector - 8, Chandigarh</span></label>
-                            </div>
-                        </div>
-
-                        <div className="address-card">
-                            <div className="mb-2">
-                                <span className="add_list_round"><i className="bi bi-house-heart-fill"></i></span> <b
-                                    style={{fontSize: 'small'}}>Work</b>
-                                <span className="delete-address-btn"><i className="bi bi-trash"></i></span>
-                                <span className="edit-address-btn"><i className="bi bi-pencil-square"></i></span>
-                            </div>
-                            <div>
-                                <input type="radio" className="form-check-input custom-align-radio"
-                                    name="shipping_address" />
-                                <label className="address-label"><span className="me-4">Vikas Kumar</span><span>Bolck C,
-                                        Sector - 8, Chandigarh</span></label>
-                            </div>
-                            <span className="make-default-address">Make as default</span>
-                        </div>
-
-                        <div className="address-card">
-                            <div className="mb-2">
-                                <span className="add_list_round"><i className="bi bi-house-heart-fill"></i></span> <b
-                                    style={{fontSize: 'small'}}>Friend</b>
-                                <span className="delete-address-btn"><i className="bi bi-trash"></i></span>
-                                <span className="edit-address-btn"><i className="bi bi-pencil-square"></i></span>
-                            </div>
-                            <div>
-                                <input type="radio" className="form-check-input custom-align-radio"
-                                    name="shipping_address" />
-                                <label className="address-label"><span className="me-4">Vikas Kumar</span><span>Bolck C,
-                                        Sector - 8, Chandigarh</span></label>
-                            </div>
-                            <span className="make-default-address">Make as default</span>
-                        </div> */}
-
-                                </div>
-                                <div className="add-new-address" id="add-new-address">
-                                    <i className="bi bi-plus-circle-fill"></i> Add address
-                                </div>
-
-                                <button className="pay-nxt-btn">Next</button>
-                            </div>
-                            : ''}
-
-
+    
+    console.log(productlist);
+    return (        
+        <>            
+            <div className="modal-body row">
+                <div className="checkout-container-left">
+                    <span className="trianle"></span>
+                    <div className="verticalbanner">
+                        <img src="./img/logo.png" width="60px" height="45px" alt="Logo" />
+                    </div>
+                    <div className="cart">
+                        <img id="cart_img" src="./img/cart.png" width="100px" height="100px" alt="Cart-icon" />
                     </div>
 
-                    <div className="checkout-container-right">
-                        {/* <div className="close-btn" data-bs-dismiss="modal"><i className="bi bi-x-lg"></i></div> */}
 
-                        <div className="top-section">
-                            <span><strong>Order Summary</strong></span>
+                    <div className="checkout-header">
+                        <div className='me-3 active-step'>
+                            <img src="./img/followers-active.png" className='me-2' />
+                            <span>Verify</span>
                         </div>
+                        <div className={`me-3 ${addressStepActive ? 'active-step' : 'disabled-step'}`}>
+                            <img src={addressStepActive ? './img/address-active.png' : './img/address.png'} className='me-2' />
+                            <span>Address</span>
+                        </div>
+                        <div className={`me-3 ${paymentStepActive ? 'active-step' : 'disabled-step'}`}>
+                            <img src={paymentStepActive ? '' : './img/payment-method.png'} className='me-2' />
+                            <span>Payment</span>
+                        </div>
+                    </div>
 
-                        <div className="cart-section">
-                            <div className="cart-list">
-                                {productlist ? productlist.map((item) =>
-                                    <ul style={{ listStyleType: 'none', paddingLeft: 0}} key={item._id}>
+
+                    {mobileSectionDiv ?
+                        <div className="mobile-section">
+                            <h6 className="mb-5 text-muted welcome">Welcome</h6>
+                            <h4 className="mb-3 enter-mobile">Please enter your mobile number</h4>
+                            <div className="input-group">
+                                <span className="country-code" id="mob-code">+91</span>
+                                <input type="text" name="mobile" id='mobile' className="form-control mobile" maxLength={MOB_MAX_NUM}
+                                    placeholder="999 888 0000" onInput={mobileInputHandler}
+                                    onChange={handleFormFieldsChange} value={fields['mobile'] || ''} />
+                                <span className="green-check"><i className="bi bi-check-circle-fill"></i></span>
+                                <span className="red-alert" data-bs-toggle="pass_tooltip" data-bs-placement="top" 
+                                    title={`Give only 10 digit mobile number`}><i className="bi bi-info-circle-fill"></i>
+                                </span>
+                            </div>
+                            <div className="text-muted ms-1 mt-2" style={{ fontSize: 12 + 'px' }}>A 4 digit OTP will be sent via
+                                SMS to verify your mobile number!</div>
+                            <button onClick={MobileNextbtn} id="mobile-next-btn" className="mobile-next-btn form-control mt-5" disabled={mobNextbtn}>Get
+                                OTP</button>
+                        </div>
+                        : ''}
+
+                    {otpSectionDiv ?
+                        <div className="otp-section">
+                            <h6 className="mb-5 text-muted verification">Verification</h6>
+                            <h6 className="mb-3 enter-otp">OTP is sent to
+                                <span className='me-2'>
+                                    {' ' + fields['mobile']}
+                                    <sup>
+                                        <i className="bi bi-pencil-square edit-icon ms-2" onClick={editMobileLink}></i>
+                                    </sup>
+                                </span>
+                            </h6>
+                            <div className="input-group mb-2">
+                                <input type="text" name="otp1" className="form-control otp-value"
+                                    maxLength="1" onInput={otpInputHandler} onChange={handleFormFieldsChange} />
+                                <input type="text" name="otp2" className="form-control otp-value"
+                                    maxLength="1" onInput={otpInputHandler} onChange={handleFormFieldsChange} />
+                                <input type="text" name="otp3" className="form-control otp-value"
+                                    maxLength="1" onInput={otpInputHandler} onChange={handleFormFieldsChange} />
+                                <input type="text" name="otp4" className="form-control otp-value"
+                                    maxLength="1" onKeyUp={otp4InputHandler} onChange={handleFormFieldsChange} />
+                            </div>
+                            <span><ClipLoader size={16} color="#35bd35" loading={cliploader} /></span>
+                            <span className='otp-info' id='otp-info'></span>
+                            <div className="text-muted ms-1 mt-5 otp-not-received">Didn't get the OTP? 
+                                <span className="resend-otp" onClick={resendOTP}>Resend a new code</span>
+                            </div>
+                        </div>
+                        : ''}
+
+
+                    {addressSectionDiv ?
+                        <div className="address-section">
+                            <div className="row mb-2">
+                                <div className="col-md-6">
+                                    <input type="text" name="fullName" className="form-control addressTextBox"
+                                        placeholder="Full Name*" onChange={handleFormFieldsChange} />
+                                </div>
+                                <div className="col-md-6">
+                                    <input type="text" name="email" className="form-control addressTextBox"
+                                        placeholder="Email Address*" onChange={handleFormFieldsChange} />
+                                </div>
+                            </div>
+                            <div className="currentLocation">
+                                <a href=""><i className="bi bi-circle bi-geo-alt"></i></a> Use current
+                                location
+                            </div>
+                            <div className="mb-2">
+                                <input type="text" name="address" className="form-control addressTextBox"
+                                    placeholder="Address(Area and street)*" onChange={handleFormFieldsChange} />
+                            </div>
+                            <div className="row mb-3">
+                                <div className="col-md-6">
+                                    <input type="text" name="landmark" className="form-control mb-2 addressTextBox"
+                                        placeholder="Landmark*" onChange={handleFormFieldsChange} />
+                                    <input type="text" name="city" className="form-control addressTextBox"
+                                        placeholder="City/District/Town*" onChange={handleFormFieldsChange} />
+                                </div>
+                                <div className="col-md-6">
+                                    <input type="text" name="pincode" className="form-control mb-2 addressTextBox"
+                            placeholder="Pincode*" maxLength="6" onInput={pincodeInputHandler} onChange={handleFormFieldsChange} />
+                                    <select name="state" id="state" className="form-control addressTextBox" onChange={handleFormFieldsChange}>
+                                    {/* {statelist ? statelist.map((item) =>
+                                            <option value={item}>{item}</option>
+                                        ) : " "
+                                    } */}
+                                            <option value="0">--Select State--</option>
+                                            <option value="Odisha">Odisha</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div className="mb-2">
+                                <h6>Address Type*</h6>
+                            </div>
+                            <div className="addressTypeRadio">
+                                <div className="form-check col-md-4">
+                                    <input className="form-check-input" type="radio" name="addressType" id="home"
+                                        value="Home" defaultChecked onChange={handleFormFieldsChange} />
+                                    <label className="form-check-label" htmlFor="home">Home <br /> <span
+                                        style={{ fontSize: 10 + 'px' }}>(All day delivery)</span></label>
+                                </div>
+                                <div className="form-check col-md-4">
+                                    <input className="form-check-input" type="radio" name="addressType" id="work"
+                                        value="Work" onChange={handleFormFieldsChange} />
+                                    <label className="form-check-label" htmlFor="work">Work <br /> <span
+                                        style={{ fontSize: 10 + 'px' }}>(Between 10 AM-5 PM)</span></label>
+                                </div>
+                                <div className="form-check col-md-4 d-flex">
+                                    <input className="form-check-input me-2" type="radio" name="addressType" id="other"
+                                        value={fields['add_type_other']} onChange={handleFormFieldsChange} />
+                                    <label className="form-check-label me-2" htmlFor={fields['add_type_other']}>{fields['add_type_other']}</label>
+                                    <input type="text" id="add_type_other" className="add_type_other" onChange={handleFormFieldsChange} value={fields['add_type_other']}/>
+                                </div>
+                            </div>
+
+                            <div className="d-flex justify-content-between">
+                                <input type="button" className="address-back-btn form-control" value="&larr;"
+                                    onClick={addressBackBtnHandler} />
+                                <input type="button" className="address-next-btn form-control" value="Next"
+                                    onClick={addressNextBtnHandler} />
+                            </div>
+
+                        </div>
+                        : ''}
+
+                    {addressListSectionDiv ?
+                        <div className="address-list-section">
+                            <div className="address-list">
+
+                                {addresslist ? addresslist.map((item, i) =>
+                                    <ul style={{ listStyleType: "none", paddingLeft: 0 }} key={item._id}>
                                         <li>
-                                            <div className="cart-list-item row">
-                                                <div className="col-md-3 cart-img" style={{ paddingRight: 0 }}>
-                                                    <img src={item.productImg} alt="Cart 1" />
+                                            <div className="address-card active-address">
+                                                <div className="mb-2">
+                                                    <span className="add_list_round"><i className="bi bi-house-heart-fill"></i></span> <b
+                                                        style={{ fontSize: 'small' }}>{item.addressType}</b>
+                                                    <span className="edit-address-btn"><i className="bi bi-pencil-square"></i></span>
                                                 </div>
-                                                <div className="col-md-9">
-                                                    <div className="product-name">{item.productName}</div>
-                                                    <div className="variant">
-                                                        Size:&nbsp;<span style={{ paddingRight: 5+'px' }}>{item.productSize}</span>
-                                                        Color:&nbsp;<span className="color">{item.productColor}</span>
-                                                    </div>
-                                                    <div className="product-price">Rs.&nbsp;&nbsp;{item.productPrice} * {item.productQuantity}</div>
-                                                    <div className="remove-cart"><a className="remove" href="#."><i
-                                                        className="bi bi-trash-fill"></i> Remove </a></div>
+                                                <div>
+                                                    <input type="radio" className="form-check-input custom-align-radio me-2"
+                                                        name="shipping_address" defaultChecked />
+                                                    <label className="address-label"><span className="me-4">{'  '}{item.fullName}</span>
+                                                        <span>{item.address + ', ' + item.city + ', ' + item.state}</span></label>
                                                 </div>
                                             </div>
                                         </li>
@@ -705,116 +559,171 @@ const Home = () => {
                                 ) : "Data Not Found"
                                 }
 
-                                {/* <div className="cart-list-item row">
-                            <div className="col-md-3 cart-img"  style={{paddingRight: 0}}>
-                                <img src="../../img/adidas.png" alt="Cart 1" />
-                            </div>
-                            <div className="col-md-9">
-                                <div className="product-name">Adidas Style Sneakers</div>
-                                <div className="variant">Size&nbsp;&nbsp;<span className="size">XL</span>
-                                    Color&nbsp;&nbsp;<span className="color">Blue</span></div>
-                                <div className="product-price">Rs. 1685.00 * 01</div>
-                                <div className="remove-cart"><a className="remove" href="#."><i
-                                            className="bi bi-trash-fill"></i> Remove </a></div>
-                            </div>
+                                {/* <div className="address-card active-address">
+                        <div className="mb-2">
+                            <span className="add_list_round"><i className="bi bi-house-heart-fill"></i></span> <b
+                                style={{fontSize: 'small'}}>Home</b>
+                            <span className="edit-address-btn"><i className="bi bi-pencil-square"></i></span>
                         </div>
-                        <div className="cart-list-item row">
-                            <div className="col-md-3 cart-img" style={{paddingRight: 0}}>
-                                <img src="../../img/sneaker.png" alt="Cart 1" />
-                            </div>
-                            <div className="col-md-9">
-                                <div className="product-name">Adidas Style Sneakers</div>
-                                <div className="variant">Size&nbsp;&nbsp;<span className="size">XL</span>
-                                    Color&nbsp;&nbsp;<span className="color">Blue</span></div>
-                                <div className="product-price">Rs. 1685.00 * 01</div>
-                                <div className="remove-cart"><a href="#."><i className="bi bi-trash-fill"></i> Remove
-                                    </a></div>
-                            </div>
+                        <div>
+                            <input type="radio" className="form-check-input custom-align-radio"
+                                name="shipping_address" defaultChecked />
+                            <label className="address-label"><span className="me-4">Vikas Kumar</span><span>Bolck C,
+                                    Sector - 8, Chandigarh</span></label>
                         </div>
-                        <div className="cart-list-item row">
-                            <div className="col-md-3 cart-img" style={{paddingRight: 0}}>
-                                <img src="../../img/puma.png" alt="Cart 1" />
-                            </div>
-                            <div className="col-md-9">
-                                <div className="product-name">Adidas Style Sneakers</div>
-                                <div className="variant">Size&nbsp;&nbsp;<span className="size">XL</span>
-                                    Color&nbsp;&nbsp;<span className="color">Blue</span></div>
-                                <div className="product-price">Rs. 1685.00 * 01</div>
-                                <div className="remove-cart"><a href="#."><i className="bi bi-trash-fill"></i> Remove
-                                    </a></div>
-                            </div>
-                        </div> */}
-                            </div>
-
-                            <div className="row">
-                                <div className="col-md-8">
-                                    <div className="price">Subtotal</div>
-                                    <div className="discount">Coupon Discount</div>
-                                    <div className="shipping">Shipping</div>
-                                </div>
-                                <div className="col-md-4 text-end">
-                                    <div className="amount">&#8377; 3299.00</div>
-                                    <div className="amount">&#8377; 659.80</div>
-                                    <div className="amount">&#8377; 0.00</div>
-                                </div>
-
-                                <div className="col-md-6">
-                                    <div><strong>To Pay</strong></div>
-                                </div>
-                                <div className="col-md-6 text-end">
-                                    <div><strong>&#8377; 2639.00</strong></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="coupon-section">
-                            <span><strong>Coupon Details</strong></span>
-                            <div className="coupon-box">
-                                <div className="row mb-2">
-                                    <div className="col-md-8">
-                                        <input type="text" className="form-control coupon_text" id="cpnTextbox"
-                                            placeholder="Promocode" />
-                                    </div>
-                                    <div className="col-md-4">
-                                        <button className="coupon_apply_btn">Apply</button>
-                                    </div>
-                                </div>
-                                <div className="coupon-list">
-                                    <div className="coupon-details">
-                                        <label className="form-check-label">
-                                            <div className="c-list">
-                                                <div className="coupon fw-bold">CC20</div>
-                                                <div className="coupon-desc">Get upto 20% discount on your purchase</div>
-                                                <div className="apply-code"><a href=""> Apply Now </a></div>
-                                            </div>
-                                        </label>
-                                    </div>
-                                    <div className="coupon-details">
-                                        <label className="form-check-label">
-                                            <div className="c-list">
-                                                <div className="coupon fw-bold">CC20</div>
-                                                <div className="coupon-desc">Get upto 20% discount on your purchase</div>
-                                                <div className="apply-code"><a href=""> Apply Now </a></div>
-                                            </div>
-                                        </label>
-                                    </div>
-                                    <div className="coupon-details">
-                                        <label className="form-check-label">
-                                            <div className="c-list">
-                                                <div className="coupon fw-bold">CC20</div>
-                                                <div className="coupon-desc">Get upto 20% discount on your purchase</div>
-                                                <div className="apply-code"><a href=""> Apply Now </a></div>
-                                            </div>
-                                        </label>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-
                     </div>
+
+                    <div className="address-card">
+                        <div className="mb-2">
+                            <span className="add_list_round"><i className="bi bi-house-heart-fill"></i></span> <b
+                                style={{fontSize: 'small'}}>Work</b>
+                            <span className="delete-address-btn"><i className="bi bi-trash"></i></span>
+                            <span className="edit-address-btn"><i className="bi bi-pencil-square"></i></span>
+                        </div>
+                        <div>
+                            <input type="radio" className="form-check-input custom-align-radio"
+                                name="shipping_address" />
+                            <label className="address-label"><span className="me-4">Vikas Kumar</span><span>Bolck C,
+                                    Sector - 8, Chandigarh</span></label>
+                        </div>
+                        <span className="make-default-address">Make as default</span>
+                    </div>
+
+                    <div className="address-card">
+                        <div className="mb-2">
+                            <span className="add_list_round"><i className="bi bi-house-heart-fill"></i></span> <b
+                                style={{fontSize: 'small'}}>Friend</b>
+                            <span className="delete-address-btn"><i className="bi bi-trash"></i></span>
+                            <span className="edit-address-btn"><i className="bi bi-pencil-square"></i></span>
+                        </div>
+                        <div>
+                            <input type="radio" className="form-check-input custom-align-radio"
+                                name="shipping_address" />
+                            <label className="address-label"><span className="me-4">Vikas Kumar</span><span>Bolck C,
+                                    Sector - 8, Chandigarh</span></label>
+                        </div>
+                        <span className="make-default-address">Make as default</span>
+                    </div> */}
+
+                            </div>
+                            <div className="add-new-address" id="add-new-address">
+                                <i className="bi bi-plus-circle-fill"></i> Add address
+                            </div>
+
+                            <button className="pay-nxt-btn">Next</button>
+                        </div>
+                        : ''}
+
+
                 </div>
-            
+
+                <div className="checkout-container-right">
+                    {/* <div className="close-btn" data-bs-dismiss="modal"><i className="bi bi-x-lg"></i></div> */}
+
+                    <div className="top-section">
+                        <span><strong>Order Summary</strong></span>
+                    </div>
+
+                    {/* order summary */}
+                    <div className="cart-section">
+
+                       
+                        <div className="cart-list">
+                            {productlist && productlist.length > 0 ? productlist.lineItems.map((item) =>
+                                <ul style={{ listStyleType: 'none', paddingLeft: 0}} key={item._id}>
+                                    <li>
+                                        <div className="cart-list-item row">
+                                            <div className="col-md-3 cart-img" style={{ paddingRight: 0 }}>
+                                                <img src={item.image} alt="Cart 1" />
+                                            </div>
+                                            <div className="col-md-9">
+                                                <div className="product-name">{item.itemName}</div>
+                                                {/* <div className="variant">
+                                                    Size:&nbsp;<span style={{ paddingRight: 5+'px' }}>{item.productSize}</span>
+                                                    Color:&nbsp;<span className="color">{item.productColor}</span>
+                                                </div> */}
+                                                {/* <div className="product-price">Rs.&nbsp;&nbsp;{item.productPrice} * {item.productQuantity}</div> */}
+                                                <div className="remove-cart"><a className="remove" href="#."><i
+                                                    className="bi bi-trash-fill"></i> Remove </a></div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            ) : ''
+                            }
+                        </div>
+
+                        <div className="row">
+                            <div className="col-md-8">
+                                <div className="price">Subtotal</div>
+                                <div className="discount">Coupon Discount</div>
+                                <div className="shipping">Shipping</div>
+                            </div>
+                            <div className="col-md-4 text-end">
+                                <div className="amount">&#8377; 3299.00</div>
+                                <div className="amount">&#8377; 659.80</div>
+                                <div className="amount">&#8377; 0.00</div>
+                            </div>
+
+                            <div className="col-md-6">
+                                <div><strong>To Pay</strong></div>
+                            </div>
+                            <div className="col-md-6 text-end">
+                                <div><strong>&#8377; 2639.00</strong></div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+                    <div className="coupon-section">
+                        <span><strong>Coupon Details</strong></span>
+                        <div className="coupon-box">
+                            <div className="row mb-2">
+                                <div className="col-md-8">
+                                    <input type="text" className="form-control coupon_text" id="cpnTextbox"
+                                        placeholder="Promocode" />
+                                </div>
+                                <div className="col-md-4">
+                                    <button className="coupon_apply_btn">Apply</button>
+                                </div>
+                            </div>
+                            <div className="coupon-list">
+                                <div className="coupon-details">
+                                    <label className="form-check-label">
+                                        <div className="c-list">
+                                            <div className="coupon fw-bold">CC20</div>
+                                            <div className="coupon-desc">Get upto 20% discount on your purchase</div>
+                                            <div className="apply-code"><a href=""> Apply Now </a></div>
+                                        </div>
+                                    </label>
+                                </div>
+                                <div className="coupon-details">
+                                    <label className="form-check-label">
+                                        <div className="c-list">
+                                            <div className="coupon fw-bold">CC20</div>
+                                            <div className="coupon-desc">Get upto 20% discount on your purchase</div>
+                                            <div className="apply-code"><a href=""> Apply Now </a></div>
+                                        </div>
+                                    </label>
+                                </div>
+                                <div className="coupon-details">
+                                    <label className="form-check-label">
+                                        <div className="c-list">
+                                            <div className="coupon fw-bold">CC20</div>
+                                            <div className="coupon-desc">Get upto 20% discount on your purchase</div>
+                                            <div className="apply-code"><a href=""> Apply Now </a></div>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>            
         </>
     )
 }
