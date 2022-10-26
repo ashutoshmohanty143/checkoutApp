@@ -35,56 +35,54 @@ const Home = () => {
     },[]);
 
     const cartDetails = () => {
-        const cartRequest =
-        {
-            "pincode": "751010",
-            "vendorId": "62f1e95815f7885d3abbd760",
-            "cartItems": [
-                {
-                    "productId": 6800847077428,
-                    "quantity": 1,
-                    "selectedOptions": [
-                        {
-                            "name": "Size",
-                            "value": "S"
-                        },
-                        {
-                            "name": "Color",
-                            "value": "Black"
-                        }
-                    ]
-                },
-                {
-                    "productId": 6800847077428,
-                    "quantity": 2,
-                    "selectedOptions": [
-                        {
-                            "name": "Size",
-                            "value": "M"
-                        },
-                        {
-                            "name": "Color",
-                            "value": "Black"
-                        }
-                    ]
-                },
-                {
-                    "productId": 6880080920628,
-                    "quantity": 2,
-                    "selectedOptions": []
-                }
-            ]
-        }
-
-        const cartUri = encodeURIComponent(JSON.stringify(cartRequest));
-        //setcartLoader(true);
-        // const search = useLocation().search;
-        // const uri = new URLSearchParams(search).get("id");
-        // console.log(uri);
-
         const url_string = window.location.href; 
         const url = new URL(url_string);
         const cartDetails = JSON.parse(url.searchParams.get("carturi"));
+        
+        // const cartRequest =
+        // {
+        //     "pincode": "751010",
+        //     "vendorId": "62f1e95815f7885d3abbd760",
+        //     "cartItems": [
+        //         {
+        //             "productId": 6800847077428,
+        //             "quantity": 1,
+        //             "selectedOptions": [
+        //                 {
+        //                     "name": "Size",
+        //                     "value": "S"
+        //                 },
+        //                 {
+        //                     "name": "Color",
+        //                     "value": "Black"
+        //                 }
+        //             ]
+        //         },
+        //         {
+        //             "productId": 6800847077428,
+        //             "quantity": 2,
+        //             "selectedOptions": [
+        //                 {
+        //                     "name": "Size",
+        //                     "value": "M"
+        //                 },
+        //                 {
+        //                     "name": "Color",
+        //                     "value": "Black"
+        //                 }
+        //             ]
+        //         },
+        //         {
+        //             "productId": 6880080920628,
+        //             "quantity": 2,
+        //             "selectedOptions": []
+        //         }
+        //     ]
+        // }
+
+        //const cartUri = encodeURIComponent(JSON.stringify(cartRequest));
+
+        
 
         ApiServices.manageCart(cartDetails).then(response => {
             //console.log(response)
@@ -108,10 +106,16 @@ const Home = () => {
     }
 
     const couponDetails = () => {
+        const url_string = window.location.href; 
+        const url = new URL(url_string);
+        const cartDetails = JSON.parse(url.searchParams.get("carturi"));
+        
         const request =
         {
-            "vendorId": "62f1e95815f7885d3abbd760"
-        }
+            "vendorId": cartDetails.vendorId
+        }  
+
+
         ApiServices.manageCoupon(request).then(response => {
             if(response && response.data){
                 setCouponLoader(false);
