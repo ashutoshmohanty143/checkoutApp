@@ -7,6 +7,7 @@ import ApiServices from '../Common/ApiServices';
 import { useLocation } from 'react-router-dom';
 
 const Home = () => {
+    const MOB_MAX_NUM = 12;
     const [mobileSectionDiv, setMobileSectionDiv] = useState(true);
     const [otpSectionDiv, setOtpSectionDiv] = useState(false);
     const [addressSectionDiv, setAddressSectionDiv] = useState(false);
@@ -14,7 +15,6 @@ const Home = () => {
 
     const [addressStepActive, setAddressStepActive] = useState(false);
     const [paymentStepActive, setPaymentStepActive] = useState(false);
-    const [aa, setAa] = useState(false);
     const [modalShow, setmodalShow] = useState(false);
 
     const [mobNextbtn, setMobNextbtn] = useState(true);
@@ -23,10 +23,18 @@ const Home = () => {
     const [statelist, setStatelist] = useState([]);
     const [addresslist, setAddresslist] = useState([]);
     const [productlist, setProductlist] = useState([]);
+    const [couponlist, setCouponlist] = useState([]);
     const [cliploader, setCliploader] = useState(false);
-    const [cartLoader, setcartLoader] = useState(false);
+    const [cartloader, setcartLoader] = useState(true);
+    const [couponloader, setCouponLoader] = useState(true);
+    
 
     useEffect(() => {
+        cartDetails();
+        couponDetails();
+    },[]);
+
+    const cartDetails = () => {
         const cartRequest =
         {
             "pincode": "751010",
@@ -69,7 +77,7 @@ const Home = () => {
         }
 
         const cartUri = encodeURIComponent(JSON.stringify(cartRequest));
-        setcartLoader(true);
+        //setcartLoader(true);
         // const search = useLocation().search;
         // const uri = new URLSearchParams(search).get("id");
         // console.log(uri);
@@ -79,26 +87,49 @@ const Home = () => {
         const cartDetails = JSON.parse(url.searchParams.get("carturi"));
 
         ApiServices.manageCart(cartDetails).then(response => {
-            if(response && response.data.data){
+            //console.log(response)
+            if(response && response.data){
                 setcartLoader(false);
                 if(response.status === 200 && response.data.status === "success"){
-                    setAa(true);
                     const cartDetails = response.data.data;
+                    //console.log(cartDetails);
                     setProductlist([cartDetails]);
 
-                } else if(response.data.status === "failure"){
-                    console.log('error');
+                } else if(response.data.status === "false"){
+                    setcartLoader(true);
+                    console.log("error1");
                 }        
             } else {
-              console.log("Error");
+                console.log("error2")
             }
         }).catch(error => {
-            console.log("error", error)
+            console.log("error3", error);
         });
+    }
 
-    });
+    const couponDetails = () => {
+        const request =
+        {
+            "vendorId": "62f1e95815f7885d3abbd760"
+        }
+        ApiServices.manageCoupon(request).then(response => {
+            if(response && response.data){
+                setCouponLoader(false);
+                if(response.status === 200 && response.data.status === "success"){
+                    const couponDetails = response.data.data;
+                    setCouponlist(couponDetails);
 
-    const MOB_MAX_NUM = 12;
+                } else if(response.data.status === "false"){
+                    setCouponLoader(true);
+                    console.log("error1");
+                }        
+            } else {
+                console.log("error2")
+            }
+        }).catch(error => {
+            console.log("error3", error);
+        });
+    }
 
     const handleFormFieldsChange = (event) => {
         setFields(fields => ({
@@ -379,8 +410,11 @@ const Home = () => {
           }
     }
     
-    //console.log(aa);
-    console.log(productlist);
+    const subtotalAmount = productlist.length ? productlist[0].subtotalAmount.amount : 0;
+    const taxAmount = productlist.length ? productlist[0].totalTaxAmount.amount : 0;
+    const totalAmount = productlist.length ? productlist[0].totalAmount.amount : 0;
+
+    console.log(couponlist);
     return (     
         <>            
             <div className="modal-body row">
@@ -628,50 +662,46 @@ const Home = () => {
                     {/* order summary */}
                     <div className="cart-section">                       
                         <div className={`cart-list ${!productlist.length ? 'text-center' : '' }`}>
+                            <ul>
+                                
 
-                            {productlist && productlist.length > 0 ? productlist[0].lineItems.map((item) =>
-                                <ul style={{ listStyleType: 'none', paddingLeft: 0}} key={item.cartItemId}>
-                                    <li>
+                            {productlist && productlist.length ? productlist[0].lineItems.map((item) =>
+                                    <li className='cart-list-item' key={item.productVariantId}>
                                         <div className="cart-list-item row">
-                                            <div className="col-md-3 cart-img" style={{ paddingRight: 0 }}>
+                                            <div className="col-md-3 cart-img" style={{paddingRight: 0 }}>
                                                 <img src={item.image} alt="Cart 1" />
                                             </div>
                                             <div className="col-md-9">
                                                 <div className="product-name">{item.itemName}</div>
                                                 <div className="variant">
-                                                    {/* {productlist && productlist.length > 0 ? productlist[0].lineItems.map((item) =>
-                                                        <div className="variant">
-                                                            Size:&nbsp;<span style={{ paddingRight: 5+'px' }}>{item.productSize}</span>
-                                                            Color:&nbsp;<span className="color">{item.productColor}</span>
-                                                        </div>
-                                                    ) : ''
-                                                    } */}
+                                                    {item.itemOptions && item.itemOptions.length > 0 ? item.itemOptions.map((item1) =>
+                                                    <>
+                                                    {item1.name} : 
+                                                    <span className="variant-option"> &nbsp; {item1.value}</span>
+                                                    </>) : ''
+                                                    }
                                                 </div>
                                                 <div className="product-price">Rs.&nbsp;&nbsp;{item.price} * {item.itemQuantity}</div>
                                                 <div className="remove-cart"><a className="remove" href="#."><i
                                                     className="bi bi-trash-fill"></i> Remove </a></div>
                                             </div>
                                         </div>
-                                    </li>
-                                </ul>
-                            ) : 
-                            
-                            <span><ClipLoader size={16} color="#000" loading={cartLoader} /></span>
-                            
-                            }
-
-
+                                    </li> 
+                                ) : 
+                                    <span><ClipLoader size={20} color="#000" loading={cartloader} /></span>                            
+                                }
+                            </ul>
                         </div>
-
                         <div className="row">
                             <div className="col-md-8">
                                 <div className="price">Subtotal</div>
-                                <div className="discount">Coupon Discount</div>
+                                {/* <div className="discount">Coupon Discount</div> */}
+                                <div className="discount">Tax</div>
                                 <div className="shipping">Shipping</div>
                             </div>
                             <div className="col-md-4 text-end">
-                                <div className="amount">&#8377; 3299.00</div>
-                                <div className="amount">&#8377; 659.80</div>
+                                <div className="amount">&#8377; {subtotalAmount}</div>
+                                <div className="amount">&#8377; {taxAmount}</div>
                                 <div className="amount">&#8377; 0.00</div>
                             </div>
 
@@ -679,13 +709,10 @@ const Home = () => {
                                 <div><strong>To Pay</strong></div>
                             </div>
                             <div className="col-md-6 text-end">
-                                <div><strong>&#8377; 2639.00</strong></div>
+                                <div><strong>&#8377; {totalAmount}</strong></div>
                             </div>
                         </div>
                     </div>
-
-
-
 
                     <div className="coupon-section">
                         <span><strong>Coupon Details</strong></span>
@@ -700,7 +727,19 @@ const Home = () => {
                                 </div>
                             </div>
                             <div className="coupon-list">
-                                <div className="coupon-details">
+                                {couponlist && couponlist.length ? couponlist.map((item) =>
+                                    <div className="coupon-details">
+                                        <label className="form-check-label">
+                                            <div className="c-list">
+                                                <div className="coupon fw-bold">{item.code}</div>
+                                                <div className="coupon-desc">Get upto {Math.trunc(item.value * -1)}% discount on your purchase</div>
+                                                <div className="apply-code"><a href=""> Apply Now </a></div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                        ): <span><ClipLoader size={20} color="#000" loading={couponloader} /></span> 
+                                        }
+                                {/* <div className="coupon-details">
                                     <label className="form-check-label">
                                         <div className="c-list">
                                             <div className="coupon fw-bold">CC20</div>
@@ -717,16 +756,7 @@ const Home = () => {
                                             <div className="apply-code"><a href=""> Apply Now </a></div>
                                         </div>
                                     </label>
-                                </div>
-                                <div className="coupon-details">
-                                    <label className="form-check-label">
-                                        <div className="c-list">
-                                            <div className="coupon fw-bold">CC20</div>
-                                            <div className="coupon-desc">Get upto 20% discount on your purchase</div>
-                                            <div className="apply-code"><a href=""> Apply Now </a></div>
-                                        </div>
-                                    </label>
-                                </div>
+                                </div> */}
                             </div>
 
                         </div>
