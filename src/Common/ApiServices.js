@@ -1,6 +1,6 @@
 import axios from 'axios';
-//const API_BASE_URL = "http://localhost:5000/api/curd";
-const API_BASE_URL = "http://thinkfast.in:5000/api/curd";
+const API_BASE_URL = "http://localhost:5000/api/curd";
+//const API_BASE_URL = "https://thinkfast.in:5000/api/curd";
 
 class ApiServices {
     
@@ -16,9 +16,9 @@ class ApiServices {
         return axios.post(API_BASE_URL+"/discount-code", formData);
     }
 
-    // AddRecord(formData){
-    //     return axios.post(API_BASE_URL+"/doc", formData);
-    // }  
+    editCart(formData){
+        return axios.post(API_BASE_URL+"/doc", formData);
+    }  
 
     // GetAllRecords(collectionName){
     //     return axios.get(API_BASE_URL+"/doc/?collection="+collectionName);
