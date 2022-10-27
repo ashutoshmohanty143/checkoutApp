@@ -2,6 +2,9 @@
     body {
         font-family: 'Poppins', sans-serif;
     }
+    .hide{
+        display: none;
+    }
     .checkoutApp {
         overflow-x: hidden;
     }
@@ -486,6 +489,10 @@
         padding: 2px 12px 0px 0px;
         max-height: 135px;
     }
+    .cart-list ul {
+        list-style-type: none;
+        padding-left: 0px;
+    }
     .product-name{
         font-size: 13px;
         margin-bottom: 2px;
@@ -516,7 +523,7 @@
 
     .cart-list-item{
         position: relative;
-        margin-bottom: 15px;
+        margin-bottom: 10px;
     }
     .cart-list-item:last-child{
         margin-bottom: 0px;
@@ -527,6 +534,9 @@
     .cart-img img{
         height: 58px;
         width: 100%;
+    }
+    .variant-option {
+        margin-right: 15px;
     }
     .price,.discount,.shipping{
         font-size: 12px;
