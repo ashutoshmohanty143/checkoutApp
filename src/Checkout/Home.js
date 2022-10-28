@@ -85,14 +85,11 @@ const Home = () => {
         
 
         ApiServices.manageCart(cartDetails).then(response => {
-            //console.log(response)
             if(response && response.data){
                 setcartLoader(false);
                 if(response.status === 200 && response.data.status === "success"){
                     const cartDetails = response.data.data;
-                    //console.log(cartDetails);
                     setProductlist([cartDetails]);
-
                 } else if(response.data.status === "false"){
                     setcartLoader(true);
                     console.log("error1");
@@ -154,9 +151,7 @@ const Home = () => {
         CommonMethods.phoneMasking(event);
         if (event.target.value.length != event.target.maxLength && event.target.value.length != MOB_MAX_NUM) {
             setMobNextbtn(true);
-            // document.querySelector('#mobile').blur();
             document.querySelector('#mobile-next-btn').classList.remove('active-btn');
-            // document.querySelector('#mobile').classList.add('danger-border');
             document.querySelector('#mobile').classList.remove('active-border');
             document.querySelectorAll('.green-check')[0].style.display = "none";
             document.querySelectorAll('.red-alert')[0].style.display = "block";
@@ -165,25 +160,13 @@ const Home = () => {
             setMobNextbtn(false);
             document.querySelector('#mobile').blur();
             document.querySelector('#mobile-next-btn').classList.add('active-btn');
-            // document.querySelector('#mobile').classList.remove('danger-border');
             document.querySelector('#mobile').classList.add('active-border');
             document.querySelectorAll('.green-check')[0].style.display = "block";   
             document.querySelectorAll('.red-alert')[0].style.display = "none";
         }
     }
 
-    const mobileKeyupHandler = (event) => {
-        // if(!CommonMethods.numberValidation(event)){
-        //     document.querySelector('#mobile').blur();
-        //     document.querySelectorAll('.red-alert')[0].style.display = "block";
-        //     document.querySelector('#mobile').classList.add('danger-border');
-            
-        // } else {
-        //     document.querySelectorAll('.red-alert')[0].style.display = "none";
-        //     document.querySelector('#mobile').classList.remove('danger-border');
-        // }
-    }
-
+    
     const otpInputHandler = (event) => {
         if (event.target.value.length == 1 && event.target.value.length == event.target.maxLength) {
             event.target.classList.add('active-border');
@@ -207,8 +190,6 @@ const Home = () => {
             //check existing user
             let vendorId = '62f9d325591adcd5e44e18ecs';
             let mobile = CommonMethods.unmask(fields['mobile']);
-
-            //console.log(mobile);
             const formData = {
                 "collection": "customers_"+vendorId,
                 "data": {
@@ -216,13 +197,7 @@ const Home = () => {
                 }
             };
 
-            console.log(formData);
-
-            ApiServices.CheckExistingCustomer(formData).then(response => {      
-                //console.log("response", response);       
-                //console.log("responseData", response.data);       
-                //console.log("responsestatus", response.status);
-                return false;       
+            ApiServices.CheckExistingCustomer(formData).then(response => {           
                 if (response.status === 200 && response.data.status == 'success' && response.data.isNewCustomer == true ) {
                     setTimeout(() => {
                         setCliploader(true);
@@ -235,7 +210,6 @@ const Home = () => {
                     }, "5000");
                 } else if(response.status === 200 && response.data.status == 'success' && response.data.isNewCustomer == false){
                     setAddresslist(response.data);
-                    //console.log(addresslist);
                     setTimeout(() => {
                         setCliploader(true);
                         document.getElementById('otp-info').style.display = "block";
@@ -249,28 +223,6 @@ const Home = () => {
             }).catch(error => {
                 console.log(error);
             }); 
-            
-            // if (addresslist.length === 0) {
-            //     setTimeout(() => {
-            //         setCliploader(true);
-            //         document.getElementById('otp-info').style.display = "block";
-            //         document.getElementById('otp-info').innerHTML = 'Verifying OTP';
-            //         }, "1000");
-            //     setTimeout(() => {
-            //         setOtpSectionDiv(false);
-            //         setAddressSectionDiv(true);
-            //     }, "5000");
-            // } else {
-            //     setTimeout(() => {
-            //         setCliploader(true);
-            //         document.getElementById('otp-info').style.display = "block";
-            //         document.getElementById('otp-info').innerHTML = 'Verifying OTP';
-            //         }, "1000");
-            //     setTimeout(() => {
-            //         setOtpSectionDiv(false);
-            //         setaddressListSectionDiv(true);
-            //     }, "5000");
-            // }
         }
     }
 
@@ -418,7 +370,6 @@ const Home = () => {
     const taxAmount = productlist.length ? productlist[0].totalTaxAmount.amount : 0;
     const totalAmount = productlist.length ? productlist[0].totalAmount.amount : 0;
 
-    console.log(couponlist);
     return (     
         <>            
             <div className="modal-body row">
