@@ -5,6 +5,7 @@ import CommonMethods from '../Common/CommonMethods';
 import './style.css';
 import ApiServices from '../Common/ApiServices';
 import { useLocation } from 'react-router-dom';
+import swal from 'sweetalert';
 
 const Home = () => {
     const MOB_MAX_NUM = 12;
@@ -22,21 +23,24 @@ const Home = () => {
     const [errors, setErrors] = useState({});
     const [statelist, setStatelist] = useState([]);
     const [addresslist, setAddresslist] = useState([]);
-    const [productlist, setProductlist] = useState([]);
+    const [cartInfo, setCartInfo] = useState([]);
+    const [cartItem, setCartItem] = useState([]);
     const [couponlist, setCouponlist] = useState([]);
     const [cliploader, setCliploader] = useState(false);
     const [cartloader, setcartLoader] = useState(true);
     const [couponloader, setCouponLoader] = useState(true);
+    const [cartProductIds, setCartProductId] = useState([]);
+    const [cartVariantIds, setCartVariantId] = useState([]);
     
 
     useEffect(() => {
         cartDetails();
-        couponDetails();
+        //couponDetails();
     },[]);
 
-    const cartDetails = () => {
-        const url_string = window.location.href; 
-        const url = new URL(url_string);
+    const cartDetails = async () => {
+        const urlString = window.location.href; 
+        const url = new URL(urlString);
         const cartDetails = JSON.parse(url.searchParams.get("carturi"));
         
         // const cartRequest =
@@ -72,65 +76,183 @@ const Home = () => {
         //                 }
         //             ]
         //         },
-        //         {
-        //             "productId": 6880080920628,
-        //             "quantity": 2,
-        //             "selectedOptions": []
-        //         }
+        //         // {
+        //         //     "productId": 6880080920628,
+        //         //     "quantity": 2,
+        //         //     "selectedOptions": []
+        //         // }
         //     ]
         // }
 
-        //const cartUri = encodeURIComponent(JSON.stringify(cartRequest));
+        // const cartUri = encodeURIComponent(JSON.stringify(cartRequest));
+        // console.log(cartUri);
 
-        
-
-        ApiServices.manageCart(cartDetails).then(response => {
-            if(response && response.data){
+        //order summary
+        const cartDetailsResponse = await ApiServices.manageCart(cartDetails);
+        try {
+            if(cartDetailsResponse && cartDetailsResponse.data.data){
+                //console.log(cartDetailsResponse);
                 setcartLoader(false);
-                if(response.status === 200 && response.data.status === "success"){
-                    const cartDetails = response.data.data;
-                    setProductlist([cartDetails]);
-                } else if(response.data.status === "false"){
+                if(cartDetailsResponse.status === 200 && cartDetailsResponse.data.status === "success"){
+                   let cartData = cartDetailsResponse.data.data;
+                    const lineCartItems = cartData.lineItems;
+                    //console.log(lineCartItems);
+                    let cartProductId = [];
+                    let cartVariantId = [];
+                    lineCartItems.map((item) => {
+                        cartProductId.push(item.productId);
+                        cartVariantId.push(item.productVariantId);
+                        
+                    });
+
+                    
+
+                    setCartProductId(...cartProductIds,cartProductId);
+                    setCartVariantId(...cartVariantIds,cartVariantId);
+
+                    //console.log('cartProductIds',cartProductIds);
+                    //console.log('cartVariantIds',cartVariantIds);
+
+                    setCartItem(lineCartItems);
+                    let cartInfoDetails = {};
+                    cartInfoDetails["subtotalAmount"] = cartData.subtotalAmount.amount;
+                    cartInfoDetails["taxAmount"] = cartData.totalTaxAmount.amount;
+                    cartInfoDetails["totalAmount"] = cartData.totalAmount.amount;
+                    cartInfoDetails["cartId"] = cartData.cartId;
+                    setCartInfo(cartInfoDetails);                    
+                } else if(cartDetailsResponse.data.status === "false"){
                     setcartLoader(true);
                     console.log("error1");
                 }        
             } else {
                 console.log("error2")
             }
-        }).catch(error => {
+        } catch(error) {
             console.log("error3", error);
-        });
-    }
+        };
 
-    const couponDetails = () => {
-        const url_string = window.location.href; 
-        const url = new URL(url_string);
-        const cartDetails = JSON.parse(url.searchParams.get("carturi"));
+        // ApiServices.manageCart(cartDetails).then(response => {
+        //     if(response && response.data.data){
+        //         //console.log(response);
+        //         setcartLoader(false);
+        //         if(response.status === 200 && response.data.status === "success"){
+                    
+
+        //             const lineCartItems = response.data.data.lineItems;
+        //             //console.log(lineCartItems);
+        //             let cartProductIds = [];
+        //             let cartVariantIds = [];
+        //             lineCartItems.map((item) => {
+        //                 cartProductIds.push(item.productId);
+        //                 cartVariantIds.push(item.productVariantId);
+                        
+        //             });
+        //             setCartProductId(cartProductIds);
+        //             setCartVariantId(cartVariantIds);
+
+        //             setCartItem(lineCartItems);
+        //             let cartInfoDetails = {};
+        //             cartInfoDetails["subtotalAmount"] = response.data.data.subtotalAmount.amount;
+        //             cartInfoDetails["taxAmount"] = response.data.data.totalTaxAmount.amount;
+        //             cartInfoDetails["totalAmount"] = response.data.data.totalAmount.amount;
+        //             cartInfoDetails["cartId"] = response.data.data.cartId;
+        //             setCartInfo(cartInfoDetails);
+
+                    
+        //         } else if(response.data.status === "false"){
+        //             setcartLoader(true);
+        //             console.log("error1");
+        //         }        
+        //     } else {
+        //         console.log("error2")
+        //     }
+        // }).catch(error => {
+        //     console.log("error3", error);
+        // });
+
+
+        // const request =
+        // {
+        //     "vendorId": cartDetails.vendorId
+        // }
         
-        const request =
-        {
-            "vendorId": cartDetails.vendorId
-        }  
+        //coupon Details
+        console.log('cartProductIds',cartProductIds);
+        console.log('cartVariantIds',cartVariantIds);
 
-
-        ApiServices.manageCoupon(request).then(response => {
-            if(response && response.data){
+        const couponDetailsResponse = await ApiServices.manageCoupon(cartDetails);
+        try {
+            if(couponDetailsResponse && couponDetailsResponse.data){
                 setCouponLoader(false);
-                if(response.status === 200 && response.data.status === "success"){
-                    const couponDetails = response.data.data;
-                    setCouponlist(couponDetails);
-
-                } else if(response.data.status === "false"){
+                if(couponDetailsResponse.status === 200 && couponDetailsResponse.data.status === "success"){
+                    const couponData = couponDetailsResponse.data.data;
+                    couponData.map((coupon) => {
+                        if(coupon.target_selection === 'entitled') {
+                            if(coupon.entitled_product_ids.length > 0){
+                                cartProductIds.map((singlePid) => {
+                                    if(!coupon.entitled_product_ids.includes(singlePid)) {
+                                        coupon.isDisabled = true;
+                                    } else {
+                                        coupon.isDisabled = false;
+                                    }   
+                                });
+                            } else if(coupon.entitled_variant_ids.length > 0){
+                                cartVariantIds.map((singleVid) => {
+                                    if(!coupon.entitled_variant_ids.includes(singleVid)) {
+                                        coupon.isDisabled = true;
+                                    } else {
+                                        coupon.isDisabled = false;
+                                    }   
+                                });
+                            } else {
+                                coupon.isDisabled = false;
+                            }
+                        } else {
+                            coupon.isDisabled = false;
+                        }
+                    })
+                    
+                    console.log(couponData);
+                    setCouponlist(couponData);
+                } else if(couponDetailsResponse.data.status === "false"){
                     setCouponLoader(true);
                     console.log("error1");
                 }        
             } else {
                 console.log("error2")
             }
-        }).catch(error => {
-            console.log("error3", error);
-        });
+        } catch(error) {
+            console.log("error4", error);
+        };
     }
+
+    // const couponDetails = async () => {
+    //     const url_string = window.location.href; 
+    //     const url = new URL(url_string);
+    //     const cartDetails = JSON.parse(url.searchParams.get("carturi"));
+        
+        
+
+    //     ApiServices.manageCoupon(request).then(response => {
+    //         if(response && response.data){
+    //             setCouponLoader(false);
+    //             if(response.status === 200 && response.data.status === "success"){
+    //                 const couponDetails = response.data.data;
+    //                 //console.log(couponDetails);
+                    
+    //                 setCouponlist(couponDetails);
+
+    //             } else if(response.data.status === "false"){
+    //                 setCouponLoader(true);
+    //                 console.log("error1");
+    //             }        
+    //         } else {
+    //             console.log("error2")
+    //         }
+    //     }).catch(error => {
+    //         console.log("error3", error);
+    //     });
+    // }
 
     const handleFormFieldsChange = (event) => {
         setFields(fields => ({
@@ -365,11 +487,47 @@ const Home = () => {
             setErrors({ ...errors, pincode : ""  });
           }
     }
-    
-    const subtotalAmount = productlist.length ? productlist[0].subtotalAmount.amount : 0;
-    const taxAmount = productlist.length ? productlist[0].totalTaxAmount.amount : 0;
-    const totalAmount = productlist.length ? productlist[0].totalAmount.amount : 0;
 
+    const removeCartItem = (event, cartId, cartItemId) => {
+        swal({
+            // title: "Are you sure?",
+            text: "Product in huge demand <br> might run out of stock. <br>Are you sure want to cancel payment.",
+            // icon: "warning",
+            buttons: true,
+            dangerMode: true,
+          }).then((willDelete) => {
+            if (willDelete) {
+                const cartItemRemoveRequest = {
+                    cartId: cartId,
+                    cartItemId: cartItemId,
+                    quantity: 0
+                };
+
+                //let currentLineItems = productlist[0].lineItems;
+                ApiServices.removeCart(cartItemRemoveRequest).then((response) => {
+                    if (response.status === 200 && response.data.status === "success") {
+                        let newCartItems = [...cartItem];
+                        var index = newCartItems.map(item => item.cartItemId).indexOf(cartItemId);
+                        newCartItems.splice(index, 1);
+                        setCartItem(newCartItems);
+                        console.log(response);
+                        let cartInfoDetails = {};
+                        cartInfoDetails["subtotalAmount"] = response.data.data.subtotalAmount.amount;
+                        cartInfoDetails["taxAmount"] = response.data.data.totalTaxAmount.amount;
+                        cartInfoDetails["totalAmount"] = response.data.data.totalAmount.amount;
+                        cartInfoDetails["cartId"] = response.data.data.cartId;
+                        //console.log(cartInfoDetails);
+                        setCartInfo(cartInfoDetails);
+                    }
+                }).catch((error) => {
+                    console.log("error", error);
+                });
+            }
+          });
+    }
+
+    //console.log(cartItem);
+    //console.log(cartInfo);
     return (     
         <>            
             <div className="modal-body row">
@@ -616,29 +774,32 @@ const Home = () => {
 
                     {/* order summary */}
                     <div className="cart-section">                       
-                        <div className={`cart-list ${!productlist.length ? 'text-center' : '' }`}>
-                            <ul>
-                                
-
-                            {productlist && productlist.length ? productlist[0].lineItems.map((item) =>
+                        <div className={`cart-list ${!cartItem.length ? 'text-center' : '' }`}>
+                            <ul>                                
+                            
+                            { cartItem && cartItem.length ? cartItem.map((item, index) =>
                                     <li className='cart-list-item' key={item.productVariantId}>
-                                        <div className="cart-list-item row">
-                                            <div className="col-md-3 cart-img" style={{paddingRight: 0 }}>
+                                        
+                                        <div className="cart-list-item row" key={item.productVariantId}>
+                                            <div className="col-md-3 cart-img">
                                                 <img src={item.image} alt="Cart 1" />
                                             </div>
                                             <div className="col-md-9">
+                                                
                                                 <div className="product-name">{item.itemName}</div>
                                                 <div className="variant">
-                                                    {item.itemOptions && item.itemOptions.length > 0 ? item.itemOptions.map((item1) =>
+                                                    {item.itemOptions && item.itemOptions.length > 0 ? item.itemOptions.map((result,index) =>
                                                     <>
-                                                    {item1.name} : 
-                                                    <span className="variant-option"> &nbsp; {item1.value}</span>
+                                                    {result.name} : 
+                                                    <span className="variant-option" key={index}> &nbsp; {result.value}</span>
                                                     </>) : ''
                                                     }
                                                 </div>
                                                 <div className="product-price">Rs.&nbsp;&nbsp;{item.price} * {item.itemQuantity}</div>
-                                                <div className="remove-cart"><a className="remove" href="#."><i
-                                                    className="bi bi-trash-fill"></i> Remove </a></div>
+                                                { cartItem.length > 1 ? 
+                                                <div className="remove-cart">
+                                                    <a className="remove" onClick={(event) => removeCartItem(event, cartInfo.cartId, item.cartItemId)}><i className="bi bi-trash-fill"></i> Remove </a>
+                                                </div> : ''}
                                             </div>
                                         </div>
                                     </li> 
@@ -650,13 +811,13 @@ const Home = () => {
                         <div className="row">
                             <div className="col-md-8">
                                 <div className="price">Subtotal</div>
-                                {/* <div className="discount">Coupon Discount</div> */}
+                                <div className="discount">Coupon Discount</div>
                                 <div className="discount">Tax</div>
                                 <div className="shipping">Shipping</div>
                             </div>
                             <div className="col-md-4 text-end">
-                                <div className="amount">&#8377; {subtotalAmount}</div>
-                                <div className="amount">&#8377; {taxAmount}</div>
+                                <div className="amount">&#8377; {cartInfo.subtotalAmount}</div>
+                                <div className="amount">&#8377; {cartInfo.taxAmount}</div>
                                 <div className="amount">&#8377; 0.00</div>
                             </div>
 
@@ -664,7 +825,7 @@ const Home = () => {
                                 <div><strong>To Pay</strong></div>
                             </div>
                             <div className="col-md-6 text-end">
-                                <div><strong>&#8377; {totalAmount}</strong></div>
+                                <div><strong>&#8377; {cartInfo.totalAmount}</strong></div>
                             </div>
                         </div>
                     </div>
