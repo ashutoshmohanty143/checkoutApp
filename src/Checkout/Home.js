@@ -35,80 +35,36 @@ const Home = () => {
 
     useEffect(() => {
         cartDetails();
-        //couponDetails();
     },[]);
 
     const cartDetails = async () => {
         const urlString = window.location.href; 
         const url = new URL(urlString);
         const cartDetails = JSON.parse(url.searchParams.get("carturi"));
+
+        let cartProductId = [];
+        let cartVariantId = [];
         
-        // const cartRequest =
-        // {
-        //     "pincode": "751010",
-        //     "vendorId": "62f1e95815f7885d3abbd760",
-        //     "cartItems": [
-        //         {
-        //             "productId": 6800847077428,
-        //             "quantity": 1,
-        //             "selectedOptions": [
-        //                 {
-        //                     "name": "Size",
-        //                     "value": "S"
-        //                 },
-        //                 {
-        //                     "name": "Color",
-        //                     "value": "Black"
-        //                 }
-        //             ]
-        //         },
-        //         {
-        //             "productId": 6800847077428,
-        //             "quantity": 2,
-        //             "selectedOptions": [
-        //                 {
-        //                     "name": "Size",
-        //                     "value": "M"
-        //                 },
-        //                 {
-        //                     "name": "Color",
-        //                     "value": "Black"
-        //                 }
-        //             ]
-        //         },
-        //         // {
-        //         //     "productId": 6880080920628,
-        //         //     "quantity": 2,
-        //         //     "selectedOptions": []
-        //         // }
-        //     ]
-        // }
-
-        // const cartUri = encodeURIComponent(JSON.stringify(cartRequest));
-        // console.log(cartUri);
-
-        //order summary
         const cartDetailsResponse = await ApiServices.manageCart(cartDetails);
         try {
             if(cartDetailsResponse && cartDetailsResponse.data.data){
-                //console.log(cartDetailsResponse);
                 setcartLoader(false);
                 if(cartDetailsResponse.status === 200 && cartDetailsResponse.data.status === "success"){
-                   let cartData = cartDetailsResponse.data.data;
+                    let cartData = cartDetailsResponse.data.data;
                     const lineCartItems = cartData.lineItems;
                     //console.log(lineCartItems);
-                    let cartProductId = [];
-                    let cartVariantId = [];
+                    
+
                     lineCartItems.map((item) => {
                         cartProductId.push(item.productId);
                         cartVariantId.push(item.productVariantId);
-                        
                     });
 
-                    
-
-                    setCartProductId(...cartProductIds,cartProductId);
-                    setCartVariantId(...cartVariantIds,cartVariantId);
+                    //console.log('a',cartProductId);
+                    //console.log('b',cartVariantId);
+        
+                    //setCartProductId(cartProductId);
+                    //setCartVariantId(cartVariantId);
 
                     //console.log('cartProductIds',cartProductIds);
                     //console.log('cartVariantIds',cartVariantIds);
@@ -131,89 +87,55 @@ const Home = () => {
             console.log("error3", error);
         };
 
-        // ApiServices.manageCart(cartDetails).then(response => {
-        //     if(response && response.data.data){
-        //         //console.log(response);
-        //         setcartLoader(false);
-        //         if(response.status === 200 && response.data.status === "success"){
-                    
-
-        //             const lineCartItems = response.data.data.lineItems;
-        //             //console.log(lineCartItems);
-        //             let cartProductIds = [];
-        //             let cartVariantIds = [];
-        //             lineCartItems.map((item) => {
-        //                 cartProductIds.push(item.productId);
-        //                 cartVariantIds.push(item.productVariantId);
-                        
-        //             });
-        //             setCartProductId(cartProductIds);
-        //             setCartVariantId(cartVariantIds);
-
-        //             setCartItem(lineCartItems);
-        //             let cartInfoDetails = {};
-        //             cartInfoDetails["subtotalAmount"] = response.data.data.subtotalAmount.amount;
-        //             cartInfoDetails["taxAmount"] = response.data.data.totalTaxAmount.amount;
-        //             cartInfoDetails["totalAmount"] = response.data.data.totalAmount.amount;
-        //             cartInfoDetails["cartId"] = response.data.data.cartId;
-        //             setCartInfo(cartInfoDetails);
-
-                    
-        //         } else if(response.data.status === "false"){
-        //             setcartLoader(true);
-        //             console.log("error1");
-        //         }        
-        //     } else {
-        //         console.log("error2")
-        //     }
-        // }).catch(error => {
-        //     console.log("error3", error);
-        // });
-
-
-        // const request =
-        // {
-        //     "vendorId": cartDetails.vendorId
-        // }
-        
-        //coupon Details
-        console.log('cartProductIds',cartProductIds);
-        console.log('cartVariantIds',cartVariantIds);
-
         const couponDetailsResponse = await ApiServices.manageCoupon(cartDetails);
+        //console.log(couponDetailsResponse);
         try {
-            if(couponDetailsResponse && couponDetailsResponse.data){
+            if(couponDetailsResponse && couponDetailsResponse.data.data){
+                
                 setCouponLoader(false);
                 if(couponDetailsResponse.status === 200 && couponDetailsResponse.data.status === "success"){
                     const couponData = couponDetailsResponse.data.data;
+
                     couponData.map((coupon) => {
                         if(coupon.target_selection === 'entitled') {
                             if(coupon.entitled_product_ids.length > 0){
-                                cartProductIds.map((singlePid) => {
-                                    if(!coupon.entitled_product_ids.includes(singlePid)) {
-                                        coupon.isDisabled = true;
-                                    } else {
+                                if(cartProductId.length > 0){
+                                    cartProductId.map((singlePid) => {
+                                        if(coupon.entitled_product_ids.includes(singlePid)) {
+                                            coupon.isDisabled = false;
+                                        } else {
+                                            coupon.isDisabled = true;
+                                        }   
+                                    });
+                                }
+                            } 
+                            
+                            if(coupon.entitled_variant_ids.length > 0){
+                                if(cartVariantId.length > 0){
+                                    if(cartVariantId.every(singleVid => coupon.entitled_variant_ids.includes(singleVid))) {
                                         coupon.isDisabled = false;
-                                    }   
-                                });
-                            } else if(coupon.entitled_variant_ids.length > 0){
-                                cartVariantIds.map((singleVid) => {
-                                    if(!coupon.entitled_variant_ids.includes(singleVid)) {
-                                        coupon.isDisabled = true;
                                     } else {
-                                        coupon.isDisabled = false;
-                                    }   
-                                });
+                                        coupon.isDisabled = true;
+                                    }  
+
+
+                                    // cartVariantId.map((singleVid) => {
+                                    //     if(coupon.entitled_variant_ids.includes(singleVid)) {
+                                    //         coupon.isDisabled = false;
+                                    //     } else {
+                                    //         coupon.isDisabled = true;
+                                    //     }   
+                                    // });
+                                }
                             } else {
                                 coupon.isDisabled = false;
                             }
                         } else {
                             coupon.isDisabled = false;
                         }
-                    })
-                    
-                    console.log(couponData);
-                    setCouponlist(couponData);
+                    });                    
+                    //console.log(couponData);
+                    setCouponlist(...couponlist,couponData);
                 } else if(couponDetailsResponse.data.status === "false"){
                     setCouponLoader(true);
                     console.log("error1");
@@ -225,34 +147,6 @@ const Home = () => {
             console.log("error4", error);
         };
     }
-
-    // const couponDetails = async () => {
-    //     const url_string = window.location.href; 
-    //     const url = new URL(url_string);
-    //     const cartDetails = JSON.parse(url.searchParams.get("carturi"));
-        
-        
-
-    //     ApiServices.manageCoupon(request).then(response => {
-    //         if(response && response.data){
-    //             setCouponLoader(false);
-    //             if(response.status === 200 && response.data.status === "success"){
-    //                 const couponDetails = response.data.data;
-    //                 //console.log(couponDetails);
-                    
-    //                 setCouponlist(couponDetails);
-
-    //             } else if(response.data.status === "false"){
-    //                 setCouponLoader(true);
-    //                 console.log("error1");
-    //             }        
-    //         } else {
-    //             console.log("error2")
-    //         }
-    //     }).catch(error => {
-    //         console.log("error3", error);
-    //     });
-    // }
 
     const handleFormFieldsChange = (event) => {
         setFields(fields => ({
@@ -439,7 +333,7 @@ const Home = () => {
         setErrors(errors);
         console.log(errors);
         return formIsValid;
-      }
+    }
 
     const addressNextBtnHandler = e => {
         e.preventDefault();
@@ -527,7 +421,7 @@ const Home = () => {
     }
 
     //console.log(cartItem);
-    //console.log(cartInfo);
+    //console.log('couponlist',couponlist);
     return (     
         <>            
             <div className="modal-body row">
@@ -846,10 +740,12 @@ const Home = () => {
                                 {couponlist && couponlist.length ? couponlist.map((item) =>
                                     <div className="coupon-details">
                                         <label className="form-check-label">
-                                            <div className="c-list">
+                                            <div className={`c-list ${item.isDisabled ? 'disabled': ''}`}>
                                                 <div className="coupon fw-bold">{item.code}</div>
                                                 <div className="coupon-desc">Get upto {Math.trunc(item.value * -1)}% discount on your purchase</div>
-                                                <div className="apply-code"><a href=""> Apply Now </a></div>
+                                                { !item.isDisabled ? 
+                                                    <div className="apply-code"><a href=""> Apply Now </a></div> : ''
+                                                }
                                             </div>
                                         </label>
                                     </div>
