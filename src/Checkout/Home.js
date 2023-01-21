@@ -179,6 +179,10 @@ const Home = () => {
                         cartInfoDetails["cartId"] = response.data.data.cartId;
                         //console.log(cartInfoDetails);
                         setCartInfo(cartInfoDetails);
+
+                        let initialSubtotalAmnt = {};
+                        initialSubtotalAmnt["amount"] = response.data.data.subtotalAmount.amount;
+                        setInitialSubTotalAmount(initialSubtotalAmnt);
                     }
                 }).catch((error) => {
                     console.log("error", error);
