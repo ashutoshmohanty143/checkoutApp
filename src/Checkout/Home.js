@@ -31,6 +31,7 @@ const Home = () => {
     const [couponloader, setCouponLoader] = useState(true);
     const [cartProductIds, setCartProductId] = useState([]);
     const [cartVariantIds, setCartVariantId] = useState([]);
+    const [initialSubTotalAmount, setInitialSubTotalAmount] = useState([]);
     
 
     useEffect(() => {
@@ -46,14 +47,13 @@ const Home = () => {
         let cartVariantId = [];
         
         const cartDetailsResponse = await ApiServices.manageCart(cartDetails);
+        let cartData;
         try {
             if(cartDetailsResponse && cartDetailsResponse.data.data){
                 setcartLoader(false);
                 if(cartDetailsResponse.status === 200 && cartDetailsResponse.data.status === "success"){
-                    let cartData = cartDetailsResponse.data.data;
-                    const lineCartItems = cartData.lineItems;
-                    //console.log(lineCartItems);
-                    
+                    cartData = cartDetailsResponse.data.data;
+                    const lineCartItems = cartData.lineItems;               
 
                     lineCartItems.map((item) => {
                         cartProductId.push(item.productId);
@@ -75,7 +75,15 @@ const Home = () => {
                     cartInfoDetails["taxAmount"] = cartData.totalTaxAmount.amount;
                     cartInfoDetails["totalAmount"] = cartData.totalAmount.amount;
                     cartInfoDetails["cartId"] = cartData.cartId;
-                    setCartInfo(cartInfoDetails);                    
+                    setCartInfo(cartInfoDetails);
+                    //console.log(cartInfo);
+                    
+                    
+                    let initialSubtotalAmnt = {};
+                    initialSubtotalAmnt["amount"] = cartData.subtotalAmount.amount;
+                    setInitialSubTotalAmount(initialSubtotalAmnt);
+                    //console.log(initialSubTotalAmount);
+                    
                 } else if(cartDetailsResponse.data.status === "false"){
                     setcartLoader(true);
                     console.log("error1");
@@ -88,66 +96,159 @@ const Home = () => {
         };
 
         const couponDetailsResponse = await ApiServices.manageCoupon(cartDetails);
-        //console.log(couponDetailsResponse);
-        try {
-            if(couponDetailsResponse && couponDetailsResponse.data.data){
-                
-                setCouponLoader(false);
-                if(couponDetailsResponse.status === 200 && couponDetailsResponse.data.status === "success"){
-                    const couponData = couponDetailsResponse.data.data;
-
-                    couponData.map((coupon) => {
-                        if(coupon.target_selection === 'entitled') {
-                            if(coupon.entitled_product_ids.length > 0){
-                                if(cartProductId.length > 0){
-                                    cartProductId.map((singlePid) => {
-                                        if(coupon.entitled_product_ids.includes(singlePid)) {
+        if(couponDetailsResponse) {
+            try {
+                if(couponDetailsResponse && couponDetailsResponse.data.data){                
+                    setCouponLoader(false);
+                    if(couponDetailsResponse.status === 200 && couponDetailsResponse.data.status === "success"){
+                        const couponData = couponDetailsResponse.data.data;
+                        
+                        //console.log(couponData);
+                        //console.log(cartData.subtotalAmount.amount);
+                        couponData.map((coupon) => {
+                            coupon.isDisabled = false;
+                            if(coupon.target_selection === 'entitled') {
+                                if(coupon.entitled_product_ids.length > 0){
+                                    if(cartProductId.length > 0){
+                                        if(cartProductId.every(singlePid => coupon.entitled_product_ids.includes(singlePid))) {
                                             coupon.isDisabled = false;
                                         } else {
                                             coupon.isDisabled = true;
-                                        }   
-                                    });
+                                        }                                   
+                                    }
+                                } 
+                                
+                                if(coupon.entitled_variant_ids.length > 0){
+                                    if(cartVariantId.length > 0){
+                                        if(cartVariantId.every(singleVid => coupon.entitled_variant_ids.includes(singleVid))) {
+                                            coupon.isDisabled = false;
+                                        } else {
+                                            coupon.isDisabled = true;
+                                        }
+                                    }
                                 }
                             } 
-                            
-                            if(coupon.entitled_variant_ids.length > 0){
-                                if(cartVariantId.length > 0){
-                                    if(cartVariantId.every(singleVid => coupon.entitled_variant_ids.includes(singleVid))) {
-                                        coupon.isDisabled = false;
-                                    } else {
-                                        coupon.isDisabled = true;
-                                    }  
-
-
-                                    // cartVariantId.map((singleVid) => {
-                                    //     if(coupon.entitled_variant_ids.includes(singleVid)) {
-                                    //         coupon.isDisabled = false;
-                                    //     } else {
-                                    //         coupon.isDisabled = true;
-                                    //     }   
-                                    // });
+                            if (coupon.prerequisite_subtotal_range !== null) {
+                                if(parseFloat(coupon.prerequisite_subtotal_range.greater_than_or_equal_to) > cartData.subtotalAmount.amount) {
+                                    coupon.isDisabled = true;
                                 }
-                            } else {
-                                coupon.isDisabled = false;
                             }
-                        } else {
-                            coupon.isDisabled = false;
-                        }
-                    });                    
-                    //console.log(couponData);
-                    setCouponlist(...couponlist,couponData);
-                } else if(couponDetailsResponse.data.status === "false"){
-                    setCouponLoader(true);
-                    console.log("error1");
-                }        
-            } else {
-                console.log("error2")
-            }
-        } catch(error) {
-            console.log("error4", error);
-        };
+                            
+                        }); 
+                        setCouponlist(...couponlist,couponData);
+                    } else if(couponDetailsResponse.data.status === "false"){
+                        setCouponLoader(true);
+                        console.log("error1");
+                    }        
+                } else {
+                    console.log("error2")
+                }
+            } catch(error) {
+                console.log("error4", error);
+            };
+        }
     }
 
+    const removeCartItem = (event, cartId, cartItemId) => {
+        swal({
+            // title: "Are you sure?",
+            text: "Product in huge demand <br> might run out of stock. <br>Are you sure want to cancel payment.",
+            // icon: "warning",
+            buttons: true,
+            dangerMode: true,
+          }).then((willDelete) => {
+            if (willDelete) {
+                const cartItemRemoveRequest = {
+                    cartId: cartId,
+                    cartItemId: cartItemId,
+                    quantity: 0
+                };
+
+                //let currentLineItems = productlist[0].lineItems;
+                ApiServices.removeCart(cartItemRemoveRequest).then((response) => {
+                    if (response.status === 200 && response.data.status === "success") {
+                        let newCartItems = [...cartItem];
+                        var index = newCartItems.map(item => item.cartItemId).indexOf(cartItemId);
+                        newCartItems.splice(index, 1);
+                        setCartItem(newCartItems);
+                        console.log(response);
+                        let cartInfoDetails = {};
+                        cartInfoDetails["subtotalAmount"] = response.data.data.subtotalAmount.amount;
+                        cartInfoDetails["taxAmount"] = response.data.data.totalTaxAmount.amount;
+                        cartInfoDetails["totalAmount"] = response.data.data.totalAmount.amount;
+                        cartInfoDetails["cartId"] = response.data.data.cartId;
+                        //console.log(cartInfoDetails);
+                        setCartInfo(cartInfoDetails);
+                    }
+                }).catch((error) => {
+                    console.log("error", error);
+                });
+            }
+          });
+    }
+
+    const applyCouponCode = (event, cartId, couponCode, initialSubTotalAmount) => {
+        console.log(initialSubTotalAmount);
+        const formData = {
+            cartId: cartId,
+            discountCode: couponCode
+        };
+        
+        ApiServices.applyCoupon(formData).then((response) => {
+            //console.log(response);
+            if (response.status === 200 && response.data.status === "success") {
+                let cardApplied = response.data.data.isCardApplied;
+                let discountAmount = response.data.data.discountedAmount;
+                if(cardApplied && discountAmount > 0) {
+                    let oldSubtotalAmount = cartInfo.subtotalAmount;
+                    let oldTaxAmount = cartInfo.taxAmount;
+                    let oldTotalAmount = cartInfo.totalAmount;
+
+                    //console.log('Old Subtotal Amount -' + oldSubtotalAmount);
+
+                    let newSubtotalAmount = response.data.data.subtotalAmount.amount;
+                    let newTaxAmount = response.data.data.totalTaxAmount.amount;
+                    let newTotalAmount = response.data.data.totalAmount.amount;
+
+                    //console.log('New Subtotal Amount -' + newSubtotalAmount);
+                    //console.log('New Tax Amount -' + newTaxAmount);
+                    //console.log('New Total Amount -' + newTotalAmount);
+
+                    let FinalSubtotalAmount = newTotalAmount - newTaxAmount;
+                    let FinalDiscountAmount = initialSubTotalAmount - FinalSubtotalAmount;
+
+                    //console.log('Final Subtotal Amount -' + FinalSubtotalAmount);
+                    //console.log('Final Discount Amount -' + FinalDiscountAmount);
+
+                    let cartInfoDetails = {};
+                    cartInfoDetails["subtotalAmount"] = FinalSubtotalAmount;
+                    cartInfoDetails["taxAmount"] = newTaxAmount;
+                    cartInfoDetails["totalAmount"] = newTotalAmount;
+                    cartInfoDetails["discountAmount"] = FinalDiscountAmount;
+                    cartInfoDetails["cartId"] = cartId;
+                    setCartInfo(cartInfoDetails);                    
+                } else if(cardApplied && discountAmount === 0){
+                    let oldSubtotalAmount = cartInfo.subtotalAmount;
+
+                    let newSubtotalAmount = response.data.data.subtotalAmount.amount;
+                    let newTaxAmount = response.data.data.totalTaxAmount.amount;
+                    let newTotalAmount = response.data.data.totalAmount.amount;
+
+                    let FinalDiscountAmount = initialSubTotalAmount - newSubtotalAmount;
+
+                    let cartInfoDetails = {};
+                    cartInfoDetails["subtotalAmount"] = newSubtotalAmount;
+                    cartInfoDetails["taxAmount"] = newTaxAmount;
+                    cartInfoDetails["totalAmount"] = newTotalAmount;
+                    cartInfoDetails["discountAmount"] = FinalDiscountAmount;
+                    cartInfoDetails["cartId"] = cartId;
+                    setCartInfo(cartInfoDetails);   
+                }
+            }
+        }).catch((error) => {
+            console.log("error", error);
+        });
+    }
     const handleFormFieldsChange = (event) => {
         setFields(fields => ({
             ...fields,
@@ -181,7 +282,6 @@ const Home = () => {
             document.querySelectorAll('.red-alert')[0].style.display = "none";
         }
     }
-
     
     const otpInputHandler = (event) => {
         if (event.target.value.length == 1 && event.target.value.length == event.target.maxLength) {
@@ -382,44 +482,6 @@ const Home = () => {
           }
     }
 
-    const removeCartItem = (event, cartId, cartItemId) => {
-        swal({
-            // title: "Are you sure?",
-            text: "Product in huge demand <br> might run out of stock. <br>Are you sure want to cancel payment.",
-            // icon: "warning",
-            buttons: true,
-            dangerMode: true,
-          }).then((willDelete) => {
-            if (willDelete) {
-                const cartItemRemoveRequest = {
-                    cartId: cartId,
-                    cartItemId: cartItemId,
-                    quantity: 0
-                };
-
-                //let currentLineItems = productlist[0].lineItems;
-                ApiServices.removeCart(cartItemRemoveRequest).then((response) => {
-                    if (response.status === 200 && response.data.status === "success") {
-                        let newCartItems = [...cartItem];
-                        var index = newCartItems.map(item => item.cartItemId).indexOf(cartItemId);
-                        newCartItems.splice(index, 1);
-                        setCartItem(newCartItems);
-                        console.log(response);
-                        let cartInfoDetails = {};
-                        cartInfoDetails["subtotalAmount"] = response.data.data.subtotalAmount.amount;
-                        cartInfoDetails["taxAmount"] = response.data.data.totalTaxAmount.amount;
-                        cartInfoDetails["totalAmount"] = response.data.data.totalAmount.amount;
-                        cartInfoDetails["cartId"] = response.data.data.cartId;
-                        //console.log(cartInfoDetails);
-                        setCartInfo(cartInfoDetails);
-                    }
-                }).catch((error) => {
-                    console.log("error", error);
-                });
-            }
-          });
-    }
-
     //console.log(cartItem);
     //console.log('couponlist',couponlist);
     return (     
@@ -431,7 +493,7 @@ const Home = () => {
                         <img src="./img/logo.png" width="60px" height="45px" alt="Logo" />
                     </div>
                     <div className="cart">
-                        <img id="cart_img" src="./img/cart.png" width="100px" height="100px" alt="Cart-icon" />
+                    <img id="cart_img" src="./img/cart.png" width="100px" height="100px" alt="Cart-icon" />
                     </div>
 
 
@@ -707,12 +769,13 @@ const Home = () => {
                                 <div className="price">Subtotal</div>
                                 <div className="discount">Coupon Discount</div>
                                 <div className="discount">Tax</div>
-                                <div className="shipping">Shipping</div>
+                                {/* <div className="shipping">Shipping</div> */}
                             </div>
                             <div className="col-md-4 text-end">
                                 <div className="amount">&#8377; {cartInfo.subtotalAmount}</div>
+                                <div className="amount">&#8377; {cartInfo.discountAmount ? cartInfo.discountAmount : '0.00'}</div>
                                 <div className="amount">&#8377; {cartInfo.taxAmount}</div>
-                                <div className="amount">&#8377; 0.00</div>
+                                {/* <div className="amount">&#8377; 0.00</div> */}
                             </div>
 
                             <div className="col-md-6">
@@ -744,8 +807,11 @@ const Home = () => {
                                                 <div className="coupon fw-bold">{item.code}</div>
                                                 <div className="coupon-desc">Get upto {Math.trunc(item.value * -1)}% discount on your purchase</div>
                                                 { !item.isDisabled ? 
-                                                    <div className="apply-code"><a href=""> Apply Now </a></div> : ''
+                                                    <div className="apply-code"><a onClick={(event) => applyCouponCode(event, cartInfo.cartId, item.code, initialSubTotalAmount.amount)}> Apply Now </a></div> : ''
                                                 }
+                                                {/* { !item.isDisabled ? 
+                                                    <div className="coupon-applied"><a onClick={(event) => applyCouponCode(event, cartInfo.cartId, item.code)}> Apply Now </a></div> : ''
+                                                } */}
                                             </div>
                                         </label>
                                     </div>

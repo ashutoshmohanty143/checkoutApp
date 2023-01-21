@@ -19,7 +19,11 @@ class ApiServices {
 
     manageCoupon(formData){
         return axios.post(API_BASE_URL+"/discount-code", formData);
-    }     
+    }
+    
+    applyCoupon(formData){
+        return axios.post(API_BASE_URL+"/cart-discount", formData);
+    }
 
     // GetAllRecords(collectionName){
     //     return axios.get(API_BASE_URL+"/doc/?collection="+collectionName);
