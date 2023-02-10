@@ -32,6 +32,7 @@ const Home = () => {
     const [cartProductIds, setCartProductId] = useState([]);
     const [cartVariantIds, setCartVariantId] = useState([]);
     const [initialSubTotalAmount, setInitialSubTotalAmount] = useState([]);
+    const [otp, setOtp] = useState('');
     
 
     useEffect(() => {
@@ -260,11 +261,13 @@ const Home = () => {
         }));
     }
     
-    const MobileNextbtn = (event) => {
+    const getOTP = (event) => {
         event.preventDefault();
+        //sms gateway call after sms fired & get otp do below steps
         setMobileSectionDiv(false);
         setTimeout(() => {
             setOtpSectionDiv(true);
+            //document.querySelector('[name="otp1"]').focus();
         }, "300");
     }
 
@@ -272,7 +275,7 @@ const Home = () => {
         CommonMethods.phoneMasking(event);
         if (event.target.value.length != event.target.maxLength && event.target.value.length != MOB_MAX_NUM) {
             setMobNextbtn(true);
-            document.querySelector('#mobile-next-btn').classList.remove('active-btn');
+            document.querySelector('#get-otp').classList.remove('active-btn');
             document.querySelector('#mobile').classList.remove('active-border');
             document.querySelectorAll('.green-check')[0].style.display = "none";
             document.querySelectorAll('.red-alert')[0].style.display = "block";
@@ -280,7 +283,7 @@ const Home = () => {
         } else {
             setMobNextbtn(false);
             document.querySelector('#mobile').blur();
-            document.querySelector('#mobile-next-btn').classList.add('active-btn');
+            document.querySelector('#get-otp').classList.add('active-btn');
             document.querySelector('#mobile').classList.add('active-border');
             document.querySelectorAll('.green-check')[0].style.display = "block";   
             document.querySelectorAll('.red-alert')[0].style.display = "none";
@@ -289,6 +292,7 @@ const Home = () => {
     
     const otpInputHandler = (event) => {
         if (event.target.value.length == 1 && event.target.value.length == event.target.maxLength) {
+            document.querySelector('[name="otp4"]').blur();
             event.target.classList.add('active-border');
             if (event.target.name == 'otp1' || event.target.name == 'otp2' || event.target.name == 'otp3') {
                 event.target.nextSibling.focus();
@@ -296,18 +300,34 @@ const Home = () => {
         } else {
             event.target.classList.remove('active-border');
         }
-    }
 
-    const otp4InputHandler = () => {
-        if (fields['otp1'] === '1' && fields['otp2'] === '2' && fields['otp3'] === '3' && fields['otp4'] === '4') {
-            // setTimeout(() => {
-            // document.getElementById('otp-info').style.display = "block";
-            // document.getElementById('otp-info').innerHTML = 'Verifying OTP';
-            // }, "500");
-            // setOtpSectionDiv(false);
-            setAddressStepActive(true);
+        let finalotp = '';
+        if(event.target.name == 'otp1'){
+            var otp1 = event.target.value.toString();
+            finalotp = otp+otp1.toString();
+            setOtp(finalotp);
+        }
+        if(event.target.name == 'otp2'){
+            var otp2 = event.target.value;
+            finalotp = otp+otp2.toString();
+            setOtp(finalotp);
+        }
+        if(event.target.name == 'otp3'){
+            var otp3 = event.target.value;
+            finalotp = otp+otp3.toString();
+            setOtp(finalotp);
+        }
+        if(event.target.name == 'otp4'){
+            var otp4 = event.target.value;
+            finalotp = otp+otp4.toString();
+            setOtp(finalotp);
+        }
 
-            //check existing user
+        console.log(finalotp);
+        let otpLength = finalotp.length;
+        let length = 4;
+        if(otpLength === length){
+            //validate otp here by calling sms gateway
             let vendorId = '62f9d325591adcd5e44e18ecs';
             let mobile = CommonMethods.unmask(fields['mobile']);
             const formData = {
@@ -327,7 +347,7 @@ const Home = () => {
                     setTimeout(() => {
                         setOtpSectionDiv(false);
                         setAddressSectionDiv(true);
-                    }, "5000");
+                    }, "2000");
                 } else if(response.status === 200 && response.data.status == 'success' && response.data.isNewCustomer == false){
                     setAddresslist(response.data);
                     setTimeout(() => {
@@ -342,12 +362,66 @@ const Home = () => {
                 }
             }).catch(error => {
                 console.log(error);
-            }); 
+            });
         }
     }
 
+    // const otp4InputHandler = () => {
+    //     if (fields['otp1'] === '1' && fields['otp2'] === '2' && fields['otp3'] === '3' && fields['otp4'] === '4') {
+    //         // setTimeout(() => {
+    //         // document.getElementById('otp-info').style.display = "block";
+    //         // document.getElementById('otp-info').innerHTML = 'Verifying OTP';
+    //         // }, "500");
+    //         // setOtpSectionDiv(false);
+    //         setAddressStepActive(true);
+
+    //         //check existing user
+    //         let vendorId = '62f9d325591adcd5e44e18ecs';
+    //         let mobile = CommonMethods.unmask(fields['mobile']);
+    //         const formData = {
+    //             "collection": "customers_"+vendorId,
+    //             "data": {
+    //                 "mobile": "" + mobile + ""
+    //             }
+    //         };
+
+    //         ApiServices.CheckExistingCustomer(formData).then(response => {           
+    //             if (response.status === 200 && response.data.status == 'success' && response.data.isNewCustomer == true ) {
+    //                 setTimeout(() => {
+    //                     setCliploader(true);
+    //                     document.getElementById('otp-info').style.display = "block";
+    //                     document.getElementById('otp-info').innerHTML = 'Verifying OTP';
+    //                 }, "1000");
+    //                 setTimeout(() => {
+    //                     setOtpSectionDiv(false);
+    //                     setAddressSectionDiv(true);
+    //                 }, "5000");
+    //             } else if(response.status === 200 && response.data.status == 'success' && response.data.isNewCustomer == false){
+    //                 setAddresslist(response.data);
+    //                 setTimeout(() => {
+    //                     setCliploader(true);
+    //                     document.getElementById('otp-info').style.display = "block";
+    //                     document.getElementById('otp-info').innerHTML = 'Verifying OTP';
+    //                 }, "1000");
+    //                 setTimeout(() => {
+    //                     setOtpSectionDiv(false);
+    //                     setaddressListSectionDiv(true);
+    //                 }, "5000");
+    //             }
+    //         }).catch(error => {
+    //             console.log(error);
+    //         }); 
+    //     }
+    // }
+
     const editMobileLink = event => {
         event.preventDefault();
+        //const mobileValue = document.querySelector('#mobile').value;
+        //console.log(mobileValue);
+        //return false;
+        // if(){
+
+        // }
         setOtpSectionDiv(false);
         setMobileSectionDiv(true);
         setCliploader(false);
@@ -375,6 +449,7 @@ const Home = () => {
         setAddressStepActive(false);
         setAddressSectionDiv(false);
         setMobileSectionDiv(true);
+        setOtp('');
         setFields({ fields: " " });
         setCliploader(false);
     }
@@ -486,7 +561,7 @@ const Home = () => {
           }
     }
 
-    //console.log(cartItem);
+    
     //console.log('couponlist',couponlist);
     return (     
         <>            
@@ -533,7 +608,7 @@ const Home = () => {
                             </div>
                             <div className="text-muted ms-1 mt-2" style={{ fontSize: 12 + 'px' }}>A 4 digit OTP will be sent via
                                 SMS to verify your mobile number!</div>
-                            <button onClick={MobileNextbtn} id="mobile-next-btn" className="mobile-next-btn form-control mt-5" disabled={mobNextbtn}>Get
+                            <button onClick={getOTP} id="get-otp" className="get-otp form-control mt-5" disabled={mobNextbtn}>Get
                                 OTP</button>
                         </div>
                         : ''}
@@ -551,13 +626,14 @@ const Home = () => {
                             </h6>
                             <div className="input-group mb-2">
                                 <input type="text" name="otp1" className="form-control otp-value"
-                                    maxLength="1" onInput={otpInputHandler} onChange={handleFormFieldsChange} />
+                                    maxLength="1" onKeyUp={otpInputHandler} onChange={handleFormFieldsChange} />
                                 <input type="text" name="otp2" className="form-control otp-value"
-                                    maxLength="1" onInput={otpInputHandler} onChange={handleFormFieldsChange} />
+                                    maxLength="1" onKeyUp={otpInputHandler} onChange={handleFormFieldsChange} />
                                 <input type="text" name="otp3" className="form-control otp-value"
-                                    maxLength="1" onInput={otpInputHandler} onChange={handleFormFieldsChange} />
+                                    maxLength="1" onKeyUp={otpInputHandler} onChange={handleFormFieldsChange} />
                                 <input type="text" name="otp4" className="form-control otp-value"
-                                    maxLength="1" onKeyUp={otp4InputHandler} onChange={handleFormFieldsChange} />
+                                    maxLength="1" onKeyUp={otpInputHandler} onChange={handleFormFieldsChange} />
+                                    {/* onKeyUp={otp4InputHandler} */}
                             </div>
                             <span><ClipLoader size={16} color="#35bd35" loading={cliploader} /></span>
                             <span className='otp-info' id='otp-info'></span>
@@ -572,8 +648,7 @@ const Home = () => {
                         <div className="address-section">
                             <div className="row mb-2">
                                 <div className="col-md-6">
-                                    <input type="text" name="fullName" className="form-control addressTextBox"
-                                        placeholder="Full Name*" onChange={handleFormFieldsChange} />
+                                    <input type="text" name="fullName" className="form-control addressTextBox" placeholder="Full Name*" onChange={handleFormFieldsChange} />
                                 </div>
                                 <div className="col-md-6">
                                     <input type="text" name="email" className="form-control addressTextBox"
@@ -633,8 +708,7 @@ const Home = () => {
                             </div>
 
                             <div className="d-flex justify-content-between">
-                                <input type="button" className="address-back-btn form-control" value="&larr;"
-                                    onClick={addressBackBtnHandler} />
+                                <input type="button" className="address-back-btn form-control" value="&larr;" onClick={addressBackBtnHandler} />
                                 <input type="button" className="address-next-btn form-control" value="Next"
                                     onClick={addressNextBtnHandler} />
                             </div>
