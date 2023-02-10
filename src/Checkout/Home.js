@@ -254,11 +254,26 @@ const Home = () => {
             console.log("error", error);
         });
     }
+
+
     const handleFormFieldsChange = (event) => {
         setFields(fields => ({
             ...fields,
             [event.target.name]: event.target.value
         }));
+    }
+
+    const handleStateFieldsChange = (event) => {
+        setFields(fields => ({
+            ...fields,
+            [event.target.name]: event.target.value
+        }));
+
+        if (event.target.value === 0) {
+            errors["stateErr"] = 'Please Select State';
+        } else {
+            errors["stateErr"] = '';
+        }
     }
     
     const getOTP = (event) => {
@@ -323,7 +338,6 @@ const Home = () => {
             setOtp(finalotp);
         }
 
-        console.log(finalotp);
         let otpLength = finalotp.length;
         let length = 4;
         if(otpLength === length){
@@ -424,6 +438,7 @@ const Home = () => {
         // }
         setOtpSectionDiv(false);
         setMobileSectionDiv(true);
+        setMobNextbtn(true);
         setCliploader(false);
     }
 
@@ -449,6 +464,7 @@ const Home = () => {
         setAddressStepActive(false);
         setAddressSectionDiv(false);
         setMobileSectionDiv(true);
+        setMobNextbtn(true);
         setOtp('');
         setFields({ fields: " " });
         setCliploader(false);
@@ -461,43 +477,43 @@ const Home = () => {
         //Full Name
         if (!fields["fullName"]) {
           formIsValid = false;
-          errors["fullName"] = "Full Name Cannot be empty";
+          errors["fullNameErr"] = "Full Name Cannot be empty";
         }
     
         //Email
         if (!fields["email"]) {
           formIsValid = false;
-          errors["email"] = "Email Cannot be empty";
+          errors["emailErr"] = "Email Cannot be empty";
         }  else if (!CommonMethods.emailValidator(fields["email"])) {
           formIsValid = false;
-          errors["email"] = "Please enter valid email.";
+          errors["emailErr"] = "Please enter valid email.";
         } 
  
         //Address
         if (!fields["address"]) {
           formIsValid = false;
-          errors["address"] = "Address Cannot be empty";
+          errors["addressErr"] = "Address Cannot be empty";
         }  
     
         //Landmark
         if (!fields["landmark"]) {
           formIsValid = false;
-          errors["landmark"] = "Landmark Cannot be empty";
+          errors["landmarkErr"] = "Landmark Cannot be empty";
         }  
     
          //City
          if (!fields["city"]) {
           formIsValid = false;
-          errors["city"] = "City Cannot be empty";
+          errors["cityErr"] = "City Cannot be empty";
         }    
     
         //Pincode
         if (!fields["pincode"]) {
           formIsValid = false;
-          errors["pincode"] = "Pincode Cannot be empty";
+          errors["pincodeErr"] = "Pincode Cannot be empty";
         } else if (fields["pincode"].length != 6) {
           formIsValid = false;
-          errors["pincode"] = "Pincode should be 6 digits";
+          errors["pincodeErr"] = "Please enter Only Numbers (Max 6)";
         }
 
         //State
@@ -505,7 +521,7 @@ const Home = () => {
         let stateValue = cstate.options.selectedIndex;
         if (stateValue === 0) {
             formIsValid = false;
-            errors["state"] = 'Please Select State';
+            errors["stateErr"] = 'Please Select State';
         }
     
     
@@ -517,52 +533,98 @@ const Home = () => {
     const addressNextBtnHandler = e => {
         e.preventDefault();
         if (formValidate()) {
-            let vendorId = '62f9d325591adcd5e44e18ecs';
-            let { fullName, email, address, landmark, city, pincode, state, addressType } = fields;
-            let mobile = CommonMethods.unmask(fields['mobile']);
-            const formData = {
-                "collection": "customers_"+vendorId,
-                "data": {
-                    "name": fullName,
-                    "email": email,
-                    "mobile": mobile,
-                    "address": [
-                        {
-                            "addressType": addressType,
-                            "address": address,
-                            "landmark": landmark,
-                            "city": city,
-                            "pincode": pincode,
-                            "state": state
-                        }
-                    ]
-                }
-            };
-            ApiServices.AddRecord(formData).then(response => {
-                console.log(response);
-                // if (response.status == 200 && response.data.status == 'success') {
-                //     setaddressListSectionDiv(true);
-                // } else if (response.data.status == 'failed' && response.data.message == 'UNIQUE KEY CONSTRAINT') {
+            // let vendorId = '62f9d325591adcd5e44e18ecs';
+            // let { fullName, email, address, landmark, city, pincode, state, addressType } = fields;
+            // let mobile = CommonMethods.unmask(fields['mobile']);
+            // const formData = {
+            //     "collection": "customers_"+vendorId,
+            //     "data": {
+            //         "name": fullName,
+            //         "email": email,
+            //         "mobile": mobile,
+            //         "address": [
+            //             {
+            //                 "addressType": addressType,
+            //                 "address": address,
+            //                 "landmark": landmark,
+            //                 "city": city,
+            //                 "pincode": pincode,
+            //                 "state": state
+            //             }
+            //         ]
+            //     }
+            // };
+            // ApiServices.AddRecord(formData).then(response => {
+            //     console.log(response);
+            //     if (response.status == 200 && response.data.status == 'success') {
+            //         setaddressListSectionDiv(true);
+            //     } else if (response.data.status == 'failed' && response.data.message == 'UNIQUE KEY CONSTRAINT') {
                     
-                // }
-            }).catch(error => {
-                console.log(error);
-            });;
+            //     }
+            // }).catch(error => {
+            //     console.log(error);
+            // });;
+            setaddressListSectionDiv(true);
         } else {
             console.log("Form Validation Error");
         }
     }
 
+    const fullNameInputHandler = e => {
+        if (!e) {
+            setErrors({ ...errors, fullNameErr : "Full Name Cannot be empty" });
+        } else {
+            setErrors({ ...errors, fullNameErr : "" });
+        }
+    }
+
+    const emailInputHandler = e => {
+        if (!e) {
+            setErrors({ ...errors, emailErr : "Email Cannot be empty" });
+        } else {
+            setErrors({ ...errors, emailErr : "" });
+        }
+    }
+
+    const addressInputHandler = e => {
+        if (!e) {
+            setErrors({ ...errors, addressErr : "Address Cannot be empty" });
+        } else {
+            setErrors({ ...errors, addressErr : "" });
+        }
+    }
+
+    const landmarkInputHandler = e => {
+        if (!e) {
+            setErrors({ ...errors, landmarkErr : "Landmark Cannot be empty" });
+        } else {
+            setErrors({ ...errors, landmarkErr : "" });
+        }
+    }
+
+    const cityInputHandler = e => {
+        if (!e) {
+            setErrors({ ...errors, cityErr : "City Cannot be empty" });
+        } else {
+            setErrors({ ...errors, cityErr : "" });
+        }
+    }
+
     const pincodeInputHandler = e => {
-        if(!CommonMethods.numberValidation(e)){
-            setErrors({ ...errors, pincode : "Please enter Only Numbers (Max 6)" });
-          } else {
-            setErrors({ ...errors, pincode : ""  });
-          }
+        if (!e) {
+            setErrors({ ...errors, pincodeErr : "Pincode Cannot be empty" });
+        } else  if(!CommonMethods.numberValidation(e)){
+            setErrors({ ...errors, pincodeErr : "Please enter Only Numbers (Max 6)" });
+        } else {
+            setErrors({ ...errors, pincodeErr : ""  });
+        }
     }
 
     
     //console.log('couponlist',couponlist);
+
+    let { fullNameErr, emailErr, addressErr, landmarkErr, cityErr, pincodeErr, stateErr } = errors;
+
     return (     
         <>            
             <div className="modal-body row">
@@ -648,32 +710,60 @@ const Home = () => {
                         <div className="address-section">
                             <div className="row mb-2">
                                 <div className="col-md-6">
-                                    <input type="text" name="fullName" className="form-control addressTextBox" placeholder="Full Name*" onChange={handleFormFieldsChange} />
+                                <div className="input-group">
+                                    <input type="text" name="fullName" className={`form-control addressTextBox ${ fullNameErr ? "errorBorder" : "" }`} 
+                                        placeholder="Full Name*" onInput={fullNameInputHandler} onChange={handleFormFieldsChange} />
+                                    <span className={`red-alert-icon ${ fullNameErr ? "" : "d-none" }`} data-bs-toggle="pass_tooltip" data-bs-placement="top" 
+                                    title={fullNameErr}><i className="bi bi-info-circle-fill"></i></span> 
+                                </div>
                                 </div>
                                 <div className="col-md-6">
-                                    <input type="text" name="email" className="form-control addressTextBox"
-                                        placeholder="Email Address*" onChange={handleFormFieldsChange} />
+                                <div className="input-group">
+                                    <input type="text" name="email" className={`form-control addressTextBox ${ emailErr ? "errorBorder" : "" }`}
+                                        placeholder="Email Address*" onInput={emailInputHandler} onChange={handleFormFieldsChange} />
+                                    <span className={`red-alert-icon ${ emailErr ? "" : "d-none" }`} data-bs-toggle="pass_tooltip" data-bs-placement="top" 
+                                    title={emailErr}><i className="bi bi-info-circle-fill"></i></span> 
+                                </div>
                                 </div>
                             </div>
+
                             <div className="currentLocation">
                                 <a href=""><i className="bi bi-circle bi-geo-alt"></i></a> Use current
                                 location
                             </div>
-                            <div className="mb-2">
-                                <input type="text" name="address" className="form-control addressTextBox"
-                                    placeholder="Address(Area and street)*" onChange={handleFormFieldsChange} />
+
+                            <div className="input-group mb-2">
+                                <input type="text" name="address" className={`form-control addressTextBox ${ addressErr ? "errorBorder" : "" }`}
+                                    placeholder="Address(Area and street)*" onInput={addressInputHandler} onChange={handleFormFieldsChange} />
+                                <span className={`red-alert-icon ${ addressErr ? "" : "d-none" }`} data-bs-toggle="pass_tooltip" data-bs-placement="top" 
+                                    title={addressErr}><i className="bi bi-info-circle-fill"></i></span> 
                             </div>
+
                             <div className="row mb-3">
                                 <div className="col-md-6">
-                                    <input type="text" name="landmark" className="form-control mb-2 addressTextBox"
-                                        placeholder="Landmark*" onChange={handleFormFieldsChange} />
-                                    <input type="text" name="city" className="form-control addressTextBox"
-                                        placeholder="City/District/Town*" onChange={handleFormFieldsChange} />
+                                <div className="input-group mb-2">
+                                    <input type="text" name="landmark" className={`form-control addressTextBox ${ landmarkErr ? "errorBorder" : "" }`}
+                                        placeholder="Landmark*" onInput={landmarkInputHandler} onChange={handleFormFieldsChange} />
+                                    <span className={`red-alert-icon ${ landmarkErr ? "" : "d-none" }`} data-bs-toggle="pass_tooltip" data-bs-placement="top" 
+                                        title={landmarkErr}><i className="bi bi-info-circle-fill"></i></span> 
+                                </div>
+                                <div className="input-group">
+                                    <input type="text" name="city" className={`form-control addressTextBox ${ cityErr ? "errorBorder" : "" }`}
+                                        placeholder="City/District/Town*" onInput={cityInputHandler} onChange={handleFormFieldsChange} />
+                                    <span className={`red-alert-icon ${ cityErr ? "" : "d-none" }`} data-bs-toggle="pass_tooltip" data-bs-placement="top" 
+                                        title={cityErr}><i className="bi bi-info-circle-fill"></i></span> 
+                                </div>
                                 </div>
                                 <div className="col-md-6">
-                                    <input type="text" name="pincode" className="form-control mb-2 addressTextBox"
-                            placeholder="Pincode*" maxLength="6" onInput={pincodeInputHandler} onChange={handleFormFieldsChange} />
-                                    <select name="state" id="state" className="form-control addressTextBox" onChange={handleFormFieldsChange}>
+                                <div className="input-group mb-2">
+                                    <input type="text" name="pincode" className={`form-control addressTextBox ${ pincodeErr ? "errorBorder" : "" }`}
+                                placeholder="Pincode*" maxLength="6" onInput={pincodeInputHandler} onChange={handleFormFieldsChange} />
+                                    <span className={`red-alert-icon ${ pincodeErr ? "" : "d-none" }`} data-bs-toggle="pass_tooltip" data-bs-placement="top" 
+                                            title={pincodeErr}><i className="bi bi-info-circle-fill"></i></span>
+                                </div>
+                                <div className="input-group">
+                                    <select name="state" id="state" className={`form-control addressTextBox ${ stateErr ? "errorBorder" : "" }`} 
+                                        onChange={handleStateFieldsChange}>
                                     {/* {statelist ? statelist.map((item) =>
                                             <option value={item}>{item}</option>
                                         ) : " "
@@ -681,6 +771,9 @@ const Home = () => {
                                             <option value="0">--Select State--</option>
                                             <option value="Odisha">Odisha</option>
                                     </select>
+                                    <span className={`red-alert-icon ${ stateErr ? "" : "d-none" }`} data-bs-toggle="pass_tooltip" data-bs-placement="top" 
+                                            title={stateErr}><i className="bi bi-info-circle-fill"></i></span>
+                                </div>
                                 </div>
                             </div>
                             <div className="mb-2">

@@ -263,6 +263,9 @@
     .addressTextBox {
         height: 40px;
         font-size: small;
+        color: #767676;
+        border-radius: 5px!important;
+        box-shadow: 3px 0 4px -4px rgb(96 96 96 / 80%), -2px 0 6px -4px rgb(112 112 112 / 80%), -2px 0 6px -4px rgb(112 112 112 / 80%), -2px 0 6px -4px rgb(112 112 112 / 80%)!important;
     }
 
     /* .addressTextBox:after {
@@ -274,6 +277,10 @@
       .mandetory_field{
         color: #e32;
         font-size: 20px;
+      }
+
+      .errorBorder{
+        border:1px solid red !important;
       }
 
 
@@ -644,6 +651,13 @@
     color: red;
    }
    
+   .red-alert-icon{
+    color: #d42506;
+    line-height: 2.70;
+    z-index: 9999;
+    position: absolute;
+    right: 12px;
+}
 
 
     
