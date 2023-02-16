@@ -361,6 +361,7 @@ const Home = () => {
                     setTimeout(() => {
                         setOtpSectionDiv(false);
                         setAddressSectionDiv(true);
+                        setAddressStepActive(true);
                     }, "2000");
                 } else if(response.status === 200 && response.data.status == 'success' && response.data.isNewCustomer == false){
                     setAddresslist(response.data);
@@ -372,6 +373,7 @@ const Home = () => {
                     setTimeout(() => {
                         setOtpSectionDiv(false);
                         setaddressListSectionDiv(true);
+                        setAddressStepActive(true);
                     }, "5000");
                 }
             }).catch(error => {
@@ -564,6 +566,7 @@ const Home = () => {
             // }).catch(error => {
             //     console.log(error);
             // });;
+            setAddressSectionDiv(false);
             setaddressListSectionDiv(true);
         } else {
             console.log("Form Validation Error");
@@ -571,7 +574,7 @@ const Home = () => {
     }
 
     const fullNameInputHandler = e => {
-        if (!e) {
+        if (e.target.value == "") {
             setErrors({ ...errors, fullNameErr : "Full Name Cannot be empty" });
         } else {
             setErrors({ ...errors, fullNameErr : "" });
@@ -579,17 +582,19 @@ const Home = () => {
     }
 
     const emailInputHandler = e => {
-        if(!CommonMethods.emailValidator(e)) {
-            setErrors({ ...errors, emailErr : "Please enter valid email-a@bcom" });
-        } else if (!e) {
+        if (e.target.value == "") {
             setErrors({ ...errors, emailErr : "Email Cannot be empty" });
-        } else {
+        } else if(!CommonMethods.emailValidator(e.target.value)) {
+            console.log(222);
+            setErrors({ ...errors, emailErr : "Please enter valid email-a@bcom" });
+        }  else {
+            console.log(111);
             setErrors({ ...errors, emailErr : "" });
         }
     }
 
     const addressInputHandler = e => {
-        if (!e) {
+        if (e.target.value == "") {
             setErrors({ ...errors, addressErr : "Address Cannot be empty" });
         } else {
             setErrors({ ...errors, addressErr : "" });
@@ -597,7 +602,7 @@ const Home = () => {
     }
 
     const landmarkInputHandler = e => {
-        if (!e) {
+        if (e.target.value == "") {
             setErrors({ ...errors, landmarkErr : "Landmark Cannot be empty" });
         } else {
             setErrors({ ...errors, landmarkErr : "" });
@@ -605,7 +610,7 @@ const Home = () => {
     }
 
     const cityInputHandler = e => {
-        if (!e) {
+        if (e.target.value == "") {
             setErrors({ ...errors, cityErr : "City Cannot be empty" });
         } else {
             setErrors({ ...errors, cityErr : "" });
@@ -613,7 +618,7 @@ const Home = () => {
     }
 
     const pincodeInputHandler = e => {
-        if (!e) {
+        if (e.target.value == "") {
             setErrors({ ...errors, pincodeErr : "Pincode Cannot be empty" });
         } else  if(!CommonMethods.numberValidation(e)){
             setErrors({ ...errors, pincodeErr : "Please enter Only Numbers (Max 6)" });
@@ -721,7 +726,7 @@ const Home = () => {
                                 </div>
                                 <div className="col-md-6">
                                 <div className="input-group">
-                                    <input type="text" name="email" className={`form-control addressTextBox ${ emailErr ? "errorBorder" : "" }`}
+                                    <input type="email" name="email" className={`form-control addressTextBox ${ emailErr ? "errorBorder" : "" }`}
                                         placeholder="Email Address*" onInput={emailInputHandler} onChange={handleFormFieldsChange} />
                                     <span className={`red-alert-icon ${ emailErr ? "" : "d-none" }`} data-bs-toggle="pass_tooltip" data-bs-placement="top" 
                                     title={emailErr}><i className="bi bi-info-circle-fill"></i></span> 
