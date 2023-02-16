@@ -486,7 +486,7 @@ const Home = () => {
           errors["emailErr"] = "Email Cannot be empty";
         }  else if (!CommonMethods.emailValidator(fields["email"])) {
           formIsValid = false;
-          errors["emailErr"] = "Please enter valid email.";
+          errors["emailErr"] = "Please enter valid email-a@bcom";
         } 
  
         //Address
@@ -579,7 +579,9 @@ const Home = () => {
     }
 
     const emailInputHandler = e => {
-        if (!e) {
+        if(!CommonMethods.emailValidator(e)) {
+            setErrors({ ...errors, emailErr : "Please enter valid email-a@bcom" });
+        } else if (!e) {
             setErrors({ ...errors, emailErr : "Email Cannot be empty" });
         } else {
             setErrors({ ...errors, emailErr : "" });
