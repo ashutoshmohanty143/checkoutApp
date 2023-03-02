@@ -19,6 +19,10 @@ const Home = () => {
     const [modalShow, setmodalShow] = useState(false);
 
     const [mobNextbtn, setMobNextbtn] = useState(true);
+    const [mobNextbtnActive, setMobNextbtnActive] = useState(false);
+    const [mobActiveBorder, setmobActiveBorder] = useState(false);
+    const [mobGreenCheck, setmobGreenCheck] = useState(false);
+    const [mobRedAlert, setmobRedAlert] = useState(false);
     const [fields, setFields] = useState({});
     const [errors, setErrors] = useState({});
     const [statelist, setStatelist] = useState([]);
@@ -290,18 +294,18 @@ const Home = () => {
         CommonMethods.phoneMasking(event);
         if (event.target.value.length != event.target.maxLength && event.target.value.length != MOB_MAX_NUM) {
             setMobNextbtn(true);
-            document.querySelector('#get-otp').classList.remove('active-btn');
-            document.querySelector('#mobile').classList.remove('active-border');
-            document.querySelectorAll('.green-check')[0].style.display = "none";
-            document.querySelectorAll('.red-alert')[0].style.display = "block";
+            setMobNextbtnActive(false);
+            setmobActiveBorder(false);
+            setmobGreenCheck(false);
+            setmobRedAlert(true);
 
         } else {
             setMobNextbtn(false);
-            document.querySelector('#mobile').blur();
-            document.querySelector('#get-otp').classList.add('active-btn');
-            document.querySelector('#mobile').classList.add('active-border');
-            document.querySelectorAll('.green-check')[0].style.display = "block";   
-            document.querySelectorAll('.red-alert')[0].style.display = "none";
+            // document.querySelector('#mobile').blur();
+            setMobNextbtnActive(true);
+            setmobActiveBorder(true);
+            setmobGreenCheck(true);
+            setmobRedAlert(false);
         }
     }
     
@@ -339,6 +343,7 @@ const Home = () => {
         }
 
         let otpLength = finalotp.length;
+        console.log(otpLength);
         let length = 4;
         if(otpLength === length){
             //validate otp here by calling sms gateway
@@ -440,8 +445,14 @@ const Home = () => {
         // }
         setOtpSectionDiv(false);
         setMobileSectionDiv(true);
-        setMobNextbtn(true);
         setCliploader(false);
+
+        setMobNextbtn(false);
+        document.querySelector('#mobile').blur();
+        document.querySelector('#get-otp').classList.add('active-btn');
+        document.querySelector('#mobile').classList.add('active-border');
+        document.querySelectorAll('.green-check')[0].style.display = "block";   
+        document.querySelectorAll('.red-alert')[0].style.display = "none";
     }
 
     const resendOTP = event => {
@@ -528,46 +539,49 @@ const Home = () => {
     
     
         setErrors(errors);
-        console.log(errors);
+        // console.log(errors);
         return formIsValid;
     }
 
     const addressNextBtnHandler = e => {
         e.preventDefault();
         if (formValidate()) {
-            // let vendorId = '62f9d325591adcd5e44e18ecs';
-            // let { fullName, email, address, landmark, city, pincode, state, addressType } = fields;
-            // let mobile = CommonMethods.unmask(fields['mobile']);
-            // const formData = {
-            //     "collection": "customers_"+vendorId,
-            //     "data": {
-            //         "name": fullName,
-            //         "email": email,
-            //         "mobile": mobile,
-            //         "address": [
-            //             {
-            //                 "addressType": addressType,
-            //                 "address": address,
-            //                 "landmark": landmark,
-            //                 "city": city,
-            //                 "pincode": pincode,
-            //                 "state": state
-            //             }
-            //         ]
-            //     }
-            // };
-            // ApiServices.AddRecord(formData).then(response => {
-            //     console.log(response);
-            //     if (response.status == 200 && response.data.status == 'success') {
-            //         setaddressListSectionDiv(true);
-            //     } else if (response.data.status == 'failed' && response.data.message == 'UNIQUE KEY CONSTRAINT') {
+            let vendorId = '62f9d325591adcd5e44e18ecs';
+            let { fullName, email, address, landmark, city, pincode, state, addressType } = fields;
+            let mobile = CommonMethods.unmask(fields['mobile']);
+            const formData = {
+                "collection": "customers_"+vendorId,
+                "data": {
+                    "name": fullName,
+                    "email": email,
+                    "mobile": mobile,
+                    "address": [
+                        {
+                            "addressType": addressType,
+                            "address": address,
+                            "landmark": landmark,
+                            "city": city,
+                            "pincode": pincode,
+                            "state": state
+                        }
+                    ]
+                },
+                "meta": {
+                    "duplicate": "" + mobile + ""
+                }       
+            };
+            ApiServices.addNewCustomer(formData).then(response => {
+                console.log(response);
+                // if (response.status == 200 && response.data.status == 'success') {
+                //     setAddressSectionDiv(false);
+                //     setaddressListSectionDiv(true);
+                // } else if (response.data.status == 'failed' && response.data.message == 'UNIQUE KEY CONSTRAINT') {
                     
-            //     }
-            // }).catch(error => {
-            //     console.log(error);
-            // });;
-            setAddressSectionDiv(false);
-            setaddressListSectionDiv(true);
+                // }
+            }).catch(error => {
+                console.log(error);
+            });;
+            
         } else {
             console.log("Form Validation Error");
         }
@@ -667,17 +681,17 @@ const Home = () => {
                             <h4 className="mb-3 enter-mobile">Please enter your mobile number</h4>
                             <div className="input-group">
                                 <span className="country-code" id="mob-code">+91</span>
-                                <input type="text" name="mobile" id='mobile' className="form-control mobile" maxLength={MOB_MAX_NUM}
+                                <input type="text" name="mobile" id='mobile' className={`form-control mobile ${ mobActiveBorder ? "active-border" : ""}`} maxLength={MOB_MAX_NUM}
                                     placeholder="999 888 0000" onInput={mobileInputHandler}
                                     onChange={handleFormFieldsChange} value={fields['mobile'] || ''} />
-                                <span className="green-check"><i className="bi bi-check-circle-fill"></i></span>
-                                <span className="red-alert" data-bs-toggle="pass_tooltip" data-bs-placement="top" 
+                                <span className={`green-check ${ mobGreenCheck ? "" : "d-none" }`}><i className="bi bi-check-circle-fill"></i></span>
+                                <span className={`red-alert ${ mobRedAlert ? "" : "d-none"}`} data-bs-toggle="pass_tooltip" data-bs-placement="top" 
                                     title={`Give only 10 digit mobile number`}><i className="bi bi-info-circle-fill"></i>
                                 </span>
                             </div>
                             <div className="text-muted ms-1 mt-2" style={{ fontSize: 12 + 'px' }}>A 4 digit OTP will be sent via
                                 SMS to verify your mobile number!</div>
-                            <button onClick={getOTP} id="get-otp" className="get-otp form-control mt-5" disabled={mobNextbtn}>Get
+                            <button onClick={getOTP} id="get-otp" className={`get-otp form-control mt-5 ${ mobNextbtnActive ? "active-btn" : "" }`} disabled={mobNextbtn}>Get
                                 OTP</button>
                         </div>
                         : ''}

@@ -168,14 +168,12 @@
         line-height: 2.70;
         z-index: 9999;
         margin-left: -30px !important;
-        display: none;
     }
     .red-alert{
         color: #d42506;
         line-height: 2.70;
         z-index: 9999;
         margin-left: -30px !important;
-        display: none;
     }
 
     .get-otp{
