@@ -37,6 +37,8 @@ const Home = () => {
     const [cartVariantIds, setCartVariantId] = useState([]);
     const [initialSubTotalAmount, setInitialSubTotalAmount] = useState([]);
     const [otp, setOtp] = useState('');
+    const [existingCustomer, setExistingCustomer] = useState(false);
+    const [customerName, setCustomerName] = useState('');
     
 
     useEffect(() => {
@@ -358,9 +360,7 @@ const Home = () => {
                 "mobile": mobile
             };
 
-            ApiServices.CheckExistingCustomer(formData).then(response => {      
-                //console.log(response);
-                //return false;  
+            ApiServices.CheckExistingCustomer(formData).then(response => { 
                 if (response.status === 200 && response.data.status == 'success' && response.data.isNewCustomer == true ) {
                     setTimeout(() => {
                         setCliploader(true);
@@ -373,7 +373,11 @@ const Home = () => {
                         setAddressStepActive(true);
                     }, "2000");
                 } else if(response.status === 200 && response.data.status == 'success' && response.data.isNewCustomer == false){
-                    setAddresslist(response.data);
+                    setExistingCustomer(true);
+                    let address = response.data.data.address;
+                    let name = response.data.data.name;
+                    setAddresslist(address);
+                    setCustomerName(name);                    
                     setTimeout(() => {
                         setCliploader(true);
                         document.getElementById('otp-info').style.display = "block";
@@ -499,53 +503,67 @@ const Home = () => {
         return formIsValid;
     }
 
-    const addressNextBtnHandler = e => { 
+    const addressNextBtnHandler = e => {
         e.preventDefault();
         const urlString = window.location.href; 
         const url = new URL(urlString);
         const cartDetails = JSON.parse(url.searchParams.get("carturi"));
         let vendorId = cartDetails.vendorId; 
 
-        if (formValidate()) {
-            let { fullName, email, address, landmark, city, pincode, state, addressType } = fields;
-            let mobile = CommonMethods.unmask(fields['mobile']);
-            const formData = {
-                "collection": "customers_"+vendorId,
-                "data": {
-                    "name": fullName,
-                    "email": email,
-                    "mobile": mobile,
-                    "address": [
-                        {
-                            "addressType": addressType,
-                            "address": address,
-                            "landmark": landmark,
-                            "city": city,
-                            "pincode": pincode,
-                            "state": state
-                        }
-                    ]
-                },
-                "meta": {
-                    "duplicate": ["mobile"]
-                }       
-            };
-
-            
-
-            ApiServices.addNewCustomer(formData).then(response => {
-                if (response.status == 200 && response.data.status == 'success') {
-                    setAddressSectionDiv(false);
-                   
-                } else if (response.data.status == 'failed' && response.data.message == 'UNIQUE KEY CONSTRAINT') {
-                    
+        if(!existingCustomer) {
+            if (formValidate()) {
+               
+                let { fullName, email, address, landmark, city, pincode, state, addressType } = fields;
+                console.log(addressType);
+                if(addressType == undefined) {
+                    addressType = 'Home';
                 }
-            }).catch(error => {
-                console.log(error);
-            });            
-        } else {
-            console.log("Form Validation Error");
+                let mobile = CommonMethods.unmask(fields['mobile']);
+                const formData = {
+                    "collection": "customers_"+vendorId,
+                    "data": {
+                        "name": fullName,
+                        "email": email,
+                        "mobile": mobile,
+                        "address": [
+                            {
+                                "addressType": addressType,
+                                "address": address,
+                                "landmark": landmark,
+                                "city": city,
+                                "pincode": pincode,
+                                "state": state
+                            }
+                        ]
+                    },
+                    "meta": {
+                        "duplicate": ["mobile"]
+                    }       
+                };                
+    
+                ApiServices.addNewCustomer(formData).then(response => {
+                    if (response.status == 200 && response.data.status == 'success') {
+                        //console.log(response);
+                        let address = response.data.data.address;
+                        let name = response.data.data.name;
+                        setAddressSectionDiv(false);
+                        setaddressListSectionDiv(true);
+                        setAddresslist(address);
+                        setCustomerName(name);
+                    } else if (response.data.status == 'failed' && response.data.message == 'UNIQUE KEY CONSTRAINT') {
+                        
+                    }
+                }).catch(error => {
+                    console.log(error);
+                });            
+            } else {
+                console.log("Form Validation Error");
+            }
+        } else if(existingCustomer) {
+
         }
+
+        
     }
 
     const fullNameInputHandler = e => {
@@ -763,20 +781,16 @@ const Home = () => {
                             </div>
                             <div className="addressTypeRadio">
                                 <div className="form-check col-md-4">
-                                    <input className="form-check-input" type="radio" name="addressType" id="home"
-                                        value="Home" defaultChecked onChange={handleFormFieldsChange} />
-                                    <label className="form-check-label" htmlFor="home">Home <br /> <span
-                                        style={{ fontSize: 10 + 'px' }}>(All day delivery)</span></label>
+                                    <input className="form-check-input" type="radio" name="addressType" id="home" value="Home" defaultChecked onChange={handleFormFieldsChange} />
+                                    <label className="form-check-label" htmlFor="home">Home <br /> <span style={{ fontSize: 10 + 'px' }}>(All day delivery)</span></label>
                                 </div>
                                 <div className="form-check col-md-4">
                                     <input className="form-check-input" type="radio" name="addressType" id="work"
                                         value="Work" onChange={handleFormFieldsChange} />
-                                    <label className="form-check-label" htmlFor="work">Work <br /> <span
-                                        style={{ fontSize: 10 + 'px' }}>(Between 10 AM-5 PM)</span></label>
+                                    <label className="form-check-label" htmlFor="work">Work <br /> <span style={{ fontSize: 10 + 'px' }}>(Between 10 AM-5 PM)</span></label>
                                 </div>
                                 <div className="form-check col-md-4 d-flex">
-                                    <input className="form-check-input me-2" type="radio" name="addressType" id="other"
-                                        value={fields['add_type_other']} onChange={handleFormFieldsChange} />
+                                    <input className="form-check-input me-2" type="radio" name="addressType" id="other" value={fields['add_type_other']} onChange={handleFormFieldsChange} />
                                     <label className="form-check-label me-2" htmlFor={fields['add_type_other']}>{fields['add_type_other']}</label>
                                     <input type="text" id="add_type_other" className="add_type_other" onChange={handleFormFieldsChange} value={fields['add_type_other']}/>
                                 </div>
@@ -807,8 +821,8 @@ const Home = () => {
                                                 <div>
                                                     <input type="radio" className="form-check-input custom-align-radio me-2"
                                                         name="shipping_address" defaultChecked />
-                                                    <label className="address-label"><span className="me-4">{'  '}{item.fullName}</span>
-                                                        <span>{item.address + ', ' + item.city + ', ' + item.state}</span></label>
+                                                    <label className="address-label"><span className="me-4">{'  '}{customerName}</span>
+                                                        <span>{item.address.slice(0,10) + '..., ' + item.city + ', ' + item.state}</span></label>
                                                 </div>
                                             </div>
                                         </li>
