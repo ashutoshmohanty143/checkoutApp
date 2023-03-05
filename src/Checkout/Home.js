@@ -347,16 +347,20 @@ const Home = () => {
         let length = 4;
         if(otpLength === length){
             //validate otp here by calling sms gateway
-            let vendorId = '62f9d325591adcd5e44e18ecs';
+
+            const urlString = window.location.href; 
+            const url = new URL(urlString);
+            const cartDetails = JSON.parse(url.searchParams.get("carturi"));
+            let vendorId = cartDetails.vendorId;
             let mobile = CommonMethods.unmask(fields['mobile']);
             const formData = {
                 "collection": "customers_"+vendorId,
-                "data": {
-                    "mobile": "" + mobile + ""
-                }
+                "mobile": mobile
             };
 
-            ApiServices.CheckExistingCustomer(formData).then(response => {           
+            ApiServices.CheckExistingCustomer(formData).then(response => {      
+                //console.log(response);
+                //return false;  
                 if (response.status === 200 && response.data.status == 'success' && response.data.isNewCustomer == true ) {
                     setTimeout(() => {
                         setCliploader(true);
@@ -386,54 +390,6 @@ const Home = () => {
             });
         }
     }
-
-    // const otp4InputHandler = () => {
-    //     if (fields['otp1'] === '1' && fields['otp2'] === '2' && fields['otp3'] === '3' && fields['otp4'] === '4') {
-    //         // setTimeout(() => {
-    //         // document.getElementById('otp-info').style.display = "block";
-    //         // document.getElementById('otp-info').innerHTML = 'Verifying OTP';
-    //         // }, "500");
-    //         // setOtpSectionDiv(false);
-    //         setAddressStepActive(true);
-
-    //         //check existing user
-    //         let vendorId = '62f9d325591adcd5e44e18ecs';
-    //         let mobile = CommonMethods.unmask(fields['mobile']);
-    //         const formData = {
-    //             "collection": "customers_"+vendorId,
-    //             "data": {
-    //                 "mobile": "" + mobile + ""
-    //             }
-    //         };
-
-    //         ApiServices.CheckExistingCustomer(formData).then(response => {           
-    //             if (response.status === 200 && response.data.status == 'success' && response.data.isNewCustomer == true ) {
-    //                 setTimeout(() => {
-    //                     setCliploader(true);
-    //                     document.getElementById('otp-info').style.display = "block";
-    //                     document.getElementById('otp-info').innerHTML = 'Verifying OTP';
-    //                 }, "1000");
-    //                 setTimeout(() => {
-    //                     setOtpSectionDiv(false);
-    //                     setAddressSectionDiv(true);
-    //                 }, "5000");
-    //             } else if(response.status === 200 && response.data.status == 'success' && response.data.isNewCustomer == false){
-    //                 setAddresslist(response.data);
-    //                 setTimeout(() => {
-    //                     setCliploader(true);
-    //                     document.getElementById('otp-info').style.display = "block";
-    //                     document.getElementById('otp-info').innerHTML = 'Verifying OTP';
-    //                 }, "1000");
-    //                 setTimeout(() => {
-    //                     setOtpSectionDiv(false);
-    //                     setaddressListSectionDiv(true);
-    //                 }, "5000");
-    //             }
-    //         }).catch(error => {
-    //             console.log(error);
-    //         }); 
-    //     }
-    // }
 
     const editMobileLink = event => {
         event.preventDefault();
@@ -543,10 +499,14 @@ const Home = () => {
         return formIsValid;
     }
 
-    const addressNextBtnHandler = e => {
+    const addressNextBtnHandler = e => { 
         e.preventDefault();
+        const urlString = window.location.href; 
+        const url = new URL(urlString);
+        const cartDetails = JSON.parse(url.searchParams.get("carturi"));
+        let vendorId = cartDetails.vendorId; 
+
         if (formValidate()) {
-            let vendorId = '62f9d325591adcd5e44e18ecs';
             let { fullName, email, address, landmark, city, pincode, state, addressType } = fields;
             let mobile = CommonMethods.unmask(fields['mobile']);
             const formData = {
@@ -567,21 +527,22 @@ const Home = () => {
                     ]
                 },
                 "meta": {
-                    "duplicate": "" + mobile + ""
+                    "duplicate": ["mobile"]
                 }       
             };
+
+            
+
             ApiServices.addNewCustomer(formData).then(response => {
-                console.log(response);
-                // if (response.status == 200 && response.data.status == 'success') {
-                //     setAddressSectionDiv(false);
-                //     setaddressListSectionDiv(true);
-                // } else if (response.data.status == 'failed' && response.data.message == 'UNIQUE KEY CONSTRAINT') {
+                if (response.status == 200 && response.data.status == 'success') {
+                    setAddressSectionDiv(false);
+                   
+                } else if (response.data.status == 'failed' && response.data.message == 'UNIQUE KEY CONSTRAINT') {
                     
-                // }
+                }
             }).catch(error => {
                 console.log(error);
-            });;
-            
+            });            
         } else {
             console.log("Form Validation Error");
         }
@@ -599,10 +560,10 @@ const Home = () => {
         if (e.target.value == "") {
             setErrors({ ...errors, emailErr : "Email Cannot be empty" });
         } else if(!CommonMethods.emailValidator(e.target.value)) {
-            console.log(222);
+            //console.log(222);
             setErrors({ ...errors, emailErr : "Please enter valid email-a@bcom" });
         }  else {
-            console.log(111);
+            //console.log(111);
             setErrors({ ...errors, emailErr : "" });
         }
     }
