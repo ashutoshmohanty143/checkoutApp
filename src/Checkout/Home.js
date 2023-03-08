@@ -345,7 +345,7 @@ const Home = () => {
         }
 
         let otpLength = finalotp.length;
-        console.log(otpLength);
+        //console.log(otpLength);
         let length = 4;
         if(otpLength === length){
             //validate otp here by calling sms gateway
@@ -374,10 +374,11 @@ const Home = () => {
                     }, "2000");
                 } else if(response.status === 200 && response.data.status == 'success' && response.data.isNewCustomer == false){
                     setExistingCustomer(true);
-                    let address = response.data.data.address;
-                    let name = response.data.data.name;
-                    setAddresslist(address);
-                    setCustomerName(name);                    
+                    //let address = response.data.data.address;
+                    //let name = response.data.data.name;
+                    //console.log(response.data.data);
+                    setAddresslist(response.data.data);
+                    //setCustomerName(response.data.data.name);                    
                     setTimeout(() => {
                         setCliploader(true);
                         document.getElementById('otp-info').style.display = "block";
@@ -509,30 +510,29 @@ const Home = () => {
         const url = new URL(urlString);
         const cartDetails = JSON.parse(url.searchParams.get("carturi"));
         let vendorId = cartDetails.vendorId; 
-
+        console.log(addresslist);
         if(!existingCustomer) {
-            if (formValidate()) {
-               
+            if (formValidate()) {           
                 let { fullName, email, address, landmark, city, pincode, state, addressType } = fields;
-                console.log(addressType);
                 if(addressType == undefined) {
                     addressType = 'Home';
                 }
                 let mobile = CommonMethods.unmask(fields['mobile']);
                 const formData = {
                     "collection": "customers_"+vendorId,
-                    "data": {
-                        "name": fullName,
-                        "email": email,
+                    "data": {                        
                         "mobile": mobile,
                         "address": [
                             {
+                                "name": fullName,
+                                "email": email,
                                 "addressType": addressType,
                                 "address": address,
                                 "landmark": landmark,
                                 "city": city,
                                 "pincode": pincode,
-                                "state": state
+                                "state": state,
+                                "isDefaultAddress": true
                             }
                         ]
                     },
@@ -544,12 +544,12 @@ const Home = () => {
                 ApiServices.addNewCustomer(formData).then(response => {
                     if (response.status == 200 && response.data.status == 'success') {
                         //console.log(response);
-                        let address = response.data.data.address;
-                        let name = response.data.data.name;
+                        //let address = response.data.data.address;
+                        //let name = response.data.data.name;
                         setAddressSectionDiv(false);
                         setaddressListSectionDiv(true);
-                        setAddresslist(address);
-                        setCustomerName(name);
+                        setAddresslist(response.data.data);
+                        //setCustomerName(response.data.data.name);
                     } else if (response.data.status == 'failed' && response.data.message == 'UNIQUE KEY CONSTRAINT') {
                         
                     }
@@ -560,10 +560,55 @@ const Home = () => {
                 console.log("Form Validation Error");
             }
         } else if(existingCustomer) {
+            let addressList = addresslist.address;
+            //console.log(addressList);
+            if (formValidate()) { 
+                let { fullName, email, address, landmark, city, pincode, state, addressType } = fields;
+                if(addressType == undefined) {
+                    addressType = 'Home';
+                }
 
-        }
+                let newAddress = {
+                    "name": fullName,
+                    "email": email,
+                    "addressType": addressType,
+                    "address": address,
+                    "landmark": landmark,
+                    "city": city,
+                    "pincode": pincode,
+                    "state": state,
+                    "isDefaultAddress": false
+                }
+                addressList.push(newAddress);                
+                const formData = {
+                    "collection": "customers_"+vendorId,
+                    "id": addresslist._id,
+                    "data": {                        
+                        "address": addressList
+                    }      
+                };
 
-        
+                ApiServices.updateExistingCustomer(formData).then(response => {
+                    if (response.status == 200 && response.data.status == 'success') {
+                        console.log(response);
+                        setAddresslist(response.data.data);
+                        setAddressSectionDiv(false);
+                        setaddressListSectionDiv(true);
+                        // setCustomerName(response.data.data.name);
+                    } else if (response.data.status == 'failed' && response.data.message == 'UNIQUE KEY CONSTRAINT') {
+                        
+                    }
+                }).catch(error => {
+                    console.log(error);
+                });
+            } else {
+                console.log("Form Validation Error");
+            }
+        }        
+    }
+
+    const updateCustomerAddress = e => {
+        console.log(1111);
     }
 
     const fullNameInputHandler = e => {
@@ -620,6 +665,13 @@ const Home = () => {
         }
     }
 
+    const addAddressExistingCustomer = e => {
+        setTimeout(() => {
+            setaddressListSectionDiv(false);
+            setAddressSectionDiv(true);
+        }, "1000");
+    }
+
     
     //console.log('couponlist',couponlist);
 
@@ -652,7 +704,6 @@ const Home = () => {
                             <span>Payment</span>
                         </div>
                     </div>
-
 
                     {mobileSectionDiv ?
                         <div className="mobile-section">
@@ -704,7 +755,6 @@ const Home = () => {
                             </div>
                         </div>
                         : ''}
-
 
                     {addressSectionDiv ?
                         <div className="address-section">
@@ -798,8 +848,7 @@ const Home = () => {
 
                             <div className="d-flex justify-content-between">
                                 <input type="button" className="address-back-btn form-control" value="&larr;" onClick={addressBackBtnHandler} />
-                                <input type="button" className="address-next-btn form-control" value="Next"
-                                    onClick={addressNextBtnHandler} />
+                                <input type="button" className="address-next-btn form-control" value="Next" onClick={addressNextBtnHandler} />
                             </div>
 
                         </div>
@@ -807,77 +856,31 @@ const Home = () => {
 
                     {addressListSectionDiv ?
                         <div className="address-list-section">
-                            <div className="address-list">
-
-                                {addresslist ? addresslist.map((item, i) =>
-                                    <ul style={{ listStyleType: "none", paddingLeft: 0 }} key={item._id}>
-                                        <li>
-                                            <div className="address-card active-address">
+                            <div className="address-list">                                
+                                <ul className='addressBox'>
+                                    { addresslist ? addresslist.address.map((item, i) =>
+                                        <li key={item._id}>
+                                            <div className={`address-card ${item.isDefaultAddress ? 'active-address': ''}`}>
                                                 <div className="mb-2">
-                                                    <span className="add_list_round"><i className="bi bi-house-heart-fill"></i></span> <b
-                                                        style={{ fontSize: 'small' }}>{item.addressType}</b>
-                                                    <span className="edit-address-btn"><i className="bi bi-pencil-square"></i></span>
+                                                    <span className="add_list_round me-2"><i className="bi bi-house-heart-fill"></i></span> 
+                                                    <b className='me-2' style={{ fontSize: 'small' }}>{item.addressType}</b>
+                                                    <span className='adressDetails'>( {item.address.slice(0,10) + '..., ' + item.city + ', ' + item.state} )</span>
+                                                    <span className="edit-address-btn" onClick={updateCustomerAddress}><i className="bi bi-pencil-square"></i></span>
+                                                    {!item.isDefaultAddress ? <span className="delete-address-btn"><i className="bi bi-trash"></i></span>: ''}
                                                 </div>
                                                 <div>
-                                                    <input type="radio" className="form-check-input custom-align-radio me-2"
-                                                        name="shipping_address" defaultChecked />
-                                                    <label className="address-label"><span className="me-4">{'  '}{customerName}</span>
-                                                        <span>{item.address.slice(0,10) + '..., ' + item.city + ', ' + item.state}</span></label>
+                                                    <input type="radio"  className="form-check-input custom-align-radio me-1" name="shipping_address" defaultChecked />
+                                                    <label className="address-label">
+                                                        <span className="me-4">{'  '}{item.name}</span>
+                                                    </label>
                                                 </div>
+                                                {!item.isDefaultAddress ? <span className="make-default-address">Make as default</span> : ''}
                                             </div>
-                                        </li>
-                                    </ul>
-                                ) : "Data Not Found"
-                                }
-
-                                {/* <div className="address-card active-address">
-                        <div className="mb-2">
-                            <span className="add_list_round"><i className="bi bi-house-heart-fill"></i></span> <b
-                                style={{fontSize: 'small'}}>Home</b>
-                            <span className="edit-address-btn"><i className="bi bi-pencil-square"></i></span>
-                        </div>
-                        <div>
-                            <input type="radio" className="form-check-input custom-align-radio"
-                                name="shipping_address" defaultChecked />
-                            <label className="address-label"><span className="me-4">Vikas Kumar</span><span>Bolck C,
-                                    Sector - 8, Chandigarh</span></label>
-                        </div>
-                    </div>
-
-                    <div className="address-card">
-                        <div className="mb-2">
-                            <span className="add_list_round"><i className="bi bi-house-heart-fill"></i></span> <b
-                                style={{fontSize: 'small'}}>Work</b>
-                            <span className="delete-address-btn"><i className="bi bi-trash"></i></span>
-                            <span className="edit-address-btn"><i className="bi bi-pencil-square"></i></span>
-                        </div>
-                        <div>
-                            <input type="radio" className="form-check-input custom-align-radio"
-                                name="shipping_address" />
-                            <label className="address-label"><span className="me-4">Vikas Kumar</span><span>Bolck C,
-                                    Sector - 8, Chandigarh</span></label>
-                        </div>
-                        <span className="make-default-address">Make as default</span>
-                    </div>
-
-                    <div className="address-card">
-                        <div className="mb-2">
-                            <span className="add_list_round"><i className="bi bi-house-heart-fill"></i></span> <b
-                                style={{fontSize: 'small'}}>Friend</b>
-                            <span className="delete-address-btn"><i className="bi bi-trash"></i></span>
-                            <span className="edit-address-btn"><i className="bi bi-pencil-square"></i></span>
-                        </div>
-                        <div>
-                            <input type="radio" className="form-check-input custom-align-radio"
-                                name="shipping_address" />
-                            <label className="address-label"><span className="me-4">Vikas Kumar</span><span>Bolck C,
-                                    Sector - 8, Chandigarh</span></label>
-                        </div>
-                        <span className="make-default-address">Make as default</span>
-                    </div> */}
-
+                                        </li> ) : "Data Not Found"
+                                    }
+                                </ul>
                             </div>
-                            <div className="add-new-address" id="add-new-address">
+                            <div className="add-address-existing-customer" id="add-address-existing-customer" onClick={addAddressExistingCustomer}>
                                 <i className="bi bi-plus-circle-fill"></i> Add address
                             </div>
 

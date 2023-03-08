@@ -360,25 +360,37 @@
     }
 
     .address-list{
-        /* margin: 10px; */
         display: flow-root;
-        
-        /* padding: 12px; */
         padding-right: 8px;
+        max-height: 230px;
+        overflow-y: scroll;
+        min-height: 250px;
+    }
+    .addressBox{
+        list-style-type: none;
+        padding-left: 0px;
+    }
+    .addressBox li{ 
+        margin-bottom: 10px;
+    }
+    .addressBox li:last-child{ 
+        margin-bottom: 0px;
     }
 
     .address-card{
         border: 1px solid #ddd;
-        padding: 8px;
+        padding: 6px 10px;
         height: auto;
         border-radius: 5px;
-    	margin-bottom: 10px;
         position: relative;
 	}
     .active-address{
         border: 1px solid #003898 !important;
     }
     .address-label{
+        font-size: 12px;
+    }
+    .adressDetails{
         font-size: 12px;
     }
     .make-default-address{
@@ -397,7 +409,7 @@
         border-radius: 50%;
         padding: 2px 4px;
     }
-    .add-new-address {
+    .add-address-existing-customer {
         cursor: pointer;
         font-size: 13px;
     }
@@ -405,10 +417,10 @@
 		font-size: 12px;
         width: 80%;    
 	}
-    .add-new-address .bi-plus-circle-fill{
+    .add-address-existing-customer .bi-plus-circle-fill{
 		font-size: 13px;
 	}
-    .add-new-address label{
+    .add-address-existing-customer label{
 		font-size: 15px;
 		cursor: pointer;
 	}
@@ -418,16 +430,18 @@
         color: #003898;
         -webkit-text-stroke: 0.5px;
         cursor: pointer;
-        font-size: 16px;
+        font-size: 15px;
+        position: absolute;
+        right: 30px;
     }
 
     .delete-address-btn {
         float: right;
         margin-left: 5px;
-        color: #C80000;
+        color: #ff3c3c;
         -webkit-text-stroke: 0.5px;
         cursor: pointer;
-        font-size: 16px;
+        font-size: 15px;
     }
 
     .pay-nxt-btn {

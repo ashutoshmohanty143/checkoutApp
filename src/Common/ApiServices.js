@@ -29,6 +29,10 @@ class ApiServices {
         return axios.post(API_BASE_URL+"/store/doc", formData);
     }
 
+    updateExistingCustomer(formData){
+        return axios.put(API_BASE_URL+"/store/doc", formData);
+    }
+
     // GetAllRecords(collectionName){
     //     return axios.get(API_BASE_URL+"/doc/?collection="+collectionName);
     // }
