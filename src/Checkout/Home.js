@@ -39,7 +39,8 @@ const Home = () => {
     const [otp, setOtp] = useState('');
     const [existingCustomer, setExistingCustomer] = useState(false);
     const [addressToBeUpdated, setAdressToBeUpdated] = useState({});
-    
+    const [addressListIndexToUpdate, setAddressListIndexToUpdate] = useState();
+    const [isAddressEditButtonClicked, setIsAddressEditButtonClicked] = useState(false);
 
     useEffect(() => {
         cartDetails();
@@ -510,7 +511,7 @@ const Home = () => {
         const url = new URL(urlString);
         const cartDetails = JSON.parse(url.searchParams.get("carturi"));
         let vendorId = cartDetails.vendorId; 
-        console.log(existingCustomer);
+        //console.log(existingCustomer);
         if(!existingCustomer) {
             if (formValidate()) {           
                 let { fullName, email, address, landmark, city, pincode, state, addressType } = fields;
@@ -543,15 +544,9 @@ const Home = () => {
     
                 ApiServices.addNewCustomer(formData).then(response => {
                     if (response.status == 200 && response.data.status == 'success') {
-                        //console.log(response);
-                        //let address = response.data.data.address;
-                        //let name = response.data.data.name;
                         setAddressSectionDiv(false);
                         setaddressListSectionDiv(true);
                         setAddresslist(response.data.data);
-                        //setCustomerName(response.data.data.name);
-                    } else if (response.data.status == 'failed' && response.data.message == 'UNIQUE KEY CONSTRAINT') {
-                        
                     }
                 }).catch(error => {
                     console.log(error);
@@ -561,14 +556,20 @@ const Home = () => {
             }
         } else if(existingCustomer) {
             let addressList = addresslist.address;
-            console.log(addressList);
-            if (formValidate()) { 
+            if (formValidate()) {
                 let { fullName, email, address, landmark, city, pincode, state, addressType } = fields;
                 if(addressType == undefined) {
                     addressType = 'Home';
                 }
 
-                let newAddress = {
+                var isDefaultAddress;
+                if(isAddressEditButtonClicked) { 
+                    isDefaultAddress = addresslist.address[addressListIndexToUpdate].isDefaultAddress;
+                } else {          
+                    isDefaultAddress = false;
+                }
+                
+                let addressFormData = {
                     "name": fullName,
                     "email": email,
                     "addressType": addressType,
@@ -577,9 +578,15 @@ const Home = () => {
                     "city": city,
                     "pincode": pincode,
                     "state": state,
-                    "isDefaultAddress": false
+                    "isDefaultAddress": isDefaultAddress
                 }
-                addressList.push(newAddress);                
+
+                if(isAddressEditButtonClicked) { 
+                    addresslist.address[addressListIndexToUpdate] = addressFormData;
+                } else {          
+                    addressList.push(addressFormData);        
+                }
+
                 const formData = {
                     "collection": "customers_"+vendorId,
                     "id": addresslist._id,
@@ -587,20 +594,18 @@ const Home = () => {
                         "address": addressList
                     }      
                 };
-
+    
                 ApiServices.updateExistingCustomer(formData).then(response => {
                     if (response.status == 200 && response.data.status == 'success') {
-                        console.log(response);
                         setAddresslist(response.data.data);
                         setAddressSectionDiv(false);
                         setaddressListSectionDiv(true);
-                        // setCustomerName(response.data.data.name);
-                    } else if (response.data.status == 'failed' && response.data.message == 'UNIQUE KEY CONSTRAINT') {
-                        
+                        setIsAddressEditButtonClicked(false);
                     }
                 }).catch(error => {
                     console.log(error);
                 });
+
             } else {
                 console.log("Form Validation Error");
             }
@@ -609,16 +614,13 @@ const Home = () => {
 
     const updateCustomerAddress = (e,i) => {
         e.preventDefault();
+        setIsAddressEditButtonClicked(true);
+        setAddressListIndexToUpdate(i);
         let updatedAddress = addresslist.address[i];
-        //console.log(updatedAddress);
-        setAdressToBeUpdated(updatedAddress);
-        console.log(addressToBeUpdated);
-        // if(addressToBeUpdated){
-            
-        //     setaddressListSectionDiv(false);
-        //     setAddressSectionDiv(true);
-        //     console.log(addressToBeUpdated);
-        // }        
+        setFields(updatedAddress);                
+        setaddressListSectionDiv(false);
+        setAddressSectionDiv(true);
+        console.log(fields);
     }
 
     const fullNameInputHandler = e => {
@@ -686,19 +688,20 @@ const Home = () => {
     //console.log('couponlist',couponlist);
 
     let { fullNameErr, emailErr, addressErr, landmarkErr, cityErr, pincodeErr, stateErr } = errors;
-
+    
     return (     
         <>            
             <div className="modal-body row">
+           
                 <div className="checkout-container-left">
+                
                     <span className="trianle"></span>
                     <div className="verticalbanner">
                         <img src="./img/logo.png" width="60px" height="45px" alt="Logo" />
                     </div>
                     <div className="cart">
-                    <img id="cart_img" src="./img/cart.png" width="100px" height="100px" alt="Cart-icon" />
+                        <img id="cart_img" src="./img/cart.png" width="100px" height="100px" alt="Cart-icon" />
                     </div>
-
 
                     <div className="checkout-header">
                         <div className='me-3 active-step'>
@@ -713,6 +716,8 @@ const Home = () => {
                             <img src={paymentStepActive ? '' : './img/payment-method.png'} className='me-2' />
                             <span>Payment</span>
                         </div>
+
+                        
                     </div>
 
                     {mobileSectionDiv ?
@@ -768,68 +773,65 @@ const Home = () => {
 
                     {addressSectionDiv ?
                         <div className="address-section">
+                            {/* {console.log('aaaa',fields["name"])}
+                            <div>{fields["fullName"]}</div> */}
                             <div className="row mb-2">
                                 <div className="col-md-6">
-                                <div className="input-group">
-                                    <input type="text" name="fullName" className={`form-control addressTextBox ${ fullNameErr ? "errorBorder" : "" }`} 
-                                        placeholder="Full Name*" onInput={fullNameInputHandler} onChange={handleFormFieldsChange} value={fields["fullName"] || ""} />
-                                    <span className={`red-alert-icon ${ fullNameErr ? "" : "d-none" }`} data-bs-toggle="pass_tooltip" data-bs-placement="top" 
-                                    title={fullNameErr}><i className="bi bi-info-circle-fill"></i></span> 
-                                </div>
+                                    <div className="input-group">
+                                        <input type="text" name="fullName" className={`form-control addressTextBox ${ fullNameErr ? "errorBorder" : "" }`} 
+                                            placeholder="Full Name*" onInput={fullNameInputHandler} onChange={handleFormFieldsChange} value={fields["fullName"] || '' } />
+                                        <span className={`red-alert-icon ${ fullNameErr ? "" : "d-none" }`} data-bs-toggle="pass_tooltip" data-bs-placement="top" 
+                                        title={fullNameErr}><i className="bi bi-info-circle-fill"></i></span> 
+                                    </div>
                                 </div>
                                 <div className="col-md-6">
-                                <div className="input-group">
-                                    <input type="email" name="email" className={`form-control addressTextBox ${ emailErr ? "errorBorder" : "" }`}
-                                        placeholder="Email Address*" onInput={emailInputHandler} onChange={handleFormFieldsChange} />
-                                    <span className={`red-alert-icon ${ emailErr ? "" : "d-none" }`} data-bs-toggle="pass_tooltip" data-bs-placement="top" 
-                                    title={emailErr}><i className="bi bi-info-circle-fill"></i></span> 
-                                </div>
+                                    <div className="input-group">
+                                        <input type="email" name="email" className={`form-control addressTextBox ${ emailErr ? "errorBorder" : "" }`}placeholder="Email Address*" onInput={emailInputHandler} onChange={handleFormFieldsChange} value={fields["email"] || '' } />
+                                        <span className={`red-alert-icon ${ emailErr ? "" : "d-none" }`} data-bs-toggle="pass_tooltip" data-bs-placement="top" 
+                                        title={emailErr}><i className="bi bi-info-circle-fill"></i></span> 
+                                    </div>
                                 </div>
                             </div>
 
                             <div className="currentLocation">
-                                <a href=""><i className="bi bi-circle bi-geo-alt"></i></a> Use current
-                                location
+                                <a href=""><i className="bi bi-circle bi-geo-alt"></i> Use current location </a>
                             </div>
 
                             <div className="input-group mb-2">
-                                <input type="text" name="address" className={`form-control addressTextBox ${ addressErr ? "errorBorder" : "" }`}
-                                    placeholder="Address(Area and street)*" onInput={addressInputHandler} onChange={handleFormFieldsChange} />
-                                <span className={`red-alert-icon ${ addressErr ? "" : "d-none" }`} data-bs-toggle="pass_tooltip" data-bs-placement="top" 
-                                    title={addressErr}><i className="bi bi-info-circle-fill"></i></span> 
+                                <input type="text" name="address" className={`form-control addressTextBox ${ addressErr ? "errorBorder" : "" }`}        placeholder="Address(Area and street)*" onInput={addressInputHandler} onChange={handleFormFieldsChange} value={fields["address"] || '' } />
+                                <span className={`red-alert-icon ${ addressErr ? "" : "d-none" }`} data-bs-toggle="pass_tooltip" data-bs-placement="top" title={addressErr}><i className="bi bi-info-circle-fill"></i></span> 
                             </div>
 
                             <div className="row mb-3">
                                 <div className="col-md-6">
                                 <div className="input-group mb-2">
-                                    <input type="text" name="landmark" className={`form-control addressTextBox ${ landmarkErr ? "errorBorder" : "" }`}
-                                        placeholder="Landmark*" onInput={landmarkInputHandler} onChange={handleFormFieldsChange} />
-                                    <span className={`red-alert-icon ${ landmarkErr ? "" : "d-none" }`} data-bs-toggle="pass_tooltip" data-bs-placement="top" 
-                                        title={landmarkErr}><i className="bi bi-info-circle-fill"></i></span> 
+                                    <input type="text" name="landmark" className={`form-control addressTextBox ${ landmarkErr ? "errorBorder" : "" }`}   placeholder="Landmark*" onInput={landmarkInputHandler} onChange={handleFormFieldsChange} value={fields["landmark"] || '' }  />
+                                    <span className={`red-alert-icon ${ landmarkErr ? "" : "d-none" }`} data-bs-toggle="pass_tooltip" data-bs-placement="top" title={landmarkErr}>
+                                        <i className="bi bi-info-circle-fill"></i>
+                                    </span>
                                 </div>
                                 <div className="input-group">
-                                    <input type="text" name="city" className={`form-control addressTextBox ${ cityErr ? "errorBorder" : "" }`}
-                                        placeholder="City/District/Town*" onInput={cityInputHandler} onChange={handleFormFieldsChange} />
+                                    <input type="text" name="city" className={`form-control addressTextBox ${ cityErr ? "errorBorder" : "" }`}placeholder="City/District/Town*" onInput={cityInputHandler} onChange={handleFormFieldsChange} value={fields["city"] || '' } />
                                     <span className={`red-alert-icon ${ cityErr ? "" : "d-none" }`} data-bs-toggle="pass_tooltip" data-bs-placement="top" 
-                                        title={cityErr}><i className="bi bi-info-circle-fill"></i></span> 
+                                        title={cityErr}>
+                                            <i className="bi bi-info-circle-fill"></i>
+                                    </span>
                                 </div>
                                 </div>
                                 <div className="col-md-6">
                                 <div className="input-group mb-2">
-                                    <input type="text" name="pincode" className={`form-control addressTextBox ${ pincodeErr ? "errorBorder" : "" }`}
-                                placeholder="Pincode*" maxLength="6" onInput={pincodeInputHandler} onChange={handleFormFieldsChange} />
-                                    <span className={`red-alert-icon ${ pincodeErr ? "" : "d-none" }`} data-bs-toggle="pass_tooltip" data-bs-placement="top" 
-                                            title={pincodeErr}><i className="bi bi-info-circle-fill"></i></span>
+                                    <input type="text" name="pincode" className={`form-control addressTextBox ${ pincodeErr ? "errorBorder" : "" }`}   placeholder="Pincode*" maxLength="6" onInput={pincodeInputHandler} onChange={handleFormFieldsChange} value={fields["pincode"] || '' } />
+                                    <span className={`red-alert-icon ${ pincodeErr ? "" : "d-none" }`} data-bs-toggle="pass_tooltip" data-bs-placement="top" title={pincodeErr}><i className="bi bi-info-circle-fill"></i></span>
                                 </div>
                                 <div className="input-group">
                                     <select name="state" id="state" className={`form-control addressTextBox ${ stateErr ? "errorBorder" : "" }`} 
-                                        onChange={handleStateFieldsChange}>
+                                        onChange={handleStateFieldsChange} value={fields["state"] || ''} >
                                     {/* {statelist ? statelist.map((item) =>
                                             <option value={item}>{item}</option>
                                         ) : " "
                                     } */}
-                                            <option value="0">--Select State--</option>
-                                            <option value="Odisha">Odisha</option>
+                                        <option value="0">--Select State--</option>
+                                        <option value="Odisha">Odisha</option>
                                     </select>
                                     <span className={`red-alert-icon ${ stateErr ? "" : "d-none" }`} data-bs-toggle="pass_tooltip" data-bs-placement="top" 
                                             title={stateErr}><i className="bi bi-info-circle-fill"></i></span>
@@ -879,12 +881,13 @@ const Home = () => {
                                                     {!item.isDefaultAddress ? <span className="delete-address-btn"><i className="bi bi-trash"></i></span>: ''}
                                                 </div>
                                                 <div>
-                                                    <input type="radio"  className="form-check-input custom-align-radio me-1" name="shipping_address" defaultChecked />
+                                                    <input type="radio"  className="form-check-input custom-align-radio me-1" name="shipping_address" checked={`${item.isDefaultAddress ? 'checked' : ''}`}/>
                                                     <label className="address-label">
                                                         <span className="me-4">{'  '}{item.name}</span>
                                                     </label>
+                                                    {!item.isDefaultAddress ? <span className="make-default-address">Make as default</span> : <span className="default-address">Default</span>}
                                                 </div>
-                                                {!item.isDefaultAddress ? <span className="make-default-address">Make as default</span> : ''}
+                                                
                                             </div>
                                         </li> ) : "Data Not Found"
                                     }
