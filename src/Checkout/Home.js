@@ -38,7 +38,7 @@ const Home = () => {
     const [initialSubTotalAmount, setInitialSubTotalAmount] = useState([]);
     const [otp, setOtp] = useState('');
     const [existingCustomer, setExistingCustomer] = useState(false);
-    const [customerName, setCustomerName] = useState('');
+    const [addressToBeUpdated, setAdressToBeUpdated] = useState({});
     
 
     useEffect(() => {
@@ -510,7 +510,7 @@ const Home = () => {
         const url = new URL(urlString);
         const cartDetails = JSON.parse(url.searchParams.get("carturi"));
         let vendorId = cartDetails.vendorId; 
-        console.log(addresslist);
+        console.log(existingCustomer);
         if(!existingCustomer) {
             if (formValidate()) {           
                 let { fullName, email, address, landmark, city, pincode, state, addressType } = fields;
@@ -561,7 +561,7 @@ const Home = () => {
             }
         } else if(existingCustomer) {
             let addressList = addresslist.address;
-            //console.log(addressList);
+            console.log(addressList);
             if (formValidate()) { 
                 let { fullName, email, address, landmark, city, pincode, state, addressType } = fields;
                 if(addressType == undefined) {
@@ -607,8 +607,18 @@ const Home = () => {
         }        
     }
 
-    const updateCustomerAddress = e => {
-        console.log(1111);
+    const updateCustomerAddress = (e,i) => {
+        e.preventDefault();
+        let updatedAddress = addresslist.address[i];
+        //console.log(updatedAddress);
+        setAdressToBeUpdated(updatedAddress);
+        console.log(addressToBeUpdated);
+        // if(addressToBeUpdated){
+            
+        //     setaddressListSectionDiv(false);
+        //     setAddressSectionDiv(true);
+        //     console.log(addressToBeUpdated);
+        // }        
     }
 
     const fullNameInputHandler = e => {
@@ -762,7 +772,7 @@ const Home = () => {
                                 <div className="col-md-6">
                                 <div className="input-group">
                                     <input type="text" name="fullName" className={`form-control addressTextBox ${ fullNameErr ? "errorBorder" : "" }`} 
-                                        placeholder="Full Name*" onInput={fullNameInputHandler} onChange={handleFormFieldsChange} />
+                                        placeholder="Full Name*" onInput={fullNameInputHandler} onChange={handleFormFieldsChange} value={fields["fullName"] || ""} />
                                     <span className={`red-alert-icon ${ fullNameErr ? "" : "d-none" }`} data-bs-toggle="pass_tooltip" data-bs-placement="top" 
                                     title={fullNameErr}><i className="bi bi-info-circle-fill"></i></span> 
                                 </div>
@@ -865,7 +875,7 @@ const Home = () => {
                                                     <span className="add_list_round me-2"><i className="bi bi-house-heart-fill"></i></span> 
                                                     <b className='me-2' style={{ fontSize: 'small' }}>{item.addressType}</b>
                                                     <span className='adressDetails'>( {item.address.slice(0,10) + '..., ' + item.city + ', ' + item.state} )</span>
-                                                    <span className="edit-address-btn" onClick={updateCustomerAddress}><i className="bi bi-pencil-square"></i></span>
+                                                    <span className="edit-address-btn" onClick={(e)=> updateCustomerAddress(e,i)}><i className="bi bi-pencil-square"></i></span>
                                                     {!item.isDefaultAddress ? <span className="delete-address-btn"><i className="bi bi-trash"></i></span>: ''}
                                                 </div>
                                                 <div>
