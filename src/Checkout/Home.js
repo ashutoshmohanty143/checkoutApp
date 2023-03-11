@@ -943,8 +943,8 @@ const Home = () => {
                     {paymentSectionActive ?
                         <div className="payment-section">
                             <div className='payment-'>
-                                <button className="pay-nxt-btn" onClick={cod} >COD</button>
-                                <button className="pay-nxt-btn" onClick={payNow} >Pay Now</button>
+                                <button className="pay-nxt-btn" >COD</button>
+                                <button className="pay-nxt-btn" >Pay Now</button>
                             </div>
                         </div>
                         : ''}
