@@ -511,7 +511,7 @@ const Home = () => {
         const url = new URL(urlString);
         const cartDetails = JSON.parse(url.searchParams.get("carturi"));
         let vendorId = cartDetails.vendorId; 
-        //console.log(existingCustomer);
+
         if(!existingCustomer) {
             if (formValidate()) {           
                 let { fullName, email, address, landmark, city, pincode, state, addressType } = fields;
@@ -610,6 +610,34 @@ const Home = () => {
                 console.log("Form Validation Error");
             }
         }        
+    }
+    const makeDefaultAddress = (e,i) => {
+        e.preventDefault();
+        const urlString = window.location.href; 
+        const url = new URL(urlString);
+        const cartDetails = JSON.parse(url.searchParams.get("carturi"));
+        let vendorId = cartDetails.vendorId;
+        addresslist.address[i].isDefaultAddress = true;
+
+        
+        // const formData = {
+        //     "collection": "customers_"+vendorId,
+        //     "id": addresslist._id,
+        //     "data": {                        
+        //         "address": addresslist
+        //     }      
+        // };
+
+        // console.log(formData);
+
+        // ApiServices.updateExistingCustomer(formData).then(response => {
+        //     if (response.status == 200 && response.data.status == 'success') {
+        //         setAddresslist(response.data.data);
+        //     } 
+        // }).catch(error => {
+        //     console.log(error);
+        // });
+        
     }
 
     const updateCustomerAddress = (e,i) => {
@@ -885,7 +913,7 @@ const Home = () => {
                                                     <label className="address-label">
                                                         <span className="me-4">{'  '}{item.name}</span>
                                                     </label>
-                                                    {!item.isDefaultAddress ? <span className="make-default-address">Make as default</span> : <span className="default-address">Default</span>}
+                                                    {!item.isDefaultAddress ? <span className="make-default-address" onClick={(e)=> makeDefaultAddress(e,i)}>Make as default</span> : <span className="default-address">Default</span>}
                                                 </div>
                                                 
                                             </div>
