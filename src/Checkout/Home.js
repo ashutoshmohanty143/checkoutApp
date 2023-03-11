@@ -43,6 +43,12 @@ const Home = () => {
     const [addressListIndexToUpdate, setAddressListIndexToUpdate] = useState();
     const [isAddressEditButtonClicked, setIsAddressEditButtonClicked] = useState(false);
 
+    
+    const urlString = window.location.href; 
+    const url = new URL(urlString);
+    const cartUrlDetails = JSON.parse(url.searchParams.get("carturi"));
+    let vendorId = cartUrlDetails.vendorId;
+
     useEffect(() => {
         cartDetails();
     },[]);
@@ -262,7 +268,6 @@ const Home = () => {
             console.log("error", error);
         });
     }
-
 
     const handleFormFieldsChange = (event) => {
         setFields(fields => ({
@@ -512,7 +517,7 @@ const Home = () => {
         const url = new URL(urlString);
         const cartDetails = JSON.parse(url.searchParams.get("carturi"));
         let vendorId = cartDetails.vendorId; 
-
+        
         if(!existingCustomer) {
             if (formValidate()) {           
                 let { fullName, email, address, landmark, city, pincode, state, addressType } = fields;
@@ -588,6 +593,8 @@ const Home = () => {
                     addressList.push(addressFormData);        
                 }
 
+                console.log(addresslist.address);
+
                 const formData = {
                     "collection": "customers_"+vendorId,
                     "id": addresslist._id,
@@ -595,7 +602,9 @@ const Home = () => {
                         "address": addresslist.address
                     }      
                 };
-    
+
+                console.log(formData);
+
                 ApiServices.updateExistingCustomer(formData).then(response => {
                     if (response.status == 200 && response.data.status == 'success') {
                         setAddresslist(response.data.data);
@@ -656,6 +665,38 @@ const Home = () => {
         setaddressListSectionDiv(false);
         setAddressSectionDiv(true);
         console.log(fields);
+    }
+
+    const deleteCustomerAddress = (e,i) => {
+        swal({
+            // title: "Are you sure?",
+            text: "Do you want to delete this address?",
+            // icon: "warning",
+            buttons: true,
+            dangerMode: true,
+          }).then((willDelete) => {
+            if (willDelete) {
+                console.log(addresslist.address);
+                addresslist.address.splice(i,1);
+                console.log(addresslist.address);
+
+                const formData = {
+                    "collection": "customers_"+vendorId,
+                    "id": addresslist._id,
+                    "data": {                        
+                        "address": addresslist.address
+                    }      
+                };
+    
+                ApiServices.updateExistingCustomer(formData).then(response => {
+                    if (response.status == 200 && response.data.status == 'success') {
+                        setAddresslist(response.data.data);
+                    }
+                }).catch(error => {
+                    console.log(error);
+                });
+            }
+          });
     }
 
     const addressListNextBtnHandler = (e) => {
@@ -720,13 +761,11 @@ const Home = () => {
 
     const addAddressExistingCustomer = e => {
         setTimeout(() => {
+            setFields({ fields: " " });
             setaddressListSectionDiv(false);
             setAddressSectionDiv(true);
         }, "1000");
     }
-
-    
-    //console.log('couponlist',couponlist);
 
     let { fullNameErr, emailErr, addressErr, landmarkErr, cityErr, pincodeErr, stateErr } = errors;
     
@@ -884,12 +923,11 @@ const Home = () => {
                             </div>
                             <div className="addressTypeRadio">
                                 <div className="form-check col-md-4">
-                                    <input className="form-check-input" type="radio" name="addressType" id="home" value={fields["addressType"] || '' }  onChange={handleFormFieldsChange} defaultChecked={`${ fields["addressType"] == 'Home' ? 'checked' : ''}`} />
+                                    <input className="form-check-input" type="radio" name="addressType" value='Home'  onChange={handleFormFieldsChange} defaultChecked={`${ fields["addressType"] == 'Home' ? 'checked' : ''}`}  />
                                     <label className="form-check-label" htmlFor="home">Home <br /> <span style={{ fontSize: 10 + 'px' }}>(All day delivery)</span></label>
                                 </div>
                                 <div className="form-check col-md-4">
-                                    <input className="form-check-input" type="radio" name="addressType" id="work"
-                                        value={fields["addressType"] || '' } onChange={handleFormFieldsChange} defaultChecked={`${ fields["addressType"] == 'Work' ? 'checked' : ''}`} />
+                                    <input className="form-check-input" type="radio" name="addressType" value='Work' onChange={handleFormFieldsChange} defaultChecked={`${ fields["addressType"] == 'Work' ? 'checked' : ''}`} />
                                     <label className="form-check-label" htmlFor="work">Work <br /> <span style={{ fontSize: 10 + 'px' }}>(Between 10 AM-5 PM)</span></label>
                                 </div>
                                 <div className="form-check col-md-4 d-flex">
@@ -917,8 +955,10 @@ const Home = () => {
                                                     <span className="add_list_round me-2"><i className="bi bi-house-heart-fill"></i></span> 
                                                     <b className='me-2' style={{ fontSize: 'small' }}>{item.addressType}</b>
                                                     <span className='adressDetails'>( {item.address.slice(0,10) + '..., ' + item.city + ', ' + item.state} )</span>
+
                                                     <span className="edit-address-btn" onClick={(e)=> updateCustomerAddress(e,i)}><i className="bi bi-pencil-square"></i></span>
-                                                    {!item.isDefaultAddress ? <span className="delete-address-btn"><i className="bi bi-trash"></i></span>: ''}
+
+                                                    {!item.isDefaultAddress ? <span className="delete-address-btn" onClick={(e)=> deleteCustomerAddress(e,i)}><i className="bi bi-trash"></i></span>: ''}
                                                 </div>
                                                 <div>
                                                     <input type="radio"  className="form-check-input custom-align-radio me-1" name="shipping_address" defaultChecked={`${item.isDefaultAddress ? 'checked' : ''}`}/>
@@ -933,7 +973,7 @@ const Home = () => {
                                     }
                                 </ul>
                             </div>
-                            <div className="add-address-existing-customer" id="add-address-existing-customer" onClick={addAddressExistingCustomer}>
+                            <div className="add-address-existing-customer" onClick={addAddressExistingCustomer}>
                                 <i className="bi bi-plus-circle-fill"></i> Add address
                             </div>
                             <button className="pay-nxt-btn" onClick={addressListNextBtnHandler} >Next</button>
