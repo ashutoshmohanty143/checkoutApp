@@ -16,6 +16,7 @@ const Home = () => {
 
     const [addressStepActive, setAddressStepActive] = useState(false);
     const [paymentStepActive, setPaymentStepActive] = useState(false);
+    const [paymentSectionActive, setPaymentSectionActive] = useState(false);
     const [modalShow, setmodalShow] = useState(false);
 
     const [mobNextbtn, setMobNextbtn] = useState(true);
@@ -658,7 +659,9 @@ const Home = () => {
     }
 
     const addressListNextBtnHandler = (e) => {
-
+        setaddressListSectionDiv(false);
+        setPaymentStepActive(true)
+        setPaymentSectionActive(true);
     }
 
     const fullNameInputHandler = e => {
@@ -937,7 +940,14 @@ const Home = () => {
                         </div>
                         : ''}
 
-                        
+                    {paymentSectionActive ?
+                        <div className="payment-section">
+                            <div className='payment-'>
+                                <button className="pay-nxt-btn" onClick={cod} >COD</button>
+                                <button className="pay-nxt-btn" onClick={payNow} >Pay Now</button>
+                            </div>
+                        </div>
+                        : ''}
                 </div>
 
                 <div className="checkout-container-right">

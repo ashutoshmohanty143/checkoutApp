@@ -272,14 +272,14 @@
         display:inline;
       } */
 
-      .mandetory_field{
+    .mandetory_field{
         color: #e32;
         font-size: 20px;
-      }
+    }
 
-      .errorBorder{
+    .errorBorder{
         border:1px solid red !important;
-      }
+    }
 
 
     .currentLocation {
@@ -468,6 +468,12 @@
 
     /* ----- Payment Box Style Starts ----- */
 
+    .payment-section{
+        position: absolute;
+        top: 180px;
+        left: 35px;
+        right: 35px;
+    }
 
     /* ----- Payment Box Style Ends ----- */
     
