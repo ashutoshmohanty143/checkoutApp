@@ -591,7 +591,7 @@ const Home = () => {
                     "collection": "customers_"+vendorId,
                     "id": addresslist._id,
                     "data": {                        
-                        "address": addressList
+                        "address": addresslist.address
                     }      
                 };
     
@@ -611,33 +611,39 @@ const Home = () => {
             }
         }        
     }
-    const makeDefaultAddress = (e,i) => {
+
+    const makeDefaultAddress = (e,selectedIndex) => {
         e.preventDefault();
         const urlString = window.location.href; 
         const url = new URL(urlString);
         const cartDetails = JSON.parse(url.searchParams.get("carturi"));
         let vendorId = cartDetails.vendorId;
-        addresslist.address[i].isDefaultAddress = true;
-
         
-        // const formData = {
-        //     "collection": "customers_"+vendorId,
-        //     "id": addresslist._id,
-        //     "data": {                        
-        //         "address": addresslist
-        //     }      
-        // };
+        addresslist.address.map((address, index) => {
+            console.log(index);
+            console.log(address);
+            if(selectedIndex == index) {
+                addresslist.address[index].isDefaultAddress = true;
+            } else {
+                addresslist.address[index].isDefaultAddress = false;
+            }
+        });
 
-        // console.log(formData);
+        const formData = {
+            "collection": "customers_"+vendorId,
+            "id": addresslist._id,
+            "data": {                        
+                "address": addresslist.address
+            }      
+        };
 
-        // ApiServices.updateExistingCustomer(formData).then(response => {
-        //     if (response.status == 200 && response.data.status == 'success') {
-        //         setAddresslist(response.data.data);
-        //     } 
-        // }).catch(error => {
-        //     console.log(error);
-        // });
-        
+        ApiServices.updateExistingCustomer(formData).then(response => {
+            if (response.status == 200 && response.data.status == 'success') {
+                setAddresslist(response.data.data);
+            } 
+        }).catch(error => {
+            console.log(error);
+        });        
     }
 
     const updateCustomerAddress = (e,i) => {
@@ -649,6 +655,10 @@ const Home = () => {
         setaddressListSectionDiv(false);
         setAddressSectionDiv(true);
         console.log(fields);
+    }
+
+    const addressListNextBtnHandler = (e) => {
+
     }
 
     const fullNameInputHandler = e => {
@@ -890,7 +900,6 @@ const Home = () => {
                                 <input type="button" className="address-back-btn form-control" value="&larr;" onClick={addressBackBtnHandler} />
                                 <input type="button" className="address-next-btn form-control" value="Next" onClick={addressNextBtnHandler} />
                             </div>
-
                         </div>
                         : ''}
 
@@ -924,12 +933,11 @@ const Home = () => {
                             <div className="add-address-existing-customer" id="add-address-existing-customer" onClick={addAddressExistingCustomer}>
                                 <i className="bi bi-plus-circle-fill"></i> Add address
                             </div>
-
-                            <button className="pay-nxt-btn">Next</button>
+                            <button className="pay-nxt-btn" onClick={addressListNextBtnHandler} >Next</button>
                         </div>
                         : ''}
 
-
+                        
                 </div>
 
                 <div className="checkout-container-right">
