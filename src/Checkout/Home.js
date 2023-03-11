@@ -526,7 +526,7 @@ const Home = () => {
                         "mobile": mobile,
                         "address": [
                             {
-                                "name": fullName,
+                                "fullName": fullName,
                                 "email": email,
                                 "addressType": addressType,
                                 "address": address,
@@ -571,7 +571,7 @@ const Home = () => {
                 }
                 
                 let addressFormData = {
-                    "name": fullName,
+                    "fullName": fullName,
                     "email": email,
                     "addressType": addressType,
                     "address": address,
@@ -884,12 +884,12 @@ const Home = () => {
                             </div>
                             <div className="addressTypeRadio">
                                 <div className="form-check col-md-4">
-                                    <input className="form-check-input" type="radio" name="addressType" id="home" value="Home" defaultChecked onChange={handleFormFieldsChange} />
+                                    <input className="form-check-input" type="radio" name="addressType" id="home" value={fields["addressType"] || '' }  onChange={handleFormFieldsChange} defaultChecked={`${ fields["addressType"] == 'Home' ? 'checked' : ''}`} />
                                     <label className="form-check-label" htmlFor="home">Home <br /> <span style={{ fontSize: 10 + 'px' }}>(All day delivery)</span></label>
                                 </div>
                                 <div className="form-check col-md-4">
                                     <input className="form-check-input" type="radio" name="addressType" id="work"
-                                        value="Work" onChange={handleFormFieldsChange} />
+                                        value={fields["addressType"] || '' } onChange={handleFormFieldsChange} defaultChecked={`${ fields["addressType"] == 'Work' ? 'checked' : ''}`} />
                                     <label className="form-check-label" htmlFor="work">Work <br /> <span style={{ fontSize: 10 + 'px' }}>(Between 10 AM-5 PM)</span></label>
                                 </div>
                                 <div className="form-check col-md-4 d-flex">
@@ -921,9 +921,9 @@ const Home = () => {
                                                     {!item.isDefaultAddress ? <span className="delete-address-btn"><i className="bi bi-trash"></i></span>: ''}
                                                 </div>
                                                 <div>
-                                                    <input type="radio"  className="form-check-input custom-align-radio me-1" name="shipping_address" checked={`${item.isDefaultAddress ? 'checked' : ''}`}/>
+                                                    <input type="radio"  className="form-check-input custom-align-radio me-1" name="shipping_address" defaultChecked={`${item.isDefaultAddress ? 'checked' : ''}`}/>
                                                     <label className="address-label">
-                                                        <span className="me-4">{'  '}{item.name}</span>
+                                                        <span className="me-4">{'  '}{item.fullName}</span>
                                                     </label>
                                                     {!item.isDefaultAddress ? <span className="make-default-address" onClick={(e)=> makeDefaultAddress(e,i)}>Make as default</span> : <span className="default-address">Default</span>}
                                                 </div>
