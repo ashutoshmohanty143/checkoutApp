@@ -310,7 +310,7 @@ const Home = () => {
 
         } else {
             setMobNextbtn(false);
-            // document.querySelector('#mobile').blur();
+            document.querySelector('#mobile').blur();
             setMobNextbtnActive(true);
             setmobActiveBorder(true);
             setmobGreenCheck(true);
@@ -352,7 +352,6 @@ const Home = () => {
         }
 
         let otpLength = finalotp.length;
-        //console.log(otpLength);
         let length = 4;
         if(otpLength === length){
             //validate otp here by calling sms gateway
@@ -405,22 +404,14 @@ const Home = () => {
 
     const editMobileLink = event => {
         event.preventDefault();
-        //const mobileValue = document.querySelector('#mobile').value;
-        //console.log(mobileValue);
-        //return false;
-        // if(){
-
-        // }
         setOtpSectionDiv(false);
         setMobileSectionDiv(true);
         setCliploader(false);
-
         setMobNextbtn(false);
-        document.querySelector('#mobile').blur();
-        document.querySelector('#get-otp').classList.add('active-btn');
-        document.querySelector('#mobile').classList.add('active-border');
-        document.querySelectorAll('.green-check')[0].style.display = "block";   
-        document.querySelectorAll('.red-alert')[0].style.display = "none";
+        setMobNextbtnActive(true);
+        setmobActiveBorder(true);
+        setmobGreenCheck(true);
+        setmobRedAlert(false);
     }
 
     const resendOTP = event => {
@@ -442,13 +433,23 @@ const Home = () => {
     }
 
     const addressBackBtnHandler = e => {
-        setAddressStepActive(false);
-        setAddressSectionDiv(false);
-        setMobileSectionDiv(true);
-        setMobNextbtn(true);
-        setOtp('');
-        setFields({ fields: " " });
-        setCliploader(false);
+
+        if(existingCustomer) {  
+            setAddressSectionDiv(false);
+            setaddressListSectionDiv(true);
+        } else {
+            setAddressStepActive(false);
+            setAddressSectionDiv(false);
+            setMobileSectionDiv(true);
+            setMobNextbtn(true);
+            setMobNextbtnActive(false);
+            setmobActiveBorder(false);
+            setmobGreenCheck(false);
+            setOtp('');
+            setFields({ fields: " " });
+            setCliploader(false);
+        }
+        
     }
 
     function formValidate(){
@@ -806,7 +807,7 @@ const Home = () => {
                             <h4 className="mb-3 enter-mobile">Please enter your mobile number</h4>
                             <div className="input-group">
                                 <span className="country-code" id="mob-code">+91</span>
-                                <input type="text" name="mobile" id='mobile' className={`form-control mobile ${ mobActiveBorder ? "active-border" : ""}`} maxLength={MOB_MAX_NUM}
+                                <input type="text" name="mobile" id='mobile' className={`form-control mobile ${ mobActiveBorder ? "active-border" : ""}`} maxLength={MOB_MAX_NUM} 
                                     placeholder="999 888 0000" onInput={mobileInputHandler}
                                     onChange={handleFormFieldsChange} value={fields['mobile'] || ''} />
                                 <span className={`green-check ${ mobGreenCheck ? "" : "d-none" }`}><i className="bi bi-check-circle-fill"></i></span>
