@@ -470,6 +470,16 @@ const Home = () => {
           formIsValid = false;
           errors["emailErr"] = "Please enter valid email-a@bcom";
         } 
+
+        //Mob
+        //console.log('aa',fields["mob"].length);
+        if(!fields["mob"]) {
+            formIsValid = false;
+            errors["mobErr"] = "Mobile Number Cannot be empty";
+        } else if (fields["mob"].length != fields["mob"].maxLength && fields["mob"].length != MOB_MAX_NUM) {
+            formIsValid = false;
+            errors["mobErr"] = "Mobile Number should be 10 digits";
+        }
  
         //Address
         if (!fields["address"]) {
@@ -521,7 +531,7 @@ const Home = () => {
         
         if(!existingCustomer) {
             if (formValidate()) {           
-                let { fullName, email, address, landmark, city, pincode, state, addressType } = fields;
+                let { fullName, email, mob, address, landmark, city, pincode, state, addressType } = fields;
                 if(addressType == undefined) {
                     addressType = 'Home';
                 }
@@ -534,6 +544,7 @@ const Home = () => {
                             {
                                 "fullName": fullName,
                                 "email": email,
+                                "mob" : mob,
                                 "addressType": addressType,
                                 "address": address,
                                 "landmark": landmark,
@@ -564,7 +575,7 @@ const Home = () => {
         } else if(existingCustomer) {
             let addressList = addresslist.address;
             if (formValidate()) {
-                let { fullName, email, address, landmark, city, pincode, state, addressType } = fields;
+                let { fullName, email, mob, address, landmark, city, pincode, state, addressType } = fields;
                 if(addressType == undefined) {
                     addressType = 'Home';
                 }
@@ -579,6 +590,7 @@ const Home = () => {
                 let addressFormData = {
                     "fullName": fullName,
                     "email": email,
+                    "mob" : mob,
                     "addressType": addressType,
                     "address": address,
                     "landmark": landmark,
@@ -718,11 +730,21 @@ const Home = () => {
         if (e.target.value == "") {
             setErrors({ ...errors, emailErr : "Email Cannot be empty" });
         } else if(!CommonMethods.emailValidator(e.target.value)) {
-            //console.log(222);
             setErrors({ ...errors, emailErr : "Please enter valid email-a@bcom" });
         }  else {
-            //console.log(111);
             setErrors({ ...errors, emailErr : "" });
+        }
+    }
+
+    const mobInputHandler = e => {
+        CommonMethods.phoneMasking(e);
+        if(e.target.value == "") {
+            setErrors({ ...errors, mobErr : "Mobile Number Cannot be empty" });
+        } 
+        else if(e.target.value.length != e.target.maxLength && e.target.value.length != MOB_MAX_NUM) {
+            setErrors({ ...errors, mobErr : "Mobile Number should be 10 digits" });
+        } else {
+            setErrors({ ...errors, mobErr : "" });
         }
     }
 
@@ -768,7 +790,7 @@ const Home = () => {
         }, "1000");
     }
 
-    let { fullNameErr, emailErr, addressErr, landmarkErr, cityErr, pincodeErr, stateErr } = errors;
+    let { fullNameErr, emailErr, mobErr, addressErr, landmarkErr, cityErr, pincodeErr, stateErr } = errors;
     
     return (     
         <>            
@@ -858,24 +880,32 @@ const Home = () => {
                             <div>{fields["fullName"]}</div> */}
                             <div className="row mb-2">
                                 <div className="col-md-6">
-                                    <div className="input-group">
+                                    <div className="input-group mb-2">
                                         <input type="text" name="fullName" className={`form-control addressTextBox ${ fullNameErr ? "errorBorder" : "" }`} 
                                             placeholder="Full Name*" onInput={fullNameInputHandler} onChange={handleFormFieldsChange} value={fields["fullName"] || '' } />
                                         <span className={`red-alert-icon ${ fullNameErr ? "" : "d-none" }`} data-bs-toggle="pass_tooltip" data-bs-placement="top" 
                                         title={fullNameErr}><i className="bi bi-info-circle-fill"></i></span> 
                                     </div>
+
+                                    <div className="input-group">
+                                        <input type="text" name="mob" maxLength={MOB_MAX_NUM} className={`form-control addressTextBox ${ mobErr ? "errorBorder" : "" }`} placeholder="Mobile Number*" onInput={mobInputHandler} onChange={handleFormFieldsChange} value={fields["mobile"] || '' } />
+                                        <span className={`red-alert-icon ${ mobErr ? "" : "d-none" }`} data-bs-toggle="pass_tooltip" data-bs-placement="top" 
+                                        title={mobErr}><i className="bi bi-info-circle-fill"></i></span> 
+                                    </div>
+                                    
                                 </div>
                                 <div className="col-md-6">
-                                    <div className="input-group">
-                                        <input type="email" name="email" className={`form-control addressTextBox ${ emailErr ? "errorBorder" : "" }`}placeholder="Email Address*" onInput={emailInputHandler} onChange={handleFormFieldsChange} value={fields["email"] || '' } />
+                                    
+                                    <div className="input-group mb-2">
+                                        <input type="email" name="email" className={`form-control addressTextBox ${ emailErr ? "errorBorder" : "" }`} placeholder="Email Address*" onInput={emailInputHandler} onChange={handleFormFieldsChange} value={fields["email"] || '' } />
                                         <span className={`red-alert-icon ${ emailErr ? "" : "d-none" }`} data-bs-toggle="pass_tooltip" data-bs-placement="top" 
                                         title={emailErr}><i className="bi bi-info-circle-fill"></i></span> 
                                     </div>
-                                </div>
-                            </div>
 
-                            <div className="currentLocation">
-                                <a href=""><i className="bi bi-circle bi-geo-alt"></i> Use current location </a>
+                                    <div className="currentLocation">
+                                        <a href=""><i className="bi bi-circle bi-geo-alt"></i> Use current location </a>
+                                    </div>
+                                </div>
                             </div>
 
                             <div className="input-group mb-2">
@@ -883,7 +913,7 @@ const Home = () => {
                                 <span className={`red-alert-icon ${ addressErr ? "" : "d-none" }`} data-bs-toggle="pass_tooltip" data-bs-placement="top" title={addressErr}><i className="bi bi-info-circle-fill"></i></span> 
                             </div>
 
-                            <div className="row mb-3">
+                            <div className="row mb-2">
                                 <div className="col-md-6">
                                 <div className="input-group mb-2">
                                     <input type="text" name="landmark" className={`form-control addressTextBox ${ landmarkErr ? "errorBorder" : "" }`}   placeholder="Landmark*" onInput={landmarkInputHandler} onChange={handleFormFieldsChange} value={fields["landmark"] || '' }  />
