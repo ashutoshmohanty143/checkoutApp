@@ -42,9 +42,7 @@ const Home = () => {
     const [addressToBeUpdated, setAdressToBeUpdated] = useState({});
     const [addressListIndexToUpdate, setAddressListIndexToUpdate] = useState();
     const [isAddressEditButtonClicked, setIsAddressEditButtonClicked] = useState(false);
-    const [addressTypeOtherVisible, setAddressTypeOtherVisible] = useState(false);
-    
-
+    const [addressTypeOtherDisable, setAddressTypeOtherDisable] = useState(true);
     
     const urlString = window.location.href; 
     const url = new URL(urlString);
@@ -280,6 +278,12 @@ const Home = () => {
             ...fields,
             [event.target.name]: event.target.value
         }));
+
+        if(event.target.value == 'Other') {
+            setAddressTypeOtherDisable(false);
+        } else {
+            setAddressTypeOtherDisable(true);
+        }
     }
 
     const handleStateFieldsChange = (event) => {
@@ -288,10 +292,10 @@ const Home = () => {
             [event.target.name]: event.target.value
         }));
 
-        if (event.target.value === 0) {
-            errors["stateErr"] = 'Please Select State';
+        if (event.target.value == 0) {
+            setErrors({ ...errors, stateErr : "Please Select State" });
         } else {
-            errors["stateErr"] = '';
+            setErrors({ ...errors, stateErr : "" });
         }
     }
     
@@ -624,7 +628,7 @@ const Home = () => {
                     }      
                 };
 
-                console.log(formData);
+                //console.log(formData);
 
                 ApiServices.updateExistingCustomer(formData).then(response => {
                     if (response.status == 200 && response.data.status == 'success') {
@@ -781,11 +785,11 @@ const Home = () => {
     }
 
     const pincodeInputHandler = e => {
-        console.log('sss');
+        var pincode = e.target.value;
         CommonMethods.numberValidation(e);
-        if (e.target.value == "") {
+        if (pincode == "") {
             setErrors({ ...errors, pincodeErr : "Pincode cannot be empty" });
-        } else if(e.target.value !== 6){
+        } else if(pincode.length !== 6){
             setErrors({ ...errors, pincodeErr : "Pincode must be 6 digits." });
         } else {
             setErrors({ ...errors, pincodeErr : ""  });
@@ -971,7 +975,7 @@ const Home = () => {
                                 <div className="form-check col-md-4">
                                     <input className="form-check-input me-2" type="radio" name="addressType" value="Other" onChange={handleFormFieldsChange} defaultChecked={`${ fields["addressType"] == 'Other' ? 'checked' : ''}`} />
                                     <label className="form-check-label me-2" htmlFor="other">Other</label>
-                                    <input type="text" name="addressType_Other" className={`add_type_other ${ addressTypeOtherVisible ? '' : 'd-none'}`} onChange={handleFormFieldsChange} value={fields['addressType_Other']}/>
+                                    <input type="text" name="addressType_Other" className="add_type_other" disabled={addressTypeOtherDisable} onChange={handleFormFieldsChange} value={fields['addressType_Other']}/>
                                 </div>
                             </div>
 

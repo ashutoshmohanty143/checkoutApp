@@ -8,6 +8,9 @@
     .hide{
         display: none;
     }
+    input:disabled {
+        cursor: not-allowed;
+    }
     .checkoutApp {
         overflow-x: hidden;
     }
@@ -318,8 +321,8 @@
     }
     .add_type_other {
         border: none;
-        border-bottom: 2px dotted #6e6e6e;
-        height: 30px;
+        border-bottom: 1px solid #6e6e6e;
+        height: 20px;
         width: 78px;
         font-size: 12px;
         background: transparent;
