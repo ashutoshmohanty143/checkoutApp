@@ -42,6 +42,8 @@ const Home = () => {
     const [addressToBeUpdated, setAdressToBeUpdated] = useState({});
     const [addressListIndexToUpdate, setAddressListIndexToUpdate] = useState();
     const [isAddressEditButtonClicked, setIsAddressEditButtonClicked] = useState(false);
+    const [addressTypeOtherVisible, setAddressTypeOtherVisible] = useState(false);
+    
 
     
     const urlString = window.location.href; 
@@ -74,6 +76,8 @@ const Home = () => {
                         cartProductId.push(item.productId);
                         cartVariantId.push(item.productVariantId);
                     });
+
+                    
 
                     //console.log('a',cartProductId);
                     //console.log('b',cartVariantId);
@@ -118,7 +122,7 @@ const Home = () => {
                     if(couponDetailsResponse.status === 200 && couponDetailsResponse.data.status === "success"){
                         const couponData = couponDetailsResponse.data.data;
                         
-                        //console.log(couponData);
+                        // console.log(couponData);
                         //console.log(cartData.subtotalAmount.amount);
                         couponData.map((coupon) => {
                             coupon.isDisabled = false;
@@ -163,6 +167,8 @@ const Home = () => {
             };
         }
     }
+
+    
 
     const removeCartItem = (event, cartId, cartItemId) => {
         swal({
@@ -294,6 +300,7 @@ const Home = () => {
         //sms gateway call after sms fired & get otp do below steps
         setMobileSectionDiv(false);
         setTimeout(() => {
+            setFields({ ...fields, deliveryMobile : fields["mobile"] });
             setOtpSectionDiv(true);
             //document.querySelector('[name="otp1"]').focus();
         }, "300");
@@ -307,14 +314,13 @@ const Home = () => {
             setmobActiveBorder(false);
             setmobGreenCheck(false);
             setmobRedAlert(true);
-
         } else {
             setMobNextbtn(false);
             document.querySelector('#mobile').blur();
             setMobNextbtnActive(true);
             setmobActiveBorder(true);
             setmobGreenCheck(true);
-            setmobRedAlert(false);
+            setmobRedAlert(false);            
         }
     }
     
@@ -355,7 +361,6 @@ const Home = () => {
         let length = 4;
         if(otpLength === length){
             //validate otp here by calling sms gateway
-
             const urlString = window.location.href; 
             const url = new URL(urlString);
             const cartDetails = JSON.parse(url.searchParams.get("carturi"));
@@ -446,7 +451,8 @@ const Home = () => {
             setmobActiveBorder(false);
             setmobGreenCheck(false);
             setOtp('');
-            setFields({ fields: " " });
+            setFields({});
+            setErrors({});
             setCliploader(false);
         }
         
@@ -459,13 +465,13 @@ const Home = () => {
         //Full Name
         if (!fields["fullName"]) {
           formIsValid = false;
-          errors["fullNameErr"] = "Full Name Cannot be empty";
+          errors["fullNameErr"] = "Full Name cannot be empty";
         }
     
         //Email
         if (!fields["email"]) {
           formIsValid = false;
-          errors["emailErr"] = "Email Cannot be empty";
+          errors["emailErr"] = "Email cannot be empty";
         }  else if (!CommonMethods.emailValidator(fields["email"])) {
           formIsValid = false;
           errors["emailErr"] = "Please enter valid email-a@bcom";
@@ -475,7 +481,7 @@ const Home = () => {
         //console.log('aa',fields["mob"].length);
         if(!fields["mob"]) {
             formIsValid = false;
-            errors["mobErr"] = "Mobile Number Cannot be empty";
+            errors["mobErr"] = "Mobile Number cannot be empty";
         } else if (fields["mob"].length != fields["mob"].maxLength && fields["mob"].length != MOB_MAX_NUM) {
             formIsValid = false;
             errors["mobErr"] = "Mobile Number should be 10 digits";
@@ -484,26 +490,26 @@ const Home = () => {
         //Address
         if (!fields["address"]) {
           formIsValid = false;
-          errors["addressErr"] = "Address Cannot be empty";
+          errors["addressErr"] = "Address cannot be empty";
         }  
     
         //Landmark
         if (!fields["landmark"]) {
           formIsValid = false;
-          errors["landmarkErr"] = "Landmark Cannot be empty";
+          errors["landmarkErr"] = "Landmark cannot be empty";
         }  
     
          //City
          if (!fields["city"]) {
           formIsValid = false;
-          errors["cityErr"] = "City Cannot be empty";
+          errors["cityErr"] = "City cannot be empty";
         }    
     
         //Pincode
         if (!fields["pincode"]) {
           formIsValid = false;
-          errors["pincodeErr"] = "Pincode Cannot be empty";
-        } else if (fields["pincode"].length != 6) {
+          errors["pincodeErr"] = "Pincode cannot be empty";
+        } else if (fields["pincode"].length !== 6) {
           formIsValid = false;
           errors["pincodeErr"] = "Please enter Only Numbers (Max 6)";
         }
@@ -531,7 +537,7 @@ const Home = () => {
         
         if(!existingCustomer) {
             if (formValidate()) {           
-                let { fullName, email, mob, address, landmark, city, pincode, state, addressType } = fields;
+                let { fullName, email, deliveryMobile, address, landmark, city, pincode, state, addressType, addressType_Other } = fields;
                 if(addressType == undefined) {
                     addressType = 'Home';
                 }
@@ -544,8 +550,9 @@ const Home = () => {
                             {
                                 "fullName": fullName,
                                 "email": email,
-                                "mob" : mob,
+                                "deliveryMobile" : deliveryMobile,
                                 "addressType": addressType,
+                                "addressType_Other" : addressType_Other,
                                 "address": address,
                                 "landmark": landmark,
                                 "city": city,
@@ -575,7 +582,7 @@ const Home = () => {
         } else if(existingCustomer) {
             let addressList = addresslist.address;
             if (formValidate()) {
-                let { fullName, email, mob, address, landmark, city, pincode, state, addressType } = fields;
+                let { fullName, email, deliveryMobile, address, landmark, city, pincode, state, addressType, addressType_Other } = fields;
                 if(addressType == undefined) {
                     addressType = 'Home';
                 }
@@ -590,8 +597,9 @@ const Home = () => {
                 let addressFormData = {
                     "fullName": fullName,
                     "email": email,
-                    "mob" : mob,
+                    "deliveryMobile" : deliveryMobile,
                     "addressType": addressType,
+                    "addressType_Other": addressType_Other,
                     "address": address,
                     "landmark": landmark,
                     "city": city,
@@ -720,7 +728,7 @@ const Home = () => {
 
     const fullNameInputHandler = e => {
         if (e.target.value == "") {
-            setErrors({ ...errors, fullNameErr : "Full Name Cannot be empty" });
+            setErrors({ ...errors, fullNameErr : "Full Name cannot be empty" });
         } else {
             setErrors({ ...errors, fullNameErr : "" });
         }
@@ -728,7 +736,7 @@ const Home = () => {
 
     const emailInputHandler = e => {
         if (e.target.value == "") {
-            setErrors({ ...errors, emailErr : "Email Cannot be empty" });
+            setErrors({ ...errors, emailErr : "Email cannot be empty" });
         } else if(!CommonMethods.emailValidator(e.target.value)) {
             setErrors({ ...errors, emailErr : "Please enter valid email-a@bcom" });
         }  else {
@@ -736,21 +744,21 @@ const Home = () => {
         }
     }
 
-    const mobInputHandler = e => {
+    const deliveryMobileInputHandler = e => {
         CommonMethods.phoneMasking(e);
         if(e.target.value == "") {
-            setErrors({ ...errors, mobErr : "Mobile Number Cannot be empty" });
+            setErrors({ ...errors, deliveryMobileErr : "Mobile Number cannot be empty" });
         } 
         else if(e.target.value.length != e.target.maxLength && e.target.value.length != MOB_MAX_NUM) {
-            setErrors({ ...errors, mobErr : "Mobile Number should be 10 digits" });
+            setErrors({ ...errors, deliveryMobileErr : "Mobile Number should be 10 digits" });
         } else {
-            setErrors({ ...errors, mobErr : "" });
+            setErrors({ ...errors, deliveryMobileErr : "" });
         }
     }
 
     const addressInputHandler = e => {
         if (e.target.value == "") {
-            setErrors({ ...errors, addressErr : "Address Cannot be empty" });
+            setErrors({ ...errors, addressErr : "Address cannot be empty" });
         } else {
             setErrors({ ...errors, addressErr : "" });
         }
@@ -758,7 +766,7 @@ const Home = () => {
 
     const landmarkInputHandler = e => {
         if (e.target.value == "") {
-            setErrors({ ...errors, landmarkErr : "Landmark Cannot be empty" });
+            setErrors({ ...errors, landmarkErr : "Landmark cannot be empty" });
         } else {
             setErrors({ ...errors, landmarkErr : "" });
         }
@@ -766,17 +774,19 @@ const Home = () => {
 
     const cityInputHandler = e => {
         if (e.target.value == "") {
-            setErrors({ ...errors, cityErr : "City Cannot be empty" });
+            setErrors({ ...errors, cityErr : "City cannot be empty" });
         } else {
             setErrors({ ...errors, cityErr : "" });
         }
     }
 
     const pincodeInputHandler = e => {
+        console.log('sss');
+        CommonMethods.numberValidation(e);
         if (e.target.value == "") {
-            setErrors({ ...errors, pincodeErr : "Pincode Cannot be empty" });
-        } else  if(!CommonMethods.numberValidation(e)){
-            setErrors({ ...errors, pincodeErr : "Please enter Only Numbers (Max 6)" });
+            setErrors({ ...errors, pincodeErr : "Pincode cannot be empty" });
+        } else if(e.target.value !== 6){
+            setErrors({ ...errors, pincodeErr : "Pincode must be 6 digits." });
         } else {
             setErrors({ ...errors, pincodeErr : ""  });
         }
@@ -790,11 +800,11 @@ const Home = () => {
         }, "1000");
     }
 
-    let { fullNameErr, emailErr, mobErr, addressErr, landmarkErr, cityErr, pincodeErr, stateErr } = errors;
+    let { fullNameErr, emailErr, deliveryMobileErr, addressErr, landmarkErr, cityErr, pincodeErr, stateErr } = errors;
     
     return (     
         <>            
-            <div className="modal-body row">
+            <div className="d-flex">
            
                 <div className="checkout-container-left">
                 
@@ -876,8 +886,6 @@ const Home = () => {
 
                     {addressSectionDiv ?
                         <div className="address-section">
-                            {/* {console.log('aaaa',fields["name"])}
-                            <div>{fields["fullName"]}</div> */}
                             <div className="row mb-2">
                                 <div className="col-md-6">
                                     <div className="input-group mb-2">
@@ -888,9 +896,9 @@ const Home = () => {
                                     </div>
 
                                     <div className="input-group">
-                                        <input type="text" name="mob" maxLength={MOB_MAX_NUM} className={`form-control addressTextBox ${ mobErr ? "errorBorder" : "" }`} placeholder="Mobile Number*" onInput={mobInputHandler} onChange={handleFormFieldsChange} value={fields["mobile"] || '' } />
-                                        <span className={`red-alert-icon ${ mobErr ? "" : "d-none" }`} data-bs-toggle="pass_tooltip" data-bs-placement="top" 
-                                        title={mobErr}><i className="bi bi-info-circle-fill"></i></span> 
+                                        <input type="text" name="deliveryMobile" maxLength={MOB_MAX_NUM} className={`form-control addressTextBox ${ deliveryMobileErr ? "errorBorder" : "" }`} placeholder="Mobile Number*" onInput={deliveryMobileInputHandler} onChange={handleFormFieldsChange} value={fields["deliveryMobile"] || '' } />
+                                        <span className={`red-alert-icon ${ deliveryMobileErr ? "" : "d-none" }`} data-bs-toggle="pass_tooltip" data-bs-placement="top" 
+                                        title={deliveryMobileErr}><i className="bi bi-info-circle-fill"></i></span> 
                                     </div>
                                     
                                 </div>
@@ -901,9 +909,8 @@ const Home = () => {
                                         <span className={`red-alert-icon ${ emailErr ? "" : "d-none" }`} data-bs-toggle="pass_tooltip" data-bs-placement="top" 
                                         title={emailErr}><i className="bi bi-info-circle-fill"></i></span> 
                                     </div>
-
-                                    <div className="currentLocation">
-                                        <a href=""><i className="bi bi-circle bi-geo-alt"></i> Use current location </a>
+                                    <div className="input-group">
+                                        <a className='currentLocation' href=""><i className="bi bi-circle bi-geo-alt"></i> Use current location </a>
                                     </div>
                                 </div>
                             </div>
@@ -961,10 +968,10 @@ const Home = () => {
                                     <input className="form-check-input" type="radio" name="addressType" value='Work' onChange={handleFormFieldsChange} defaultChecked={`${ fields["addressType"] == 'Work' ? 'checked' : ''}`} />
                                     <label className="form-check-label" htmlFor="work">Work <br /> <span style={{ fontSize: 10 + 'px' }}>(Between 10 AM-5 PM)</span></label>
                                 </div>
-                                <div className="form-check col-md-4 d-flex">
-                                    <input className="form-check-input me-2" type="radio" name="addressType" id="other" value={fields['add_type_other']} onChange={handleFormFieldsChange} />
-                                    <label className="form-check-label me-2" htmlFor={fields['add_type_other']}>{fields['add_type_other']}</label>
-                                    <input type="text" id="add_type_other" className="add_type_other" onChange={handleFormFieldsChange} value={fields['add_type_other']}/>
+                                <div className="form-check col-md-4">
+                                    <input className="form-check-input me-2" type="radio" name="addressType" value="Other" onChange={handleFormFieldsChange} defaultChecked={`${ fields["addressType"] == 'Other' ? 'checked' : ''}`} />
+                                    <label className="form-check-label me-2" htmlFor="other">Other</label>
+                                    <input type="text" name="addressType_Other" className={`add_type_other ${ addressTypeOtherVisible ? '' : 'd-none'}`} onChange={handleFormFieldsChange} value={fields['addressType_Other']}/>
                                 </div>
                             </div>
 
@@ -1034,29 +1041,25 @@ const Home = () => {
                             <ul>                                
                             
                             { cartItem && cartItem.length ? cartItem.map((item, index) =>
-                                    <li className='cart-list-item' key={item.productVariantId}>
-                                        
-                                        <div className="cart-list-item row" key={item.productVariantId}>
-                                            <div className="col-md-3 cart-img">
-                                                <img src={item.image} alt="Cart 1" />
+                                    <li className='cart-list-item row' key={item.cartItemId}>
+                                        <div className="col-md-3 cart-img">
+                                            <img src={item.image} alt="Cart 1" />
+                                        </div>
+                                        <div className="col-md-9">
+                                            <div className="product-name">{item.itemName}</div>
+                                            <div className="variant">
+                                                {item.itemOptions && item.itemOptions.length > 0 ? item.itemOptions.map((result,index) =>
+                                                <>
+                                                {result.name} : 
+                                                <span className="variant-option" key={index}> &nbsp; {result.value}</span>
+                                                </>) : ''
+                                                }
                                             </div>
-                                            <div className="col-md-9">
-                                                
-                                                <div className="product-name">{item.itemName}</div>
-                                                <div className="variant">
-                                                    {item.itemOptions && item.itemOptions.length > 0 ? item.itemOptions.map((result,index) =>
-                                                    <>
-                                                    {result.name} : 
-                                                    <span className="variant-option" key={index}> &nbsp; {result.value}</span>
-                                                    </>) : ''
-                                                    }
-                                                </div>
-                                                <div className="product-price">Rs.&nbsp;&nbsp;{item.price} * {item.itemQuantity}</div>
-                                                { cartItem.length > 1 ? 
-                                                <div className="remove-cart">
-                                                    <a className="remove" onClick={(event) => removeCartItem(event, cartInfo.cartId, item.cartItemId)}><i className="bi bi-trash-fill"></i> Remove </a>
-                                                </div> : ''}
-                                            </div>
+                                            <div className="product-price">Rs.&nbsp;&nbsp;{item.price} * {item.itemQuantity}</div>
+                                            { cartItem.length > 1 ? 
+                                            <div className="remove-cart">
+                                                <a className="remove" onClick={(event) => removeCartItem(event, cartInfo.cartId, item.cartItemId)}><i className="bi bi-trash-fill"></i> Remove </a>
+                                            </div> : ''}
                                         </div>
                                     </li> 
                                 ) : 
@@ -1101,7 +1104,7 @@ const Home = () => {
                             </div>
                             <div className="coupon-list">
                                 {couponlist && couponlist.length ? couponlist.map((item) =>
-                                    <div className="coupon-details">
+                                    <div className="coupon-details" key={item.id}>
                                         <label className="form-check-label">
                                             <div className={`c-list ${item.isDisabled ? 'disabled': ''}`}>
                                                 <div className="coupon fw-bold">{item.code}</div>

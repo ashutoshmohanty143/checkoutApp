@@ -287,14 +287,10 @@
 
     .currentLocation {
         color: #003898;
-        font-size: 11px;
+        font-size: 14px;
+        line-height: 34px;
         font-weight: 600;
-        margin-top: 12px;
-        margin-bottom: 12px;
-        cursor: pointer;
-        position: absolute;
-        right: 15px;
-        bottom: -15px;
+        display: block;
     }
 
     .addressTypeRadio {
@@ -320,13 +316,14 @@
     .add_type_other:focus-visible{
     	outline: 0;
     }
-    .add_type_other, .add_type_other:active {
+    .add_type_other {
         border: none;
-        border-bottom: 1px solid #6e6e6e;
-        height: 18px;
+        border-bottom: 2px dotted #6e6e6e;
+        height: 30px;
         width: 78px;
         font-size: 12px;
         background: transparent;
+        position: absolute;
     }
 
     .address-back-btn {
