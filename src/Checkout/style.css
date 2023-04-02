@@ -1,706 +1,707 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
-    body {
-        font-family: 'Poppins', sans-serif;
-    }
-    .row{
-        position: relative;
-    }
-    .hide{
-        display: none;
-    }
-    input:disabled {
-        cursor: not-allowed;
-    }
-    .checkoutApp {
-        overflow-x: hidden;
-    }
-    .checkout-container-left{
-        position: relative;
-        width: 495px;
-        border-radius: 20px;
-        background-color: #FCFCFC;
-        height: 530px;
-        padding-left: 0px;
-        padding-right: 0px;
-    }
-    
-    .checkout-container-right{
-        position: relative;
-        width: 290px;
-        border-radius: 20px;
-        border-bottom-left-radius: 0;
-        border-top-left-radius: 0;
-        background-color: #fff;
-        height: 500px;
-        align-self: center;
-    }
+@import url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
+body {
+  font-family: "Poppins", sans-serif;
+}
+.row {
+  position: relative;
+}
+.hide {
+  display: none;
+}
+input:disabled {
+  cursor: not-allowed;
+}
+.checkoutApp {
+  overflow-x: hidden;
+}
+.checkout-container-left {
+  position: relative;
+  width: 495px;
+  border-radius: 20px;
+  background-color: #fcfcfc;
+  height: 530px;
+  padding-left: 0px;
+  padding-right: 0px;
+}
 
-    .form-check-input:checked {
-        background-color: #003898;
-        border-color: #003898;
-    }
-    .btn-primary {
-        color: #fff;
-        background-color: #003898;
-        border-color: #003898;
-    }
-    a {
-        color: #003898;
-        text-decoration: none;
-        cursor: pointer;
-    }
-    .modal-content{
-        background:none !important;
-        border:none !important;
-    }
+.checkout-container-right {
+  position: relative;
+  width: 290px;
+  border-radius: 20px;
+  border-bottom-left-radius: 0;
+  border-top-left-radius: 0;
+  background-color: #fff;
+  height: 500px;
+  align-self: center;
+}
 
-    .trianle{
-        position: absolute;
-        top: -12px;
-        left: 36px;
-        width: 0;
-        height: 0;
-        border-bottom: 12px solid #5379b9;
-        border-left: 14px solid transparent;
-    }
+.form-check-input:checked {
+  background-color: #003898;
+  border-color: #003898;
+}
+.btn-primary {
+  color: #fff;
+  background-color: #003898;
+  border-color: #003898;
+}
+a {
+  color: #003898;
+  text-decoration: none;
+  cursor: pointer;
+}
+.modal-content {
+  background: none !important;
+  border: none !important;
+}
 
-    .verticalbanner {
-        position: absolute;
-        width: 80px;
-        top: -12px;
-        left:50px;
-        background: #003898;
-        height: 80px;
-        line-height: 95px;
-        text-align: center;
-    }
-    .verticalbanner:after,
-    .verticalbanner:before {
-        content: '';
-        position: absolute;
-        border-top: 20px solid #003898;
-        height: 0;
-        width: 0;
-        top: 100%;
-    }
-    .verticalbanner:after {
-        border-right:40px solid transparent;
-        right: 0px;
-    }
-    .verticalbanner:before {
-        border-left: 40px solid transparent;
-        left: 0px;
-    }
+.trianle {
+  position: absolute;
+  top: -12px;
+  left: 36px;
+  width: 0;
+  height: 0;
+  border-bottom: 12px solid #5379b9;
+  border-left: 14px solid transparent;
+}
 
-    .custom-circle{
-        border-radius: 50%;
-        padding: 5px 8px;
-    }
+.verticalbanner {
+  position: absolute;
+  width: 80px;
+  top: -12px;
+  left: 50px;
+  background: #003898;
+  height: 80px;
+  line-height: 95px;
+  text-align: center;
+}
+.verticalbanner:after,
+.verticalbanner:before {
+  content: "";
+  position: absolute;
+  border-top: 20px solid #003898;
+  height: 0;
+  width: 0;
+  top: 100%;
+}
+.verticalbanner:after {
+  border-right: 40px solid transparent;
+  right: 0px;
+}
+.verticalbanner:before {
+  border-left: 40px solid transparent;
+  left: 0px;
+}
 
-    .checkout-header{
-        position: absolute;
-        top: 105px;
-        left: 50px;
-        display: flex;
-    }
+.custom-circle {
+  border-radius: 50%;
+  padding: 5px 8px;
+}
 
-    .cart{
-        position: absolute;
-        top: 10px;
-        right: 35px;
-    }
+.checkout-header {
+  position: absolute;
+  top: 105px;
+  left: 50px;
+  display: flex;
+}
 
-    .active-step{
-        color: #003898;
-        font-weight: bold;
-        padding-bottom: 8px;
-        border-bottom: 1px solid #003898;
-        font-size: 13px;	 
-    }
+.cart {
+  position: absolute;
+  top: 10px;
+  right: 35px;
+}
 
-    .disabled-step{
-        color:#767676;
-        font-size: 13px;
-    }
+.active-step {
+  color: #003898;
+  font-weight: bold;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #003898;
+  font-size: 13px;
+}
 
+.disabled-step {
+  color: #767676;
+  font-size: 13px;
+}
 
+.active-border {
+  border: 1px solid #59dd59;
+}
 
-    .active-border{
-        border: 1px solid #59dd59; 
-    }
+.danger-border {
+  border: 1px solid #d42506;
+}
 
-    .danger-border{
-        border: 1px solid #d42506; 
-    }
+.welcome,
+.verification {
+  font-size: 18px;
+  color: #767676;
+}
+.enter-mobile,
+.enter-otp {
+  font-size: 22px;
+  color: #323232;
+  font-weight: 600;
+}
 
-    .welcome , .verification{
-        font-size: 18px;
-        color: #767676;
-    }
-    .enter-mobile, .enter-otp{
-        font-size: 22px;
-        color: #323232;
-        font-weight: 600;
-    }
+/* ----- Mobile Box Styles Starts ----- */
 
-    /* ----- Mobile Box Styles Starts ----- */
+.mobile-section {
+  position: absolute;
+  top: 210px;
+  left: 50px;
+}
 
-    .mobile-section{
-        position: absolute;
-        top: 210px;
-        left: 50px;
-    }
+.mobile {
+  border-radius: 5px !important;
+  height: 43px;
+  max-width: 65% !important;
+  box-shadow: 3px 0 4px -4px rgb(96 96 96 / 80%),
+    -2px 0 6px -4px rgb(112 112 112 / 80%),
+    -2px 0 6px -4px rgb(112 112 112 / 80%),
+    -2px 0 6px -4px rgb(112 112 112 / 80%) !important;
+  color: #767676;
+  padding-left: 50px;
+}
+.mobile:focus {
+  border-color: #8f8b8b00 !important;
+  box-shadow: 3px 0 4px -4px rgb(96 96 96 / 80%),
+    -2px 0 6px -4px rgb(112 112 112 / 80%),
+    -2px 0 6px -4px rgb(112 112 112 / 80%),
+    -2px 0 6px -4px rgb(112 112 112 / 80%) !important;
+}
+.green-check {
+  color: #35bd35;
+  line-height: 2.7;
+  z-index: 9999;
+  margin-left: -30px !important;
+}
+.red-alert {
+  color: #d42506;
+  line-height: 2.7;
+  z-index: 9999;
+  margin-left: -30px !important;
+}
 
-    .mobile{
-        border-radius: 5px!important;
-        height: 43px;
-        max-width: 65% !important;
-        box-shadow: 3px 0 4px -4px rgb(96 96 96 / 80%), 
-        -2px 0 6px -4px rgb(112 112 112 / 80%), 
-        -2px 0 6px -4px rgb(112 112 112 / 80%), 
-        -2px 0 6px -4px rgb(112 112 112 / 80%)!important;
-        color: #767676;
-        padding-left: 50px;   
-    }
-    .mobile:focus{
-        border-color: #8f8b8b00!important;
-        box-shadow: 3px 0 4px -4px rgb(96 96 96 / 80%), 
-        -2px 0 6px -4px rgb(112 112 112 / 80%), 
-        -2px 0 6px -4px rgb(112 112 112 / 80%), 
-        -2px 0 6px -4px rgb(112 112 112 / 80%)!important;
-    }
-    .green-check{
-        color: #35bd35;
-        line-height: 2.70;
-        z-index: 9999;
-        margin-left: -30px !important;
-    }
-    .red-alert{
-        color: #d42506;
-        line-height: 2.70;
-        z-index: 9999;
-        margin-left: -30px !important;
-    }
+.get-otp {
+  width: 135px;
+  padding: 9px;
+  background-color: #767676 !important;
+  color: #fff !important;
+  border-radius: 7px;
+}
 
-    .get-otp{
-        width: 135px;
-        padding: 9px;
-        background-color: #767676 !important;
-        color: #fff !important;
-        border-radius: 7px;
-    }
+.active-btn {
+  background-color: #003898 !important;
+}
+.country-code {
+  position: absolute;
+  z-index: 999999;
+  padding: 0px 7px;
+  color: #847592;
+  background: #fff;
+  height: 41px;
+  line-height: 41px;
+  margin-top: 1px;
+  border-right: 1px solid #ddd;
+  border-radius: 5px;
+  color: #767676;
+}
 
-    .active-btn{
-        background-color: #003898 !important;
-    }
-    .country-code{
-        position: absolute;
-        z-index: 999999;
-        padding: 0px 7px;
-        color: #847592;
-        background: #fff;
-        height: 41px;
-        line-height: 41px;
-        margin-top: 1px;
-        border-right: 1px solid #ddd;
-        border-radius: 5px;
-        color: #767676;
-    }
+/* ----- Mobile Box Styles Ends ----- */
 
-    /* ----- Mobile Box Styles Ends ----- */
+/* ----- OTP Box Styles Starts ----- */
 
-    /* ----- OTP Box Styles Starts ----- */
+.otp-section {
+  position: absolute;
+  top: 210px;
+  left: 50px;
+}
+.otp-not-received {
+  font-size: small;
+  color: #767676 !important;
+}
+.resend-otp {
+  color: #003898;
+  cursor: pointer;
+  font-weight: 500;
+}
 
-    .otp-section{
-        position: absolute;
-        top: 210px;
-        left: 50px;
-    }
-    .otp-not-received{
-        font-size: small;
-        color: #767676!important;
-    }
-    .resend-otp{
-        color: #003898;
-        cursor: pointer;
-        font-weight: 500;
-    }
+.edit-icon {
+  color: #003898;
+  -webkit-text-stroke: 0.5px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: bold;
+}
 
-    .edit-icon { 
-        color: #003898;
-        -webkit-text-stroke: 0.5px;
-        cursor: pointer;
-        font-size: 12px;
-        font-weight: bold;
-    }
+.otp-info {
+  color: #35bd35;
+  /* font-size: 8px; */
+  display: none;
+}
 
-    .otp-info {
-        color: #35bd35;
-        /* font-size: 8px; */
-        display: none;
-    }
+.otp-value {
+  border-radius: 5px !important;
+  height: 43px;
+  font-size: 20px;
+  width: 45px !important;
+  flex: none !important;
+  margin-right: 0.7rem !important;
+  text-align: center;
+  box-shadow: 3px 0 4px -4px rgb(96 96 96 / 80%),
+    -2px 0 6px -4px rgb(112 112 112 / 80%),
+    -2px 0 6px -4px rgb(112 112 112 / 80%),
+    -2px 0 6px -4px rgb(112 112 112 / 80%) !important;
+}
 
-    .otp-value{
-        border-radius: 5px!important;
-        height: 43px;
-        font-size: 20px;
-        width: 45px!important;
-        flex: none!important;
-        margin-right: 0.7rem!important;
-        text-align: center;
-        box-shadow: 3px 0 4px -4px rgb(96 96 96 / 80%), -2px 0 6px -4px rgb(112 112 112 / 80%), -2px 0 6px -4px rgb(112 112 112 / 80%), -2px 0 6px -4px rgb(112 112 112 / 80%)!important;
-    }
-    
-    /* ----- OTP Box Styles Ends ----- */
+/* ----- OTP Box Styles Ends ----- */
 
+/* ----- Address Box Style Starts ----- */
 
-    /* ----- Address Box Style Starts ----- */
+.address-section {
+  position: absolute;
+  top: 155px;
+  left: 35px;
+  right: 35px;
+  margin-top: 10px;
+}
 
-    .address-section{
-        position: absolute;
-        top: 155px;
-        left: 35px;
-        right: 35px;
-        margin-top: 10px;
-    }
+.addressTextBox {
+  height: 34px;
+  font-size: 12px;
+  color: #767676;
+  border-radius: 5px !important;
+  box-shadow: 3px 0 4px -4px rgb(96 96 96 / 80%),
+    -2px 0 6px -4px rgb(112 112 112 / 80%),
+    -2px 0 6px -4px rgb(112 112 112 / 80%),
+    -2px 0 6px -4px rgb(112 112 112 / 80%) !important;
+}
 
-    .addressTextBox {
-        height: 34px;
-        font-size: 12px;
-        color: #767676;
-        border-radius: 5px!important;
-        box-shadow: 3px 0 4px -4px rgb(96 96 96 / 80%), -2px 0 6px -4px rgb(112 112 112 / 80%), -2px 0 6px -4px rgb(112 112 112 / 80%), -2px 0 6px -4px rgb(112 112 112 / 80%)!important;
-    }
-
-    /* .addressTextBox:after {
+/* .addressTextBox:after {
         color: #e32;
         content: ' *';
         display:inline;
       } */
 
-    .mandetory_field{
-        color: #e32;
-        font-size: 20px;
-    }
-
-    .errorBorder{
-        border:1px solid red !important;
-    }
-
-
-    .currentLocation {
-        color: #003898;
-        font-size: 14px;
-        line-height: 34px;
-        font-weight: 600;
-        display: block;
-    }
-
-    .addressTypeRadio {
-        font-size: small;
-        display: flex;
-    }
-
-    .address-header{
-        width: initial;
-       display: flow-root;
-       margin-bottom: 15px;
-       border-bottom: 1px solid #ddd;
-    }
-    .add-address{
-        float: left;
-        margin-bottom: 10px;
-        font-weight: bold;
-    }
-    .mandatory-filed{
-        float: right;
-        font-size: 10px;
-    }
-    .add_type_other:focus-visible{
-    	outline: 0;
-    }
-    .add_type_other {
-        border: none;
-        border-bottom: 1px solid #6e6e6e;
-        height: 20px;
-        width: 78px;
-        font-size: 12px;
-        background: transparent;
-        position: absolute;
-    }
-
-    .address-back-btn {
-        width: 70px;
-        line-height: 15px;
-    	height: 35px;
-        padding: 10px;
-        background-color: #003898 !important;
-        color: #fff !important;
-        border-radius: 40px;
-        -webkit-text-stroke: 1px;
-        border: none;
-        margin-top: 10px;
-    }
-
-    .address-next-btn {
-        width: 100px;
-        line-height: 15px;
-    	height: 35px;
-        padding: 10px;
-        background-color: #003898 !important;
-        color: #fff !important;
-        border-radius: 7px;
-        border: none;
-        margin-top: 10px;
-    }
-
-    /* ----- Address Box Style Ends ----- */
-
-    /* ----- Address List Box Style Starts ----- */
-
-    .address-list-section{
-        position: absolute;
-        top: 180px;
-        left: 35px;
-        right: 35px;
-    }
-
-    .address-list{
-        display: flow-root;
-        padding-right: 8px;
-        max-height: 230px;
-        overflow-y: scroll;
-        min-height: 250px;
-    }
-    .addressBox{
-        list-style-type: none;
-        padding-left: 0px;
-    }
-    .addressBox li{ 
-        margin-bottom: 10px;
-    }
-    .addressBox li:last-child{ 
-        margin-bottom: 0px;
-    }
-
-    .address-card{
-        border: 1px solid #ddd;
-        padding: 6px 10px;
-        height: auto;
-        border-radius: 5px;
-        position: relative;
-	}
-    .active-address{
-        border: 1px solid #003898 !important;
-    }
-    .address-label{
-        font-size: 12px;
-    }
-    .adressDetails{
-        font-size: 12px;
-    }
-    .default-address {
-        background: #4caf50;
-        color: #fff;
-        padding: 0px 9px;
-        border-radius: 5px;
-        float: right;
-        font-size: 12px;
-    }
-    .make-default-address{
-        font-size: 12px;
-        float: right;
-        color: #C80000;
-        cursor: pointer;
-        position: absolute;
-        bottom: 10px;
-        right: 5px;
-    }
-    .add_list_round {
-        background: #003898;
-        color: #fff;
-        font-size: x-small;
-        border-radius: 50%;
-        padding: 2px 4px;
-    }
-    .add-address-existing-customer {
-        cursor: pointer;
-        font-size: 13px;
-    }
-    .shipping-address{
-		font-size: 12px;
-        width: 80%;    
-	}
-    .add-address-existing-customer .bi-plus-circle-fill{
-		font-size: 13px;
-	}
-    .add-address-existing-customer label{
-		font-size: 15px;
-		cursor: pointer;
-	}
-
-    .edit-address-btn{
-        float: right;
-        color: #003898;
-        -webkit-text-stroke: 0.5px;
-        cursor: pointer;
-        font-size: 15px;
-        position: absolute;
-        right: 30px;
-    }
-
-    .delete-address-btn {
-        float: right;
-        margin-left: 5px;
-        color: #ff3c3c;
-        -webkit-text-stroke: 0.5px;
-        cursor: pointer;
-        font-size: 15px;
-    }
-
-    .pay-nxt-btn {
-        width: 100px;
-        float: right;
-        margin-top: 25px;
-        padding: 10px;
-        background-color: #003898 !important;
-        color: #fff !important;
-        border-radius: 7px;
-        border: none;
-    }
-
-    /* ----- Address List Box Style Ends ----- */
-
-
-    /* ----- Payment Box Style Starts ----- */
-
-    .payment-section{
-        position: absolute;
-        top: 180px;
-        left: 35px;
-        right: 35px;
-    }
-
-    /* ----- Payment Box Style Ends ----- */
-    
-    
-
-
-    /* ----- Right Panel Box Styles Starts ----- */
-
-    .top-section,.coupon-section{
-        text-align: left;
-        font-size: 14px;
-        padding: 12px 0px;
-    }
-
-    .close-btn {
-        position: absolute;
-        top: 10px;
-        right: 15px;
-        cursor: pointer;
-    }
-
-    .bi-cart{
-        -webkit-text-stroke: 1px;
-    }
-    .bi-chevron-up{
-        -webkit-text-stroke: 1px;
-        cursor: pointer;
-        color: #282c30;
-    }
-    .bi-chevron-down{
-        -webkit-text-stroke: 1px;
-        cursor: pointer;
-        color: #282c30;
-    }
-    .cart-section{
-        background: #fff;
-        font-size: 14px;
-        padding-bottom: 10px;
-        border-bottom-left-radius: 10px;
-        border-bottom-right-radius: 10px;
-        padding-right: 5px;
-    }
-    .cart-list{
-        width: 100%;
-        margin-bottom: 15px;
-        min-height: 100px;
-        overflow-y: scroll;
-        padding: 2px 12px 0px 0px;
-        max-height: 135px;
-    }
-    .cart-list ul {
-        list-style-type: none;
-        padding-left: 0px;
-    }
-    .product-name{
-        font-size: 13px;
-        margin-bottom: 2px;
-    }
-    .disabled{
-        opacity: 0.7;
-    }
-
-    .variant{
-        font-size: 12px;
-        margin-bottom: 2px;
-    }
-
-    .product-price{
-        font-size: 12px;
-    }
-	.cart-list::-webkit-scrollbar {
-        width: 7px;
-    }	
-    .cart-list::-webkit-scrollbar-track {
-        box-shadow: inset 0 0 5px grey; 
-        border-radius: 10px;
-    } 	
-    .cart-list::-webkit-scrollbar-thumb {
-        background: #5e5d5d; 
-        border-radius: 10px;
-    }	
-    .cart-list::-webkit-scrollbar-thumb:hover {
-        background: #003898; 
-    }
-
-    .cart-list-item{
-        position: relative;
-        margin-bottom: 10px;
-    }
-    .cart-list-item:last-child{
-        margin-bottom: 0px;
-    }
-    .cart-img{
-        display: flex;
-        padding-right: 0;
-    }
-    .cart-img img{
-        height: 58px;
-        width: 100%;
-    }
-    .variant-option {
-        margin-right: 15px;
-    }
-    .price,.discount,.shipping{
-        font-size: 12px;
-        margin-bottom: 3px;
-    }
-    .amount{
-        font-size: 12px;
-        margin-bottom: 3px;
-    }
-    .product-details{
-        background: #fff;
-        font-size: 14px;
-    }
-    .remove-cart{
-        position: absolute;
-        right: 10px;
-        bottom: 2px;
-        font-size: 11px;
-    }
-    .hr-tag{
-        margin: 5px auto;
-        width: 265px;
-    }
-    .coupon-details label{
-        margin-bottom: 10px;
-    }
-    .coupon-desc{
-        font-size: 12px;
-    }
-    .c-list{
-        position: relative;
-    }
-
-    .apply-code{
-        position: absolute;
-        right: 0px;
-        top: 0px;
-        font-size: 11px;
-        color: blue;
-    }
-    .coupon-box{
-        /* border: 2px solid gray; */
-        /* border-radius: 5px; */
-        /* padding: 5px; */
-        max-height: 195px;
-    }
-    .coupon-header{
-        font-size: 14px;
-        font-weight: bold;
-        text-decoration: underline;
-        margin-bottom: 2px;
-    }
-    .coupon_text{
-        padding: 1px 8px !important;
-    }
-    .coupon_apply_btn{
-        padding: 1px 7px !important;
-        background: #0a53be;
-        color: #fff;
-        border-radius: 7px;
-        border: none;
-    }
-    .c-list{
-        font-size: small;
-        line-height: 1.3;
-    }
-
-    .coupon-list{
-        min-height: 100px;
-        overflow-y: scroll;
-        padding: 12px;
-        max-height: 120px;
-    }
-
-    .coupon-list::-webkit-scrollbar {
-        width: 7px;
-    }	
-    .coupon-list::-webkit-scrollbar-track {
-        box-shadow: inset 0 0 5px grey; 
-        border-radius: 10px;
-    } 	
-    .coupon-list::-webkit-scrollbar-thumb {
-        background: #5e5d5d; 
-        border-radius: 10px;
-    }	
-    .coupon-list::-webkit-scrollbar-thumb:hover {
-        background: #0a53be; 
-    }
-
-    /* ----- Right Panel Box Styles Ends ----- */
-
-    #loader{
-        position: absolute;
-        top: 30%;
-    }
-
-    /* New Code Added */
-   .error-msg {
-    color: red;
-   }
-   
-   .red-alert-icon{
-    color: #d42506;
-    line-height: 2.70;
-    z-index: 9999;
-    position: absolute;
-    right: 12px;
+.mandetory_field {
+  color: #e32;
+  font-size: 20px;
 }
 
+.errorBorder {
+  border: 1px solid red !important;
+}
 
-    
-    
+.currentLocation {
+  color: #003898;
+  font-size: 14px;
+  line-height: 34px;
+  font-weight: 600;
+  display: block;
+}
 
-    
+.addressTypeRadio {
+  font-size: small;
+  display: flex;
+}
 
-    
+.address-header {
+  width: initial;
+  display: flow-root;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #ddd;
+}
+.add-address {
+  float: left;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+.mandatory-filed {
+  float: right;
+  font-size: 10px;
+}
+.add_type_other:focus-visible {
+  outline: 0;
+}
+.add_type_other {
+  border: none;
+  border-bottom: 1px solid #6e6e6e;
+  height: 20px;
+  width: 78px;
+  font-size: 12px;
+  background: transparent;
+  position: absolute;
+}
 
-    
+.address-back-btn {
+  width: 70px;
+  line-height: 15px;
+  height: 35px;
+  padding: 10px;
+  background-color: #003898 !important;
+  color: #fff !important;
+  border-radius: 40px;
+  -webkit-text-stroke: 1px;
+  border: none;
+  margin-top: 10px;
+}
 
-    
+.address-next-btn {
+  width: 100px;
+  line-height: 15px;
+  height: 35px;
+  padding: 10px;
+  background-color: #003898 !important;
+  color: #fff !important;
+  border-radius: 7px;
+  border: none;
+  margin-top: 10px;
+}
 
-    
+/* ----- Address Box Style Ends ----- */
+
+/* ----- Address List Box Style Starts ----- */
+
+.address-list-section {
+  position: absolute;
+  top: 180px;
+  left: 35px;
+  right: 35px;
+}
+
+.address-list {
+  display: flow-root;
+  padding-right: 8px;
+  max-height: 230px;
+  overflow-y: scroll;
+  min-height: 250px;
+}
+.addressBox {
+  list-style-type: none;
+  padding-left: 0px;
+}
+.addressBox li {
+  margin-bottom: 10px;
+}
+.addressBox li:last-child {
+  margin-bottom: 0px;
+}
+
+.address-card {
+  border: 1px solid #ddd;
+  padding: 6px 10px;
+  height: auto;
+  border-radius: 5px;
+  position: relative;
+}
+.active-address {
+  border: 1px solid #003898 !important;
+}
+.address-label {
+  font-size: 12px;
+}
+.adressDetails {
+  font-size: 12px;
+}
+.default-address {
+  background: #4caf50;
+  color: #fff;
+  padding: 0px 9px;
+  border-radius: 5px;
+  float: right;
+  font-size: 12px;
+}
+.make-default-address {
+  font-size: 12px;
+  float: right;
+  color: #c80000;
+  cursor: pointer;
+  position: absolute;
+  bottom: 10px;
+  right: 5px;
+}
+.add_list_round {
+  background: #003898;
+  color: #fff;
+  font-size: x-small;
+  border-radius: 50%;
+  padding: 2px 4px;
+}
+.add-address-existing-customer {
+  cursor: pointer;
+  font-size: 13px;
+}
+.shipping-address {
+  font-size: 12px;
+  width: 80%;
+}
+.add-address-existing-customer .bi-plus-circle-fill {
+  font-size: 13px;
+}
+.add-address-existing-customer label {
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.edit-address-btn {
+  float: right;
+  color: #003898;
+  -webkit-text-stroke: 0.5px;
+  cursor: pointer;
+  font-size: 15px;
+  position: absolute;
+  right: 30px;
+}
+
+.delete-address-btn {
+  float: right;
+  margin-left: 5px;
+  color: #ff3c3c;
+  -webkit-text-stroke: 0.5px;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.pay-nxt-btn {
+  width: 100px;
+  float: right;
+  margin-top: 25px;
+  padding: 10px;
+  background-color: #003898 !important;
+  color: #fff !important;
+  border-radius: 7px;
+  border: none;
+}
+
+/* ----- Address List Box Style Ends ----- */
+
+/* ----- Payment Box Style Starts ----- */
+
+.payment-section {
+  position: absolute;
+  top: 180px;
+  left: 35px;
+  right: 35px;
+}
+
+/* ----- Payment Box Style Ends ----- */
+
+/* ----- Right Panel Box Styles Starts ----- */
+
+.top-section,
+.coupon-section {
+  text-align: left;
+  font-size: 14px;
+  padding: 12px 0px;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  cursor: pointer;
+}
+
+.bi-cart {
+  -webkit-text-stroke: 1px;
+}
+.bi-chevron-up {
+  -webkit-text-stroke: 1px;
+  cursor: pointer;
+  color: #282c30;
+}
+.bi-chevron-down {
+  -webkit-text-stroke: 1px;
+  cursor: pointer;
+  color: #282c30;
+}
+.cart-section {
+  background: #fff;
+  font-size: 14px;
+  padding-bottom: 10px;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  padding-right: 5px;
+}
+.cart-list {
+  width: 100%;
+  margin-bottom: 15px;
+  min-height: 100px;
+  overflow-y: scroll;
+  padding: 2px 12px 0px 0px;
+  max-height: 135px;
+}
+.cart-list ul {
+  list-style-type: none;
+  padding-left: 0px;
+}
+.product-name {
+  font-size: 13px;
+  margin-bottom: 2px;
+}
+.disabled {
+  opacity: 0.7;
+}
+
+.variant {
+  font-size: 12px;
+  margin-bottom: 2px;
+}
+
+.product-price {
+  font-size: 12px;
+}
+.cart-list::-webkit-scrollbar {
+  width: 7px;
+}
+.cart-list::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey;
+  border-radius: 10px;
+}
+.cart-list::-webkit-scrollbar-thumb {
+  background: #5e5d5d;
+  border-radius: 10px;
+}
+.cart-list::-webkit-scrollbar-thumb:hover {
+  background: #003898;
+}
+
+.cart-list-item {
+  position: relative;
+  margin-bottom: 10px;
+}
+.cart-list-item:last-child {
+  margin-bottom: 0px;
+}
+.cart-img {
+  display: flex;
+  padding-right: 0;
+}
+.cart-img img {
+  height: 58px;
+  width: 100%;
+}
+.variant-option {
+  margin-right: 15px;
+}
+.price,
+.discount,
+.shipping {
+  font-size: 12px;
+  margin-bottom: 3px;
+}
+.amount {
+  font-size: 12px;
+  margin-bottom: 3px;
+}
+.product-details {
+  background: #fff;
+  font-size: 14px;
+}
+.remove-cart {
+  position: absolute;
+  right: 10px;
+  bottom: 2px;
+  font-size: 11px;
+}
+.hr-tag {
+  margin: 5px auto;
+  width: 265px;
+}
+.coupon-details label {
+  margin-bottom: 10px;
+}
+.coupon-desc {
+  font-size: 12px;
+}
+.c-list {
+  position: relative;
+}
+
+.apply-code {
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  font-size: 11px;
+  color: blue;
+}
+.coupon-box {
+  /* border: 2px solid gray; */
+  /* border-radius: 5px; */
+  /* padding: 5px; */
+  max-height: 195px;
+}
+.coupon-header {
+  font-size: 14px;
+  font-weight: bold;
+  text-decoration: underline;
+  margin-bottom: 2px;
+}
+.coupon_text {
+  padding: 1px 8px !important;
+}
+.coupon_apply_btn {
+  padding: 1px 7px !important;
+  background: #0a53be;
+  color: #fff;
+  border-radius: 7px;
+  border: none;
+}
+.c-list {
+  font-size: small;
+  line-height: 1.3;
+}
+
+.coupon-list {
+  min-height: 100px;
+  overflow-y: scroll;
+  padding: 12px;
+  max-height: 120px;
+}
+
+.coupon-list::-webkit-scrollbar {
+  width: 7px;
+}
+.coupon-list::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey;
+  border-radius: 10px;
+}
+.coupon-list::-webkit-scrollbar-thumb {
+  background: #5e5d5d;
+  border-radius: 10px;
+}
+.coupon-list::-webkit-scrollbar-thumb:hover {
+  background: #0a53be;
+}
+
+/* ----- Right Panel Box Styles Ends ----- */
+
+#loader {
+  position: absolute;
+  top: 30%;
+}
+
+/* New Code Added */
+.error-msg {
+  color: red;
+}
+
+.red-alert-icon {
+  color: #d42506;
+  z-index: 9999;
+  position: absolute;
+  right: 12px;
+  top: 6px;
+}
+
+.red-alert-icon-other-type {
+  color: #d42506;
+  z-index: 9999;
+  position: absolute;
+  top: 1px;
+  right: 2px;
+}
+
+.errorBorder_Bottom {
+    border-bottom: 1px solid red !important;
+}

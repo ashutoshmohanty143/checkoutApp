@@ -161,7 +161,7 @@ const Home = () => {
                     console.log("error2")
                 }
             } catch(error) {
-                console.log("error4", error);
+                // console.log("error4", error);
             };
         }
     }
@@ -279,11 +279,13 @@ const Home = () => {
             [event.target.name]: event.target.value
         }));
 
-        if(event.target.value == 'Other') {
+        if(event.target.value == 'Other' || event.target.name == 'addressType_Other') {
             setAddressTypeOtherDisable(false);
-        } else {
+        } else if(event.target.value == 'Home' || event.target.value == 'Work') {
             setAddressTypeOtherDisable(true);
-        }
+            setFields({ ...fields, addressType_Other : "" });
+            setErrors({ ...errors, addressType_OtherErr : "" });
+        } 
     }
 
     const handleStateFieldsChange = (event) => {
@@ -481,14 +483,13 @@ const Home = () => {
           errors["emailErr"] = "Please enter valid email-a@bcom";
         } 
 
-        //Mob
-        //console.log('aa',fields["mob"].length);
-        if(!fields["mob"]) {
+        //De
+        if(!fields["deliveryMobile"]) {
             formIsValid = false;
-            errors["mobErr"] = "Mobile Number cannot be empty";
-        } else if (fields["mob"].length != fields["mob"].maxLength && fields["mob"].length != MOB_MAX_NUM) {
+            errors["deliveryMobileErr"] = "Mobile Number cannot be empty";
+        } else if (fields["deliveryMobile"].length != fields["deliveryMobile"].maxLength && fields["deliveryMobile"].length != MOB_MAX_NUM) {
             formIsValid = false;
-            errors["mobErr"] = "Mobile Number should be 10 digits";
+            errors["deliveryMobileErr"] = "Mobile Number should be 10 digits";
         }
  
         //Address
@@ -525,7 +526,17 @@ const Home = () => {
             formIsValid = false;
             errors["stateErr"] = 'Please Select State';
         }
-    
+
+
+        var radio_Checked_Value = document.querySelector('input[name="addressType"]:checked').value;
+        if(radio_Checked_Value == "Other") {
+            if (!fields["addressType_Other"]) {
+                formIsValid = false;
+                errors["addressType_OtherErr"] = "Address cannot be empty";
+            }
+        } else if(radio_Checked_Value == "Home" || radio_Checked_Value == "Work") {
+            setErrors({ ...errors, addressType_OtherErr : "" });
+        }
     
         setErrors(errors);
         // console.log(errors);
@@ -542,9 +553,10 @@ const Home = () => {
         if(!existingCustomer) {
             if (formValidate()) {           
                 let { fullName, email, deliveryMobile, address, landmark, city, pincode, state, addressType, addressType_Other } = fields;
-                if(addressType == undefined) {
-                    addressType = 'Home';
-                }
+                // if(addressType == undefined) {
+                //     addressType = 'Home';
+                // }
+                addressType = document.querySelector('input[name="addressType"]:checked').value;
                 let mobile = CommonMethods.unmask(fields['mobile']);
                 const formData = {
                     "collection": "customers_"+vendorId,
@@ -587,10 +599,7 @@ const Home = () => {
             let addressList = addresslist.address;
             if (formValidate()) {
                 let { fullName, email, deliveryMobile, address, landmark, city, pincode, state, addressType, addressType_Other } = fields;
-                if(addressType == undefined) {
-                    addressType = 'Home';
-                }
-
+                addressType = document.querySelector('input[name="addressType"]:checked').value;
                 var isDefaultAddress;
                 if(isAddressEditButtonClicked) { 
                     isDefaultAddress = addresslist.address[addressListIndexToUpdate].isDefaultAddress;
@@ -618,8 +627,6 @@ const Home = () => {
                     addressList.push(addressFormData);        
                 }
 
-                console.log(addresslist.address);
-
                 const formData = {
                     "collection": "customers_"+vendorId,
                     "id": addresslist._id,
@@ -627,8 +634,6 @@ const Home = () => {
                         "address": addresslist.address
                     }      
                 };
-
-                //console.log(formData);
 
                 ApiServices.updateExistingCustomer(formData).then(response => {
                     if (response.status == 200 && response.data.status == 'success') {
@@ -686,10 +691,10 @@ const Home = () => {
         setIsAddressEditButtonClicked(true);
         setAddressListIndexToUpdate(i);
         let updatedAddress = addresslist.address[i];
-        setFields(updatedAddress);                
+        setFields(updatedAddress); 
+        setErrors({});               
         setaddressListSectionDiv(false);
         setAddressSectionDiv(true);
-        console.log(fields);
     }
 
     const deleteCustomerAddress = (e,i) => {
@@ -796,6 +801,16 @@ const Home = () => {
         }
     }
 
+    const addressType_OtherInputHandler = e => {
+        if(fields["addressType"] == "Other") {
+            if (e.target.value == "") {
+                setErrors({ ...errors, addressType_OtherErr : "Address cannot be empty" });
+            } else {
+                setErrors({ ...errors, addressType_OtherErr : "" });
+            }
+        }
+    }
+
     const addAddressExistingCustomer = e => {
         setTimeout(() => {
             setFields({ fields: " " });
@@ -804,7 +819,7 @@ const Home = () => {
         }, "1000");
     }
 
-    let { fullNameErr, emailErr, deliveryMobileErr, addressErr, landmarkErr, cityErr, pincodeErr, stateErr } = errors;
+    let { fullNameErr, emailErr, deliveryMobileErr, addressErr, landmarkErr, cityErr, pincodeErr, stateErr, addressType_OtherErr } = errors;
     
     return (     
         <>            
@@ -830,7 +845,7 @@ const Home = () => {
                             <span>Address</span>
                         </div>
                         <div className={`me-3 ${paymentStepActive ? 'active-step' : 'disabled-step'}`}>
-                            <img src={paymentStepActive ? '' : './img/payment-method.png'} className='me-2' />
+                            <img src={paymentStepActive ? './img/payment-method.png' : './img/payment-method.png'} className='me-2' />
                             <span>Payment</span>
                         </div>
 
@@ -965,17 +980,19 @@ const Home = () => {
                             </div>
                             <div className="addressTypeRadio">
                                 <div className="form-check col-md-4">
-                                    <input className="form-check-input" type="radio" name="addressType" value='Home'  onChange={handleFormFieldsChange} defaultChecked={`${ fields["addressType"] == 'Home' ? 'checked' : ''}`}  />
+                                    <input className="form-check-input" type="radio" name="addressType" value='Home'  onChange={handleFormFieldsChange} defaultChecked={`${ fields["addressType"] == 'Home' ? 'checked' : 'checked'}`}  />
                                     <label className="form-check-label" htmlFor="home">Home <br /> <span style={{ fontSize: 10 + 'px' }}>(All day delivery)</span></label>
                                 </div>
                                 <div className="form-check col-md-4">
                                     <input className="form-check-input" type="radio" name="addressType" value='Work' onChange={handleFormFieldsChange} defaultChecked={`${ fields["addressType"] == 'Work' ? 'checked' : ''}`} />
                                     <label className="form-check-label" htmlFor="work">Work <br /> <span style={{ fontSize: 10 + 'px' }}>(Between 10 AM-5 PM)</span></label>
                                 </div>
-                                <div className="form-check col-md-4">
+                                <div className="form-check col-md-4 position-relative">
                                     <input className="form-check-input me-2" type="radio" name="addressType" value="Other" onChange={handleFormFieldsChange} defaultChecked={`${ fields["addressType"] == 'Other' ? 'checked' : ''}`} />
                                     <label className="form-check-label me-2" htmlFor="other">Other</label>
-                                    <input type="text" name="addressType_Other" className="add_type_other" disabled={addressTypeOtherDisable} onChange={handleFormFieldsChange} value={fields['addressType_Other']}/>
+                                    <input type="text" name="addressType_Other" className={`add_type_other ${ addressType_OtherErr ? "errorBorder_Bottom" : "" }`} disabled={addressTypeOtherDisable} onChange={handleFormFieldsChange} value={fields['addressType_Other'] || ''} onInput={addressType_OtherInputHandler}/>
+                                    <span className={`red-alert-icon-other-type ${ addressType_OtherErr ? "" : "d-none" }`} data-bs-toggle="pass_tooltip" data-bs-placement="top" 
+                                            title={addressType_OtherErr}><i className="bi bi-info-circle-fill"></i></span>
                                 </div>
                             </div>
 
